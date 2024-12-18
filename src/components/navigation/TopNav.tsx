@@ -1,4 +1,4 @@
-import { Bell, Settings } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import UserProfileMenu from "./UserProfileMenu";
@@ -53,9 +53,6 @@ const TopNav = () => {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
           </Button>
           <UserProfileMenu />
         </div>
