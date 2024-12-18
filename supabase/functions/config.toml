@@ -8,3 +8,6 @@ verify_jwt = true
 
 [functions.lob-webhook]
 verify_jwt = false
+
+[functions.handle-actblue-webhook]
+verify_jwt = false
