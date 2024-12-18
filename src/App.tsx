@@ -7,6 +7,7 @@ import { AuthProvider } from "./components/auth/AuthProvider";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import LoginPage from "./components/auth/LoginPage";
 import Dashboard from "./pages/Dashboard";
+import TopNav from "./components/navigation/TopNav";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,10 @@ const App = () => (
               path="/"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <>
+                    <TopNav />
+                    <Dashboard />
+                  </>
                 </ProtectedRoute>
               }
             />
