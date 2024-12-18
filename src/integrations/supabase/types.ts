@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      actblue_accounts: {
+        Row: {
+          candidate_name: string | null
+          city: string
+          committee_name: string
+          committee_type: Database["public"]["Enums"]["committee_type"]
+          created_at: string | null
+          disclaimer_text: string
+          id: string
+          office_sought: string | null
+          state: string
+          street_address: string
+          user_id: string
+          zip_code: string
+        }
+        Insert: {
+          candidate_name?: string | null
+          city: string
+          committee_name: string
+          committee_type: Database["public"]["Enums"]["committee_type"]
+          created_at?: string | null
+          disclaimer_text: string
+          id?: string
+          office_sought?: string | null
+          state: string
+          street_address: string
+          user_id: string
+          zip_code: string
+        }
+        Update: {
+          candidate_name?: string | null
+          city?: string
+          committee_name?: string
+          committee_type?: Database["public"]["Enums"]["committee_type"]
+          created_at?: string | null
+          disclaimer_text?: string
+          id?: string
+          office_sought?: string | null
+          state?: string
+          street_address?: string
+          user_id?: string
+          zip_code?: string
+        }
+        Relationships: []
+      }
       addresses: {
         Row: {
           address_data: Json
@@ -206,6 +251,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      committee_type: "candidate" | "political_action_committee" | "non_profit"
       postcard_status:
         | "pending"
         | "in_transit"
