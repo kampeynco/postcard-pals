@@ -50,12 +50,12 @@ serve(async (req) => {
 
     console.log('Processed donation data:', donationData)
 
-    // Store donation in database
+    // Store donation in database with source set to 'actblue'
     const { data: donationResult, error: donationError } = await supabase
       .from('donations')
       .insert({
         donation_data: donationData,
-        user_id: payload.metadata?.user_id || '00000000-0000-0000-0000-000000000000', // Fallback UUID for testing
+        source: 'actblue',
         processed: false,
         postcard_sent: false
       })
