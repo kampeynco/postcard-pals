@@ -12,17 +12,27 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  )
+
   try {
+    // Log the raw request
+    console.log('Received webhook request:', {
+      method: req.method,
+      headers: Object.fromEntries(req.headers.entries()),
+    })
+
     const payload = await req.json()
-    console.log('Received ActBlue webhook payload:', payload)
+    console.log('Parsed webhook payload:', payload)
 
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    // Validate required fields
+    if (!payload.contribution || !payload.donor) {
+      throw new Error('Missing required fields in payload')
+    }
 
-    // Extract relevant data from ActBlue payload
+    // Extract relevant data from ActBlue payload with null checks
     const donationData = {
       amount: payload.contribution?.amount || 0,
       donor_name: `${payload.donor?.firstname || ''} ${payload.donor?.lastname || ''}`.trim(),
@@ -38,25 +48,27 @@ serve(async (req) => {
       timestamp: payload.contribution?.timestamp || new Date().toISOString()
     }
 
+    console.log('Processed donation data:', donationData)
+
     // Store donation in database
-    const { data, error } = await supabase
+    const { data: donationResult, error: donationError } = await supabase
       .from('donations')
       .insert({
         donation_data: donationData,
-        user_id: payload.metadata?.user_id, // Assuming ActBlue webhook includes user_id in metadata
+        user_id: payload.metadata?.user_id || '00000000-0000-0000-0000-000000000000', // Fallback UUID for testing
         processed: false,
         postcard_sent: false
       })
 
-    if (error) {
-      console.error('Error storing donation:', error)
-      throw error
+    if (donationError) {
+      console.error('Error storing donation:', donationError)
+      throw donationError
     }
 
-    console.log('Successfully stored donation:', data)
+    console.log('Successfully stored donation:', donationResult)
 
-    // Log webhook receipt in webhook_logs table
-    await supabase
+    // Log webhook receipt
+    const { error: logError } = await supabase
       .from('webhook_logs')
       .insert({
         webhook_type: 'actblue_donation',
@@ -64,10 +76,22 @@ serve(async (req) => {
         status: 'success'
       })
 
+    if (logError) {
+      console.error('Error logging webhook:', logError)
+      // Don't throw here, as the main operation succeeded
+    }
+
     return new Response(
-      JSON.stringify({ success: true, message: 'Donation processed successfully' }),
+      JSON.stringify({ 
+        success: true, 
+        message: 'Donation processed successfully',
+        donation_data: donationData 
+      }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json'
+        },
         status: 200 
       }
     )
@@ -76,19 +100,18 @@ serve(async (req) => {
     console.error('Error processing webhook:', error)
 
     // Log error in webhook_logs table
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    await supabase
-      .from('webhook_logs')
-      .insert({
-        webhook_type: 'actblue_donation',
-        payload: await req.json(),
-        status: 'error',
-        error_message: error.message
-      })
+    try {
+      await supabase
+        .from('webhook_logs')
+        .insert({
+          webhook_type: 'actblue_donation',
+          payload: await req.clone().json(),
+          status: 'error',
+          error_message: error.message
+        })
+    } catch (logError) {
+      console.error('Error logging webhook failure:', logError)
+    }
 
     return new Response(
       JSON.stringify({ 
@@ -97,7 +120,10 @@ serve(async (req) => {
         details: error.message 
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json'
+        },
         status: 500 
       }
     )
