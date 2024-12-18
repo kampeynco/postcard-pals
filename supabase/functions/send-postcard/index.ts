@@ -23,7 +23,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get template data
     const { data: template, error: templateError } = await supabase
       .from('templates')
       .select('template_data')
@@ -32,7 +31,6 @@ serve(async (req) => {
 
     if (templateError) throw templateError
 
-    // Create postcard using Lob API
     const postcard = await lob.postcards.create({
       description: `Postcard for donation ${donationId}`,
       to: toAddress,
@@ -44,7 +42,6 @@ serve(async (req) => {
 
     console.log('Postcard created:', postcard)
 
-    // Save postcard details to database
     const { data: savedPostcard, error: dbError } = await supabase
       .from('postcards')
       .insert({
@@ -52,7 +49,8 @@ serve(async (req) => {
         template_id: templateId,
         lob_id: postcard.id,
         status: 'pending',
-        expected_delivery_date: postcard.expected_delivery_date
+        expected_delivery_date: postcard.expected_delivery_date,
+        user_id: (await req.json()).user_id // Get user_id from request
       })
       .select()
       .single()

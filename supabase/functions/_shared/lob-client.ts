@@ -1,4 +1,4 @@
-import Lob from 'lob';
+import Lob from 'https://esm.sh/lob';
 
 export function getLobClient(isTest: boolean = true) {
   const apiKey = isTest 
