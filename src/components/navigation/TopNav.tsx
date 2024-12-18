@@ -1,6 +1,7 @@
-import { Bell, Settings, User } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import UserProfileMenu from "./UserProfileMenu";
 
 const TopNav = () => {
   const location = useLocation();
@@ -56,9 +57,7 @@ const TopNav = () => {
           <Button variant="ghost" size="icon">
             <Settings className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="bg-emerald-50">
-            <User className="h-5 w-5 text-emerald-600" />
-          </Button>
+          <UserProfileMenu />
         </div>
       </div>
     </div>

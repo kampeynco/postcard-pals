@@ -31,6 +31,17 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/settings/:tab"
+              element={
+                <ProtectedRoute>
+                  <>
+                    <TopNav />
+                    <div className="p-8">Settings page placeholder</div>
+                  </>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
