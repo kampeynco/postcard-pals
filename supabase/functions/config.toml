@@ -1,0 +1,10 @@
+project_id = "hokkweglaumudsmphmbv"
+
+[functions.verify-address]
+verify_jwt = true
+
+[functions.send-postcard]
+verify_jwt = true
+
+[functions.lob-webhook]
+verify_jwt = false
