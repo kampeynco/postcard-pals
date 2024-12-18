@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          address_data: Json
+          created_at: string | null
+          id: string
+          is_verified: boolean | null
+          lob_id: string
+          user_id: string | null
+        }
+        Insert: {
+          address_data: Json
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          lob_id: string
+          user_id?: string | null
+        }
+        Update: {
+          address_data?: Json
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          lob_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           created_at: string | null
@@ -43,27 +70,33 @@ export type Database = {
         Row: {
           created_at: string | null
           donation_id: string
+          expected_delivery_date: string | null
           id: string
           lob_id: string
-          status: string
+          lob_webhook_id: string | null
+          status: Database["public"]["Enums"]["postcard_status"]
           template_id: string
           user_id: string
         }
         Insert: {
           created_at?: string | null
           donation_id: string
+          expected_delivery_date?: string | null
           id?: string
           lob_id: string
-          status?: string
+          lob_webhook_id?: string | null
+          status?: Database["public"]["Enums"]["postcard_status"]
           template_id: string
           user_id: string
         }
         Update: {
           created_at?: string | null
           donation_id?: string
+          expected_delivery_date?: string | null
           id?: string
           lob_id?: string
-          status?: string
+          lob_webhook_id?: string | null
+          status?: Database["public"]["Enums"]["postcard_status"]
           template_id?: string
           user_id?: string
         }
@@ -173,7 +206,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      postcard_status:
+        | "pending"
+        | "in_transit"
+        | "delivered"
+        | "failed"
+        | "returned"
     }
     CompositeTypes: {
       [_ in never]: never
