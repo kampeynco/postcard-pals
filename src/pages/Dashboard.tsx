@@ -6,6 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Database } from "@/integrations/supabase/types";
+
+type Donation = Database['public']['Tables']['donations']['Row'];
+type Postcard = Database['public']['Tables']['postcards']['Row'];
 
 interface Stats {
   totalDonations: number;
@@ -16,15 +20,11 @@ interface Stats {
   lastMonthFailures: number;
 }
 
-interface DonationActivity {
-  id: string;
-  created_at: string;
+interface DonationActivity extends Omit<Donation, 'donation_data'> {
   donation_data: {
     amount: number;
     donor_name: string;
   };
-  processed: boolean;
-  postcard_sent: boolean;
 }
 
 const Dashboard = () => {
@@ -48,7 +48,9 @@ const Dashboard = () => {
         .limit(5);
 
       if (error) throw error;
-      return data as DonationActivity[];
+      
+      // Type assertion to ensure donation_data has the correct shape
+      return (data as DonationActivity[]) || [];
     },
   });
 
@@ -60,22 +62,22 @@ const Dashboard = () => {
       const [donationsResult, templatesResult, postcardsResult] = await Promise.all([
         supabase.from("donations").select("created_at"),
         supabase.from("templates").select("*").eq("is_active", true),
-        supabase.from("postcards").select("status"),
+        supabase.from("postcards").select("*"),
       ]);
 
       const currentDonations = donationsResult.data?.length || 0;
       const lastMonthDonations = donationsResult.data?.filter(
-        d => new Date(d.created_at) >= lastMonth
+        d => d.created_at && new Date(d.created_at) >= lastMonth
       ).length || 0;
 
       const activeTemplates = templatesResult.data?.length || 0;
       const lastMonthTemplates = templatesResult.data?.filter(
-        t => new Date(t.created_at) >= lastMonth
+        t => t.created_at && new Date(t.created_at) >= lastMonth
       ).length || 0;
 
       const failedCount = postcardsResult.data?.filter(p => p.status === "failed").length || 0;
       const lastMonthFailures = postcardsResult.data?.filter(
-        p => p.status === "failed" && new Date(p.created_at) >= lastMonth
+        p => p.created_at && p.status === "failed" && new Date(p.created_at) >= lastMonth
       ).length || 0;
 
       setStats({
@@ -124,7 +126,9 @@ const Dashboard = () => {
     return <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-100">Error</Badge>;
   };
 
-  const formatTimeAgo = (dateString: string) => {
+  const formatTimeAgo = (dateString: string | null) => {
+    if (!dateString) return "Unknown time";
+    
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
@@ -273,6 +277,7 @@ const Dashboard = () => {
       </div>
     </div>
   );
+
 };
 
 export default Dashboard;
