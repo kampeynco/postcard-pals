@@ -41,34 +41,15 @@ const EmailConfirmationHandler = () => {
       }
 
       try {
-        // Get the current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error('Error getting session:', sessionError);
-          toast.error("Unable to confirm email. Please try signing in.");
-          navigate('/signin');
-          return;
-        }
-
-        if (!session) {
-          console.log("No active session, attempting to sign in with email");
-          // Try to sign in with the email
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: '' // This will fail but trigger the email confirmation process
-          });
-
-          if (signInError) {
-            console.log("Sign in attempt error (expected):", signInError);
-          }
-        }
+        // Always sign out the user first
+        await supabase.auth.signOut();
+        console.log("User signed out");
 
         // Check if the profile is confirmed
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('is_confirmed')
-          .eq('id', session?.user.id)
+          .eq('email', email)
           .single();
 
         if (profileError) {
@@ -85,7 +66,7 @@ const EmailConfirmationHandler = () => {
         }
 
         console.log("Email confirmed successfully");
-        toast.success("Email confirmed! You can now sign in.");
+        toast.success("Email confirmed! Please sign in to continue.");
         navigate('/signin');
 
       } catch (error) {

@@ -42,9 +42,11 @@ const SignUpPage = () => {
             setShowConfirmation(true);
             toast.success("Please check your email to confirm your account.");
             
+            // Sign out the user immediately
+            await supabase.auth.signOut();
+            
             // Wait for 5 seconds to show the confirmation message before redirecting
-            setTimeout(async () => {
-              await supabase.auth.signOut();
+            setTimeout(() => {
               navigate("/signin", { replace: true });
             }, 5000);
           }
