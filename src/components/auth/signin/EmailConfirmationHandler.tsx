@@ -29,14 +29,14 @@ const EmailConfirmationHandler = () => {
       if (error) {
         console.error('Confirmation error:', { error, errorDescription });
         toast.error(errorDescription || "Error confirming email");
-        navigate('/signin');
+        navigate('/signin', { replace: true });
         return;
       }
 
       if (!email || !isValidEmail(email)) {
         console.error('Invalid or missing email in confirmation URL');
         toast.error("Invalid confirmation link");
-        navigate('/signin');
+        navigate('/signin', { replace: true });
         return;
       }
 
@@ -55,7 +55,7 @@ const EmailConfirmationHandler = () => {
         if (profileError) {
           console.error('Error checking profile:', profileError);
           toast.error("Error confirming email. Please try signing in.");
-          navigate('/signin');
+          navigate('/signin', { replace: true });
           return;
         }
 
@@ -67,19 +67,22 @@ const EmailConfirmationHandler = () => {
 
         console.log("Email confirmed successfully");
         toast.success("Email confirmed! Please sign in to continue.");
-        navigate('/signin');
+        navigate('/signin', { replace: true });
 
       } catch (error) {
         console.error('Error in confirmation process:', error);
         toast.error("An error occurred during confirmation. Please try signing in.");
-        navigate('/signin');
+        navigate('/signin', { replace: true });
       }
     };
 
     if (location.search.includes('confirmation=success')) {
       handleEmailConfirmation();
+    } else if (location.pathname === '/') {
+      // If we're on the homepage without confirmation parameters, redirect to signin
+      navigate('/signin', { replace: true });
     }
-  }, [location.search, navigate]);
+  }, [location.search, location.pathname, navigate]);
 
   return null;
 };
