@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DonationActivity, Stats } from "@/types/donations";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats>({
     totalDonations: 0,
     activeTemplates: 0,
@@ -98,21 +96,8 @@ const Dashboard = () => {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold mb-1">Welcome, User 👋</h1>
-          <p className="text-gray-500">Here's what's happening with your postcards</p>
-        </div>
-        <Button 
-          onClick={() => navigate("/templates/new")}
-          className="bg-emerald-600 hover:bg-emerald-700"
-        >
-          Create Template
-        </Button>
-      </div>
-
+      <DashboardHeader />
       <DashboardStats stats={stats} />
-
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2">
           <RecentActivity activities={recentActivity || []} />
