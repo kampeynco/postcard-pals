@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="bg-white border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -20,13 +27,24 @@ export const Footer = () => {
             <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/pricing" className="text-sm text-gray-600 hover:text-gray-900">
-                  Pricing
-                </Link>
+                <button
+                  onClick={() => scrollToSection('features')}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  Features
+                </button>
               </li>
               <li>
-                <Link to="/signup" className="text-sm text-gray-600 hover:text-gray-900">
-                  Sign Up
+                <button
+                  onClick={() => scrollToSection('how-it-works')}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  How It Works
+                </button>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-sm text-gray-600 hover:text-gray-900">
+                  Pricing
                 </Link>
               </li>
             </ul>
