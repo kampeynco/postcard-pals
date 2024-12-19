@@ -15,27 +15,44 @@ const SignInPage = () => {
     // Check for confirmation success message in URL
     const params = new URLSearchParams(location.search);
     
-    // If coming from confirmation link, update the profile first
+    // If coming from confirmation link, update the profile
     const updateConfirmationStatus = async () => {
       if (params.get('confirmation') === 'success') {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          console.log("Updating confirmation status for user:", session.user.id);
-          
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ is_confirmed: true })
-            .eq('id', session.user.id);
-          
-          if (updateError) {
-            console.error('Error updating profile:', updateError);
-            toast.error("There was an error confirming your email.");
-            return;
-          }
-          
-          toast.success("Email confirmed! Please sign in to continue.");
+        const email = params.get('email');
+        if (!email) {
+          console.error('No email provided in confirmation URL');
+          toast.error("Invalid confirmation link");
+          return;
         }
+
+        // Get user by email
+        const { data: { users }, error: getUserError } = await supabase.auth.admin.listUsers({
+          filters: {
+            email: email
+          }
+        });
+
+        if (getUserError || !users?.length) {
+          console.error('Error finding user:', getUserError);
+          toast.error("Could not verify your account. Please try signing in.");
+          return;
+        }
+
+        const userId = users[0].id;
+        console.log("Updating confirmation status for user:", userId);
+        
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ is_confirmed: true })
+          .eq('id', userId);
+        
+        if (updateError) {
+          console.error('Error updating profile:', updateError);
+          toast.error("There was an error confirming your email.");
+          return;
+        }
+        
+        toast.success("Email confirmed! Please sign in to continue.");
       }
     };
 
