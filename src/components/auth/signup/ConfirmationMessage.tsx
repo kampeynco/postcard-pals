@@ -5,9 +5,11 @@ const ConfirmationMessage = () => {
       <p className="text-gray-600">
         We've sent you a confirmation email. Please check your inbox and follow the instructions to confirm your account.
       </p>
-      <p className="text-sm text-gray-500">
-        Redirecting you to sign in page in a few seconds...
-      </p>
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm text-blue-700">
+          Redirecting you to sign in page in a few seconds...
+        </p>
+      </div>
     </div>
   );
 };

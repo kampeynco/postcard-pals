@@ -16,7 +16,6 @@ const SignUpPage = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user && event === 'SIGNED_IN') {
         console.log("New signup detected, session:", session.user.email);
-        setShowConfirmation(true);
         
         try {
           // Check if this is a new signup by checking if profile exists and is not confirmed
@@ -35,6 +34,7 @@ const SignUpPage = () => {
 
           if (!profile?.is_confirmed) {
             console.log("Sending confirmation email to new user");
+            setShowConfirmation(true);
             
             // Send confirmation email using our Resend function
             const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
@@ -51,22 +51,23 @@ const SignUpPage = () => {
               }
             });
 
-            console.log("Email function response:", emailData);
-
             if (emailError) {
               console.error('Error sending confirmation email:', emailError);
               toast.error("There was an error sending your confirmation email. Please try signing in to resend it.");
             } else {
+              console.log("Confirmation email sent successfully");
               toast.success("Please check your email to confirm your account.");
             }
+
+            // Wait for 5 seconds to show the confirmation message before redirecting
+            setTimeout(async () => {
+              await supabase.auth.signOut();
+              navigate("/signin", { replace: true });
+            }, 5000);
+          } else {
+            // If profile is already confirmed, redirect to dashboard
+            navigate("/dashboard", { replace: true });
           }
-
-          // Wait for 5 seconds to show the confirmation message before redirecting
-          setTimeout(async () => {
-            await supabase.auth.signOut();
-            navigate("/signin", { replace: true });
-          }, 5000);
-
         } catch (error) {
           const authError = error as AuthError;
           console.error("Error in signup process:", authError);
