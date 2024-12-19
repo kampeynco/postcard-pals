@@ -13,7 +13,7 @@ const SignUpPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_UP" && session) {
+      if (event === 'SIGNED_UP' && session) {
         console.log("User signed up, sending confirmation email");
         
         // Send confirmation email using our Resend function
