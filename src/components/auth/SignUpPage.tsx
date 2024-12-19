@@ -5,14 +5,16 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
+import { toast } from "sonner";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/dashboard");
+      if (event === 'SIGNED_UP') {
+        toast.success("Please check your email to confirm your account.");
+        navigate("/signin", { replace: true });
       }
     });
 

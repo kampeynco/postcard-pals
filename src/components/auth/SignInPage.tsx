@@ -12,14 +12,26 @@ const SignInPage = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Check for confirmation success message in URL
+    const params = new URLSearchParams(location.search);
+    if (params.get('confirmation') === 'success') {
+      toast.success("Email confirmed! Please sign in to continue.");
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        // Check if user has a profile
+        // Check if user's profile is confirmed
         const { data: profile } = await supabase
           .from('profiles')
-          .select('first_name, last_name')
+          .select('first_name, last_name, is_confirmed')
           .eq('id', session.user.id)
           .single();
+
+        if (!profile?.is_confirmed) {
+          toast.error("Please confirm your email before signing in.");
+          await supabase.auth.signOut();
+          return;
+        }
 
         // If profile is incomplete, redirect to onboarding
         if (!profile?.first_name || !profile?.last_name) {

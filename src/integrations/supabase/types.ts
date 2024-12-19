@@ -201,6 +201,7 @@ export type Database = {
           display_name: string | null
           first_name: string | null
           id: string
+          is_confirmed: boolean | null
           last_name: string | null
           phone_number: string | null
           role: string | null
@@ -211,6 +212,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           id: string
+          is_confirmed?: boolean | null
           last_name?: string | null
           phone_number?: string | null
           role?: string | null
@@ -221,6 +223,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           id?: string
+          is_confirmed?: boolean | null
           last_name?: string | null
           phone_number?: string | null
           role?: string | null
