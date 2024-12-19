@@ -1,16 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import type { PricingPlan } from "@/config/pricingPlans";
 
 interface PricingCardProps {
   plan: PricingPlan;
+  onGetStarted: () => void;
 }
 
-const PricingCard = ({ plan }: PricingCardProps) => {
-  const navigate = useNavigate();
-
+const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
   return (
     <Card 
       className={`relative flex flex-col ${
@@ -49,7 +47,7 @@ const PricingCard = ({ plan }: PricingCardProps) => {
               ? 'bg-brand-accent hover:bg-brand-accent/90 text-white' 
               : 'bg-[#4B5EE4] hover:bg-[#4B5EE4]/90 text-white'
           }`}
-          onClick={() => navigate("/signup")}
+          onClick={onGetStarted}
         >
           Get Started
         </Button>
