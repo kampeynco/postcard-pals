@@ -36,24 +36,26 @@ const EmailConfirmationHandler = () => {
           return;
         }
 
-        // Step 3: Sign out user FIRST
+        // Step 3: Sign out user first
         await supabase.auth.signOut();
         console.log("User signed out successfully");
 
-        // Step 4: Update profile confirmation status
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ is_confirmed: true })
-          .eq('id', user.id);
+        // Step 4: Call edge function to update profile
+        const { error: confirmError } = await supabase.functions.invoke('confirm-email', {
+          body: { 
+            userId: user.id,
+            email: email 
+          }
+        });
 
-        if (updateError) {
-          console.error('Error updating profile:', updateError);
+        if (confirmError) {
+          console.error('Error confirming email:', confirmError);
           toast.error("There was an error confirming your email.");
           navigate('/signin');
           return;
         }
 
-        // Step 5: Show success message and redirect with delay
+        // Step 5: Show success message and redirect
         toast.success("Email confirmed successfully! Please sign in to continue.");
         
         // Step 6: Redirect to sign in page after a short delay
