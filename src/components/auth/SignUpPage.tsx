@@ -37,7 +37,7 @@ const SignUpPage = () => {
             setShowConfirmation(true);
             
             // Send confirmation email using our Resend function
-            const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
+            const { error: emailError } = await supabase.functions.invoke('send-email', {
               body: {
                 to: [session.user.email],
                 subject: "Welcome to Thanks From Us - Please Confirm Your Email",

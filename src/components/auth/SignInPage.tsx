@@ -20,44 +20,57 @@ const SignInPage = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        // Check if user's profile exists and is confirmed
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('first_name, last_name, is_confirmed')
-          .eq('id', session.user.id)
-          .single();
+        try {
+          // Check if user's profile exists and is confirmed
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('first_name, last_name, is_confirmed')
+            .eq('id', session.user.id)
+            .single();
 
-        if (!profile?.is_confirmed) {
-          // Update profile to mark as confirmed if coming from confirmation link
-          if (params.get('confirmation') === 'success') {
-            const { error } = await supabase
-              .from('profiles')
-              .update({ is_confirmed: true })
-              .eq('id', session.user.id);
-            
-            if (error) {
-              console.error('Error updating profile:', error);
-              toast.error("There was an error confirming your email.");
-              await supabase.auth.signOut();
-              return;
-            }
-          } else {
-            toast.error("Please confirm your email before signing in.");
+          if (profileError) {
+            console.error('Error fetching profile:', profileError);
+            toast.error("There was an error signing in. Please try again.");
             await supabase.auth.signOut();
             return;
           }
-        }
 
-        // If profile is incomplete, redirect to onboarding
-        if (!profile?.first_name || !profile?.last_name) {
-          toast.success("Welcome! Let's set up your account.");
-          navigate("/onboarding", { replace: true });
-          return;
-        }
+          if (!profile?.is_confirmed) {
+            // Update profile to mark as confirmed if coming from confirmation link
+            if (params.get('confirmation') === 'success') {
+              const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ is_confirmed: true })
+                .eq('id', session.user.id);
+              
+              if (updateError) {
+                console.error('Error updating profile:', updateError);
+                toast.error("There was an error confirming your email.");
+                await supabase.auth.signOut();
+                return;
+              }
+            } else {
+              toast.error("Please confirm your email before signing in.");
+              await supabase.auth.signOut();
+              return;
+            }
+          }
 
-        // Otherwise, redirect to requested page or dashboard
-        const from = (location.state as any)?.from?.pathname || "/dashboard";
-        navigate(from, { replace: true });
+          // If profile is incomplete, redirect to onboarding
+          if (!profile?.first_name || !profile?.last_name) {
+            toast.success("Welcome! Let's set up your account.");
+            navigate("/onboarding", { replace: true });
+            return;
+          }
+
+          // Otherwise, redirect to requested page or dashboard
+          const from = (location.state as any)?.from?.pathname || "/dashboard";
+          navigate(from, { replace: true });
+        } catch (error) {
+          console.error('Error in sign in process:', error);
+          toast.error("An unexpected error occurred. Please try again.");
+          await supabase.auth.signOut();
+        }
       }
     });
 
@@ -78,9 +91,11 @@ const SignInPage = () => {
             appearance={{ 
               theme: ThemeSupa,
               className: {
-                button: 'disabled:opacity-50 disabled:cursor-not-allowed',
+                button: 'w-full disabled:opacity-50 disabled:cursor-not-allowed',
                 container: 'space-y-4',
                 message: 'text-sm text-red-600',
+                input: 'w-full',
+                label: 'block text-sm font-medium text-gray-700',
               },
             }}
             theme="light"

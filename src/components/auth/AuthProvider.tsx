@@ -32,22 +32,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const checkUserProfile = async (session: Session) => {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('first_name, last_name')
-      .eq('id', session.user.id)
-      .single();
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, is_confirmed')
+        .eq('id', session.user.id)
+        .single();
 
-    if (error?.code === 'PGRST116' || !profile) {
-      // Profile not found - user likely deleted
-      await supabase.auth.signOut();
-      setSession(null);
-      toast.error("Your account appears to have been deleted. Please sign up again.");
-      navigate("/signup", { replace: true });
+      if (error) {
+        console.error('Error fetching profile:', error);
+        if (error.code === 'PGRST116') {
+          // Profile not found - user likely deleted
+          await supabase.auth.signOut();
+          setSession(null);
+          toast.error("Your account appears to have been deleted. Please sign up again.");
+          navigate("/signup", { replace: true });
+          return null;
+        }
+        throw error;
+      }
+
+      return profile;
+    } catch (error) {
+      console.error('Error checking user profile:', error);
+      toast.error("An error occurred while checking your profile. Please try again.");
       return null;
     }
-
-    return profile;
   };
 
   useEffect(() => {
@@ -59,6 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (!noOnboardingRoutes.includes(location.pathname)) {
           if (!profile.first_name || !profile.last_name) {
             navigate("/onboarding", { replace: true });
+            return;
           }
         }
       }
@@ -71,12 +82,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
-        await checkUserProfile(session);
+        const profile = await checkUserProfile(session);
+        if (!profile) return; // User was logged out due to deleted account
       }
       
       setSession(session);
       if (!session && !publicRoutes.includes(location.pathname)) {
-        navigate("/signin");
+        navigate("/signin", { replace: true });
       }
     });
 
