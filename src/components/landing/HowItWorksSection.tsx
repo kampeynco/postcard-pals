@@ -25,7 +25,7 @@ export const HowItWorksSection = () => {
               Connect your ActBlue account to automatically sync your donation data
             </p>
             {/* Wavy line connector with arrow */}
-            <svg className="h-24 w-8 overflow-visible mb-6" preserveAspectRatio="none">
+            <svg className="h-24 w-8 overflow-visible mb-8" preserveAspectRatio="none">
               <path
                 d="M 4 0 Q 8 32, 4 64 Q 0 96, 4 112"
                 stroke="#4B5EE4"
@@ -56,7 +56,7 @@ export const HowItWorksSection = () => {
               We automatically generate personalized thank you cards for each donation
             </p>
             {/* Wavy line connector with arrow */}
-            <svg className="h-24 w-8 overflow-visible mb-6" preserveAspectRatio="none">
+            <svg className="h-24 w-8 overflow-visible mb-8" preserveAspectRatio="none">
               <path
                 d="M 4 0 Q 8 32, 4 64 Q 0 96, 4 112"
                 stroke="#4B5EE4"
