@@ -5,8 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import AppRoutes from "./routes";
+import usePageTitle from "./hooks/usePageTitle";
 
 const queryClient = new QueryClient();
+
+const AppContent = () => {
+  usePageTitle();
+  return <AppRoutes />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -15,7 +21,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <AppContent />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
