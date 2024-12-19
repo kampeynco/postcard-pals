@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,10 +18,14 @@ export const useAuth = () => {
   return context;
 };
 
+// List of public routes that don't require authentication
+const publicRoutes = ["/", "/pricing", "/login"];
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -33,13 +37,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (!session) {
+      if (!session && !publicRoutes.includes(location.pathname)) {
         navigate("/login");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
