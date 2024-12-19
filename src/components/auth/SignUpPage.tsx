@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
@@ -7,14 +8,12 @@ import { toast } from "sonner";
 import SignUpForm from "./signup/SignUpForm";
 import ConfirmationMessage from "./signup/ConfirmationMessage";
 
-type AuthEvent = 'SIGNED_IN' | 'SIGNED_UP' | 'SIGNED_OUT' | 'USER_UPDATED' | 'USER_DELETED';
-
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthEvent, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       if (event === 'SIGNED_UP' && session) {
         console.log("New signup detected, session:", session.user.email);
         setShowConfirmation(true);
