@@ -1,8 +1,9 @@
 import * as React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { SidebarContext } from "./context";
-import { SidebarProviderProps } from "./types";
+import { type SidebarProviderProps, type SidebarContextType } from "./types";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -66,7 +67,7 @@ export const SidebarProvider = React.forwardRef<
 
     const state = open ? "expanded" : "collapsed";
 
-    const contextValue = React.useMemo<SidebarContext>(
+    const contextValue: SidebarContextType = React.useMemo(
       () => ({
         state,
         open,
