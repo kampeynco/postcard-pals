@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const EmailConfirmationHandler = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleEmailConfirmation = async () => {
@@ -19,11 +20,20 @@ const EmailConfirmationHandler = () => {
         }
 
         try {
+          // Get current user before signing out
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (!user) {
+            toast.error("Unable to confirm email. Please try signing in.");
+            navigate('/signin');
+            return;
+          }
+
           // Update profile confirmation status
           const { error: updateError } = await supabase
             .from('profiles')
             .update({ is_confirmed: true })
-            .eq('id', (await supabase.auth.getUser()).data.user?.id);
+            .eq('id', user.id);
 
           if (updateError) {
             console.error('Error updating profile:', updateError);
@@ -31,18 +41,22 @@ const EmailConfirmationHandler = () => {
             return;
           }
 
-          // Make sure user is logged out after confirmation
+          // Sign out the user
           await supabase.auth.signOut();
+          
+          // Show success message and redirect to sign in
           toast.success("Email confirmed! Please sign in to continue.");
+          navigate('/signin', { replace: true });
         } catch (error) {
           console.error('Error in confirmation process:', error);
           toast.error("An error occurred during confirmation. Please try signing in.");
+          navigate('/signin');
         }
       }
     };
 
     handleEmailConfirmation();
-  }, [location.search]);
+  }, [location.search, navigate]);
 
   return null;
 };
