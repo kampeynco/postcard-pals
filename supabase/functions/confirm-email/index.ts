@@ -34,21 +34,31 @@ serve(async (req) => {
     const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
     // Update profile confirmation status
-    const { error: updateError } = await supabaseAdmin
+    const { data, error: updateError } = await supabaseAdmin
       .from('profiles')
       .update({ is_confirmed: true })
-      .eq('id', userId);
+      .eq('id', userId)
+      .select()
+      .single();
 
     if (updateError) {
       console.error('Error updating profile:', updateError);
       throw updateError;
     }
 
-    console.log('Successfully confirmed email for user:', userId);
+    console.log('Successfully confirmed email for user:', userId, 'Profile:', data);
 
     return new Response(
-      JSON.stringify({ success: true }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        success: true,
+        profile: data
+      }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        } 
+      }
     );
   } catch (error) {
     console.error('Error in confirm-email function:', error);

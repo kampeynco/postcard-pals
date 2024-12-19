@@ -63,14 +63,11 @@ const EmailConfirmationHandler = () => {
         }
 
         console.log("Email confirmed successfully");
-        toast.success("Email confirmed successfully! Please sign in to continue.");
+        toast.success("Email confirmed! Redirecting to dashboard...");
         
-        // Sign out user after successful confirmation
-        await supabase.auth.signOut();
-        
-        // Redirect to sign in page after a short delay
+        // Redirect to dashboard after successful confirmation
         setTimeout(() => {
-          navigate('/signin', { replace: true });
+          navigate('/dashboard', { replace: true });
         }, 2000);
 
       } catch (error) {
