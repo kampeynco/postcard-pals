@@ -30,7 +30,7 @@ const PublicNav = () => {
               <Link to="/login">Sign in</Link>
             </Button>
             <Button asChild>
-              <Link to="/dashboard">Get Started</Link>
+              <Link to="/signup">Get Started</Link>
             </Button>
           </div>
         </div>
