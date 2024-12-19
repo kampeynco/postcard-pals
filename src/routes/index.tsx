@@ -15,7 +15,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
@@ -70,11 +70,8 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Root route - redirect to signin or dashboard based on auth status */}
-      <Route path="/" element={<Navigate to="/signin" replace />} />
-
-      {/* Catch all route - redirect to signin */}
-      <Route path="*" element={<Navigate to="/signin" replace />} />
+      {/* Catch all route - redirect to landing page */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
