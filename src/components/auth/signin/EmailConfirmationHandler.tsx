@@ -78,11 +78,8 @@ const EmailConfirmationHandler = () => {
 
     if (location.search.includes('confirmation=success')) {
       handleEmailConfirmation();
-    } else if (location.pathname === '/') {
-      // If we're on the homepage without confirmation parameters, redirect to signin
-      navigate('/signin', { replace: true });
     }
-  }, [location.search, location.pathname, navigate]);
+  }, [location.search, navigate]);
 
   return null;
 };
