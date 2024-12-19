@@ -39,8 +39,8 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Redirect /index to root */}
-      <Route path="/index" element={<Navigate to="/" replace />} />
+      {/* Catch all route - redirect to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
