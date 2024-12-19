@@ -1,6 +1,46 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check } from "lucide-react";
 import PublicNav from "@/components/navigation/PublicNav";
+import { useNavigate } from "react-router-dom";
 
 const PricingPage = () => {
+  const navigate = useNavigate();
+
+  const pricingPlans = [
+    {
+      name: "Starter",
+      price: 49,
+      description: "Perfect for getting started with thank you postcards",
+      features: [
+        "$1.79 per mailing",
+        "1 ActBlue account",
+        "Unlimited Users",
+      ],
+    },
+    {
+      name: "Grow",
+      price: 99,
+      description: "Ideal for growing campaigns and organizations",
+      features: [
+        "$1.29 per mailing",
+        "5 ActBlue accounts",
+        "Unlimited Users",
+      ],
+      popular: true,
+    },
+    {
+      name: "Scale",
+      price: 199,
+      description: "For established organizations with high volume",
+      features: [
+        "$0.79 per mailing",
+        "Unlimited ActBlue accounts",
+        "Unlimited Users",
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <PublicNav />
@@ -10,16 +50,54 @@ const PricingPage = () => {
             Simple, transparent pricing
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Choose the plan that best fits your needs
+            Choose the plan that best fits your campaign
           </p>
         </div>
-        <div className="mt-16 flex justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold">Coming Soon</h3>
-            <p className="mt-2 text-gray-600">
-              Our pricing details will be available shortly.
-            </p>
-          </div>
+        
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {pricingPlans.map((plan) => (
+            <Card 
+              key={plan.name}
+              className={`relative flex flex-col ${
+                plan.popular ? 'border-primary shadow-lg' : 'border-border'
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                <CardDescription>{plan.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <div className="mb-8">
+                  <span className="text-4xl font-bold">${plan.price}</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <ul className="space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  className="w-full"
+                  variant={plan.popular ? "default" : "outline"}
+                  onClick={() => navigate("/login")}
+                >
+                  Get Started
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
