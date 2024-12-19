@@ -42,19 +42,23 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-background">
+    <div className="min-h-screen">
       <PublicNav />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
-            Simple, transparent pricing
-          </h2>
-          <p className="mt-4 text-lg text-brand-text/80">
-            Choose the plan that best fits your campaign
-          </p>
+      <div className="bg-[#4B5EE4] text-white pt-24 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+              Simple, transparent pricing
+            </h2>
+            <p className="text-lg text-white/80 max-w-2xl mx-auto">
+              Choose the plan that best fits your campaign
+            </p>
+          </div>
         </div>
-        
-        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {pricingPlans.map((plan) => (
             <Card 
               key={plan.name}
@@ -92,7 +96,7 @@ const PricingPage = () => {
                   className={`w-full ${
                     plan.popular 
                       ? 'bg-brand-accent hover:bg-brand-accent/90 text-white' 
-                      : 'bg-brand-background hover:bg-brand-background/90 text-white'
+                      : 'bg-[#4B5EE4] hover:bg-[#4B5EE4]/90 text-white'
                   }`}
                   onClick={() => navigate("/signup")}
                 >

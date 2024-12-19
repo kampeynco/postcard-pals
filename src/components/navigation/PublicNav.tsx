@@ -5,22 +5,42 @@ const PublicNav = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <nav className={`${isHomePage ? 'absolute w-full z-10' : 'bg-white border-b'}`}>
+    <nav className={`${isHomePage ? 'absolute w-full z-10' : 'bg-[#4B5EE4]'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <Link to="/" className={`${isHomePage ? 'text-white' : 'text-[#9b87f5]'} font-semibold text-lg`}>
+            <Link to="/" className="text-white font-semibold text-lg">
               Thanks From Us
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
+              <button
+                onClick={() => scrollToSection('features')}
+                className="text-white/80 hover:text-white transition-colors duration-200"
+              >
+                Features
+              </button>
+              <button
+                onClick={() => scrollToSection('how-it-works')}
+                className="text-white/80 hover:text-white transition-colors duration-200"
+              >
+                How It Works
+              </button>
               <Link
                 to="/pricing"
-                className={`${
-                  isHomePage
-                    ? "text-white/80 hover:text-white"
-                    : "text-[#8E9196] hover:text-[#7E69AB]"
-                } transition-colors duration-200`}
+                className="text-white/80 hover:text-white transition-colors duration-200"
               >
                 Pricing
               </Link>
@@ -29,21 +49,13 @@ const PublicNav = () => {
           <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
-              className={`${
-                isHomePage
-                  ? "text-white hover:text-white/80"
-                  : "text-[#7E69AB] hover:text-[#6E59A5] hover:bg-[#D6BCFA]/10"
-              }`}
+              className="text-white hover:text-white/80"
               asChild
             >
               <Link to="/signin">Sign in</Link>
             </Button>
             <Button 
-              className={`${
-                isHomePage
-                  ? "bg-white text-[#4B5EE4] hover:bg-white/90"
-                  : "bg-[#9b87f5] text-white hover:bg-[#7E69AB]"
-              }`}
+              className="bg-white text-[#4B5EE4] hover:bg-white/90"
               asChild
             >
               <Link to="/signup">Get Started</Link>
