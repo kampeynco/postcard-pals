@@ -15,7 +15,24 @@ const SignInPage = () => {
     // Check for confirmation success message in URL
     const params = new URLSearchParams(location.search);
     if (params.get('confirmation') === 'success') {
-      toast.success("Email confirmed! Please sign in to continue.");
+      // Update the profile to mark as confirmed
+      const updateProfile = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error } = await supabase
+            .from('profiles')
+            .update({ is_confirmed: true })
+            .eq('id', user.id);
+          
+          if (error) {
+            console.error('Error updating profile:', error);
+            toast.error("There was an error confirming your email.");
+          } else {
+            toast.success("Email confirmed! Please sign in to continue.");
+          }
+        }
+      };
+      updateProfile();
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
