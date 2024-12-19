@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
-import { AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session) => {
-      if (event === "SIGNED_UP" && session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
         // Send confirmation email using our Resend function
         const { error } = await supabase.functions.invoke('send-email', {
           body: {
@@ -25,7 +25,8 @@ const SignUpPage = () => {
               <p><a href="${window.location.origin}/signin?confirmation=success">Confirm Email</a></p>
               <p>If you did not create this account, please ignore this email.</p>
               <p>Best regards,<br>Thanks From Us Team</p>
-            `
+            `,
+            from: "Thanks From Us <noreply@thanksfromus.com>"
           }
         });
 
@@ -34,6 +35,8 @@ const SignUpPage = () => {
           toast.error("There was an error sending your confirmation email. Please try again.");
         } else {
           toast.success("Please check your email to confirm your account.");
+          // Sign out the user after sending confirmation email
+          await supabase.auth.signOut();
           navigate("/signin", { replace: true });
         }
       }
