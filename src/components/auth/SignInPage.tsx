@@ -25,20 +25,20 @@ const SignInPage = () => {
           return;
         }
 
-        // Get user by email
-        const { data: { users }, error: getUserError } = await supabase.auth.admin.listUsers({
-          filters: {
-            email: email
-          }
-        });
+        // Get user by email using the correct API method
+        const { data, error: getUserError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', (await supabase.auth.admin.getUserByEmail(email)).data.user?.id)
+          .single();
 
-        if (getUserError || !users?.length) {
+        if (getUserError || !data?.id) {
           console.error('Error finding user:', getUserError);
           toast.error("Could not verify your account. Please try signing in.");
           return;
         }
 
-        const userId = users[0].id;
+        const userId = data.id;
         console.log("Updating confirmation status for user:", userId);
         
         const { error: updateError } = await supabase
