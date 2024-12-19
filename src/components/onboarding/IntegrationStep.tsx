@@ -33,7 +33,7 @@ export function IntegrationStep({ onNext, onBack }: IntegrationStepProps) {
           <CardContent>
             <ol className="list-decimal list-inside space-y-2">
               <li>Log in to your ActBlue account</li>
-              <li>Navigate to Account Settings > Webhooks</li>
+              <li>Navigate to Account Settings {`>`} Webhooks</li>
               <li>Add a new webhook endpoint</li>
               <li>Copy and paste your unique webhook URL</li>
             </ol>
