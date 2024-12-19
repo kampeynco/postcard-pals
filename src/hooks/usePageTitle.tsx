@@ -13,6 +13,7 @@ const getPageTitle = (pathname: string, isAuthenticated: boolean): string => {
   const pageNames: Record<string, string> = {
     '/dashboard': 'Dashboard',
     '/settings/actblue': 'ActBlue Settings',
+    '/onboarding': 'New User Onboarding',
     // Add more routes as needed
   };
 
