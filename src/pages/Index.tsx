@@ -9,7 +9,7 @@ const Index = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate("/signin");
   };
 
   return (
