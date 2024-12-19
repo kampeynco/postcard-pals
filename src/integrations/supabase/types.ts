@@ -84,6 +84,33 @@ export type Database = {
         }
         Relationships: []
       }
+      default_templates: {
+        Row: {
+          back_message: string
+          created_at: string | null
+          front_image_url: string
+          id: string
+          is_active: boolean | null
+          user_id: string
+        }
+        Insert: {
+          back_message: string
+          created_at?: string | null
+          front_image_url: string
+          id?: string
+          is_active?: boolean | null
+          user_id: string
+        }
+        Update: {
+          back_message?: string
+          created_at?: string | null
+          front_image_url?: string
+          id?: string
+          is_active?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           created_at: string | null
@@ -172,21 +199,30 @@ export type Database = {
         Row: {
           created_at: string | null
           display_name: string | null
+          first_name: string | null
           id: string
+          last_name: string | null
+          phone_number: string | null
           role: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           display_name?: string | null
+          first_name?: string | null
           id: string
+          last_name?: string | null
+          phone_number?: string | null
           role?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           display_name?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone_number?: string | null
           role?: string | null
           updated_at?: string | null
         }
