@@ -4,6 +4,7 @@ import { ComparisonSection } from "@/components/landing/ComparisonSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { CallToAction } from "@/components/landing/CallToAction";
+import { Footer } from "@/components/layout/Footer";
 
 const LandingPage = () => {
   return (
@@ -14,6 +15,7 @@ const LandingPage = () => {
       <HowItWorksSection />
       <FeaturesSection />
       <CallToAction />
+      <Footer />
     </div>
   );
 };
