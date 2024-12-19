@@ -10,7 +10,7 @@ const LandingPage = () => {
       <div className="bg-[#4B5EE4] text-white relative">
         <PublicNav />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center">
-          <span className="bg-orange-500 text-white text-sm px-4 py-1 rounded-full">Never fall behind</span>
+          <span className="bg-orange-500 text-white text-sm px-4 py-1 rounded-full">Powered by ActBlue</span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mt-6 mb-6">
             Thank donors in days,<br />not weeks
           </h1>
