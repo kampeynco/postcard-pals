@@ -22,8 +22,16 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    if (!RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is not set");
+      throw new Error("Email service is not configured");
+    }
+
     const emailRequest: EmailRequest = await req.json();
-    console.log("Sending email with Resend:", { to: emailRequest.to, subject: emailRequest.subject });
+    console.log("Sending email with Resend:", { 
+      to: emailRequest.to, 
+      subject: emailRequest.subject 
+    });
     
     const fromAddress = emailRequest.from || "Thanks From Us <noreply@thanksfromus.com>";
 
@@ -41,13 +49,15 @@ const handler = async (req: Request): Promise<Response> => {
       }),
     });
 
+    const responseText = await res.text();
+    console.log("Resend API response:", responseText);
+
     if (!res.ok) {
-      const error = await res.text();
-      console.error("Resend API error:", error);
-      throw new Error(`Resend API error: ${error}`);
+      console.error("Resend API error:", responseText);
+      throw new Error(`Resend API error: ${responseText}`);
     }
 
-    const data = await res.json();
+    const data = JSON.parse(responseText);
     console.log("Email sent successfully:", data);
 
     return new Response(JSON.stringify(data), {
