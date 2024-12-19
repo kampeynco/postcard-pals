@@ -44,9 +44,11 @@ const formSchema = z.object({
   }
 );
 
+type FormValues = z.infer<typeof formSchema>;
+
 export default function ActBlueAccountForm() {
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       committee_type: "candidate",
@@ -63,9 +65,18 @@ export default function ActBlueAccountForm() {
 
   const committeeType = form.watch("committee_type");
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormValues) {
     try {
-      const { error } = await supabase.from("actblue_accounts").insert([values]);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+
+      const { error } = await supabase.from("actblue_accounts").insert({
+        ...values,
+        user_id: user.id,
+      });
       
       if (error) throw error;
 
