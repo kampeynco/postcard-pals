@@ -19,7 +19,7 @@ export const useAuth = () => {
 };
 
 // List of public routes that don't require authentication
-const publicRoutes = ["/", "/pricing", "/login"];
+const publicRoutes = ["/", "/pricing", "/signin", "/signup"];
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (!session && !publicRoutes.includes(location.pathname)) {
-        navigate("/login");
+        navigate("/signin");
       }
     });
 

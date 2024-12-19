@@ -11,10 +11,13 @@ import MainLayout from "@/components/layout/MainLayout";
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
+
+      {/* Protected routes */}
       <Route
         path="/dashboard"
         element={
@@ -31,16 +34,6 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <MainLayout>
               <ActBlueSettings />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/settings/:tab"
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <div className="p-8">Settings page placeholder</div>
             </MainLayout>
           </ProtectedRoute>
         }
