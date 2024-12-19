@@ -19,7 +19,7 @@ export const HeroSection = () => {
             <Link to="/signup">Send Thank You Faster →</Link>
           </Button>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 mb-12">
           <div className="flex items-center justify-center gap-2">
             <Check className="text-green-400 w-5 h-5" />
             <span className="text-white/90">5-minute no-hassle setup</span>
@@ -32,6 +32,15 @@ export const HeroSection = () => {
             <Check className="text-green-400 w-5 h-5" />
             <span className="text-white/90">No more mail merges</span>
           </div>
+        </div>
+        
+        {/* Validation Section */}
+        <div className="flex justify-center items-center">
+          <img 
+            src="/lovable-uploads/2cabfb70-f702-478f-8a8e-e762f458ecea.png" 
+            alt="135 users send thank yous faster with our platform" 
+            className="h-12 object-contain"
+          />
         </div>
       </div>
     </div>
