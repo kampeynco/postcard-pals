@@ -1,50 +1,85 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Sparkles, Users, MailCheck, LineChart } from "lucide-react";
+
 export const HowItWorksSection = () => {
   return (
     <div className="py-24 bg-white">
-      <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-16">How Thanks From Us Works</h2>
-        <div className="relative">
-          {/* Vertical connecting line */}
-          <div className="absolute left-[28px] top-0 bottom-0 w-0.5 bg-gray-200 hidden md:block"></div>
-          
-          {/* Step 1 */}
-          <div className="flex flex-col md:flex-row items-start gap-8 mb-20 relative">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
-              1
-            </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-2xl font-bold mb-3 text-navy-900">Connect ActBlue</h3>
-              <p className="text-gray-600 text-lg">
-                Link your ActBlue account to automatically sync your donations. It takes less than 5 minutes to get everything set up.
-              </p>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <span className="text-[#4B5EE4] text-sm font-medium uppercase tracking-wide">Features</span>
+          <h2 className="mt-4 text-4xl font-bold text-gray-900 tracking-tight">
+            Powerful features to streamline your
+            <br />
+            donor thank you process
+          </h2>
+        </div>
 
-          {/* Step 2 */}
-          <div className="flex flex-col md:flex-row items-start gap-8 mb-20 relative">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
-              2
-            </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-2xl font-bold mb-3 text-navy-900">Design Your Thank You Cards</h3>
-              <p className="text-gray-600 text-lg">
-                Choose from our templates or create your own custom design. Add your personal touch to make your donors feel special.
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* ActBlue Integration */}
+          <Card className="border border-gray-100 shadow-sm bg-white rounded-2xl p-8">
+            <CardContent className="p-0">
+              <div className="h-48 bg-gray-50 rounded-lg mb-6 flex items-center justify-center">
+                <Users className="w-16 h-16 text-[#4B5EE4]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                ActBlue Integration
+              </h3>
+              <p className="text-gray-600">
+                Seamlessly connect with ActBlue to automatically capture and process donations. 
+                No manual data entry required.
               </p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Step 3 */}
-          <div className="flex flex-col md:flex-row items-start gap-8 relative">
-            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
-              3
-            </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-2xl font-bold mb-3 text-navy-900">Automatic Sending</h3>
-              <p className="text-gray-600 text-lg">
-                We handle everything else - from printing to mailing. Your donors receive beautiful thank you cards without any extra work from you.
+          {/* Automated Thank Yous */}
+          <Card className="border border-gray-100 shadow-sm bg-white rounded-2xl p-8">
+            <CardContent className="p-0">
+              <div className="h-48 bg-gray-50 rounded-lg mb-6 flex items-center justify-center">
+                <MailCheck className="w-16 h-16 text-[#4B5EE4]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Automated Thank Yous
+              </h3>
+              <p className="text-gray-600">
+                Choose from professionally designed templates and automatically send 
+                personalized thank you postcards to your donors.
               </p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+
+          {/* Analytics Dashboard */}
+          <Card className="border border-gray-100 shadow-sm bg-white rounded-2xl p-8">
+            <CardContent className="p-0">
+              <div className="h-48 bg-gray-50 rounded-lg mb-6 flex items-center justify-center">
+                <LineChart className="w-16 h-16 text-[#4B5EE4]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Analytics Dashboard
+              </h3>
+              <p className="text-gray-600">
+                Track donation trends, monitor thank you card delivery status, and measure 
+                the impact of your gratitude campaign.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Smart Templates */}
+          <Card className="border border-gray-100 shadow-sm bg-white rounded-2xl p-8">
+            <CardContent className="p-0">
+              <div className="h-48 bg-gray-50 rounded-lg mb-6 flex items-center justify-center">
+                <Sparkles className="w-16 h-16 text-[#4B5EE4]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Smart Templates
+              </h3>
+              <p className="text-gray-600">
+                Create and customize thank you card templates with dynamic fields that 
+                automatically populate with donor information.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
