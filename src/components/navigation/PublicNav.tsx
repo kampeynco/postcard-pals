@@ -11,7 +11,7 @@ const PublicNav = () => {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link to="/" className={`${isHomePage ? 'text-white' : 'text-[#9b87f5]'} font-semibold text-lg`}>
-              PostCard
+              Thanks From Us
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
               <Link
