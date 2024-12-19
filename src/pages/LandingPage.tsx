@@ -2,6 +2,7 @@ import PublicNav from "@/components/navigation/PublicNav";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ComparisonSection } from "@/components/landing/ComparisonSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
+import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { CallToAction } from "@/components/landing/CallToAction";
 
 const LandingPage = () => {
@@ -9,6 +10,7 @@ const LandingPage = () => {
     <div className="min-h-screen">
       <PublicNav />
       <HeroSection />
+      <FeaturesSection />
       <ComparisonSection />
       <HowItWorksSection />
       <CallToAction />
