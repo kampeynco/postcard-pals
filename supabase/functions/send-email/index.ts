@@ -25,7 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailRequest: EmailRequest = await req.json();
     
     // Default from address if not provided
-    const fromAddress = emailRequest.from || "Thanks From Us <onboarding@resend.dev>";
+    const fromAddress = emailRequest.from || "Thanks From Us Team <noreply@thanksfrom.us>";
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
