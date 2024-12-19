@@ -4,18 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  useEffect(() => {
+    // If user is not authenticated, redirect to landing page
+    if (!session?.user) {
+      navigate("/");
+    }
+  }, [session, navigate]);
+
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
       await supabase.auth.signOut();
-      navigate("/signin");
+      navigate("/");
       toast.success("Signed out successfully");
     } catch (error) {
       console.error("Error signing out:", error);

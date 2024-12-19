@@ -10,12 +10,14 @@ import PostcardsPage from "@/pages/PostcardsPage";
 import MonitoringPage from "@/pages/MonitoringPage";
 import Onboarding from "@/pages/Onboarding";
 import MainLayout from "@/components/layout/MainLayout";
+import Index from "@/pages/Index";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/index" element={<Index />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
