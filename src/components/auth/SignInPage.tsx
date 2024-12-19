@@ -14,12 +14,35 @@ const SignInPage = () => {
   useEffect(() => {
     // Check for confirmation success message in URL
     const params = new URLSearchParams(location.search);
-    if (params.get('confirmation') === 'success') {
-      toast.success("Email confirmed! Please sign in to continue.");
-    }
+    
+    // If coming from confirmation link, update the profile first
+    const updateConfirmationStatus = async () => {
+      if (params.get('confirmation') === 'success') {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          console.log("Updating confirmation status for user:", session.user.id);
+          
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ is_confirmed: true })
+            .eq('id', session.user.id);
+          
+          if (updateError) {
+            console.error('Error updating profile:', updateError);
+            toast.error("There was an error confirming your email.");
+            return;
+          }
+          
+          toast.success("Email confirmed! Please sign in to continue.");
+        }
+      }
+    };
+
+    updateConfirmationStatus();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session); // Debug log
+      console.log("Auth state changed:", event, session);
 
       if (session) {
         try {
@@ -37,22 +60,8 @@ const SignInPage = () => {
             return;
           }
 
-          // Update profile confirmation status if coming from confirmation link
-          if (params.get('confirmation') === 'success' && !profile?.is_confirmed) {
-            console.log("Updating profile confirmation status"); // Debug log
-            const { error: updateError } = await supabase
-              .from('profiles')
-              .update({ is_confirmed: true })
-              .eq('id', session.user.id);
-            
-            if (updateError) {
-              console.error('Error updating profile:', updateError);
-              toast.error("There was an error confirming your email.");
-              await supabase.auth.signOut();
-              return;
-            }
-          } else if (!profile?.is_confirmed) {
-            console.log("Profile not confirmed"); // Debug log
+          if (!profile?.is_confirmed) {
+            console.log("Profile not confirmed");
             toast.error("Please confirm your email before signing in.");
             await supabase.auth.signOut();
             return;
@@ -60,7 +69,7 @@ const SignInPage = () => {
 
           // If profile is incomplete, redirect to onboarding
           if (!profile?.first_name || !profile?.last_name) {
-            console.log("Redirecting to onboarding"); // Debug log
+            console.log("Redirecting to onboarding");
             toast.success("Welcome! Let's set up your account.");
             navigate("/onboarding", { replace: true });
             return;
@@ -68,7 +77,7 @@ const SignInPage = () => {
 
           // Otherwise, redirect to requested page or dashboard
           const from = (location.state as any)?.from?.pathname || "/dashboard";
-          console.log("Redirecting to:", from); // Debug log
+          console.log("Redirecting to:", from);
           navigate(from, { replace: true });
         } catch (error) {
           console.error('Error in sign in process:', error);
