@@ -42,14 +42,14 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-background">
       <PublicNav />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
             Simple, transparent pricing
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-brand-text/80">
             Choose the plan that best fits your campaign
           </p>
         </div>
@@ -59,39 +59,42 @@ const PricingPage = () => {
             <Card 
               key={plan.name}
               className={`relative flex flex-col ${
-                plan.popular ? 'border-primary shadow-lg' : 'border-border'
-              }`}
+                plan.popular ? 'border-brand-accent shadow-lg' : 'border-white/10'
+              } bg-white`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full">
+                  <span className="bg-brand-accent text-white text-sm font-medium px-3 py-1 rounded-full">
                     Most Popular
                   </span>
                 </div>
               )}
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
+                <CardDescription className="text-gray-600">{plan.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1">
                 <div className="mb-8">
-                  <span className="text-4xl font-bold">${plan.price}</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                  <span className="text-gray-600">/month</span>
                 </div>
                 <ul className="space-y-3">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>{feature}</span>
+                      <Check className="h-4 w-4 text-brand-accent" />
+                      <span className="text-gray-700">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
               <CardFooter>
                 <Button 
-                  className="w-full"
-                  variant={plan.popular ? "default" : "outline"}
-                  onClick={() => navigate("/login")}
+                  className={`w-full ${
+                    plan.popular 
+                      ? 'bg-brand-accent hover:bg-brand-accent/90 text-white' 
+                      : 'bg-brand-background hover:bg-brand-background/90 text-white'
+                  }`}
+                  onClick={() => navigate("/signup")}
                 >
                   Get Started
                 </Button>
