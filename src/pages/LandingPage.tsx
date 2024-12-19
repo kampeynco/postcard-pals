@@ -109,59 +109,53 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* How It Works Section */}
+      {/* How It Works Section - Updated Design */}
       <div className="py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Here's How It Works</h2>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="step-1">
-              <AccordionTrigger className="text-left">
-                <div className="flex items-center gap-4">
-                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                    <span className="font-semibold">1</span>
-                  </div>
-                  <span className="font-semibold">Connect ActBlue Account</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <p className="text-gray-600 pl-12">
-                  Just link to your ActBlue account. It takes less than 5 minutes to get everything registered.
+          <h2 className="text-3xl font-bold text-center mb-16">Here's How It Works</h2>
+          <div className="relative">
+            {/* Vertical connecting line */}
+            <div className="absolute left-[28px] top-[60px] bottom-[60px] w-0.5 bg-blue-200 hidden md:block"></div>
+            
+            {/* Step 1 */}
+            <div className="flex flex-col md:flex-row items-start gap-8 mb-16 relative">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+                1
+              </div>
+              <div className="flex-1 pt-2">
+                <h3 className="text-xl font-semibold mb-2">Connect ActBlue</h3>
+                <p className="text-gray-600">
+                  Link your ActBlue account to automatically sync your donations. It takes less than 5 minutes to get everything set up.
                 </p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </div>
 
-            <AccordionItem value="step-2">
-              <AccordionTrigger className="text-left">
-                <div className="flex items-center gap-4">
-                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                    <span className="font-semibold">2</span>
-                  </div>
-                  <span className="font-semibold">Design Thank You Card</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <p className="text-gray-600 pl-12">
-                  Choose from our templates or create your own custom design.
+            {/* Step 2 */}
+            <div className="flex flex-col md:flex-row items-start gap-8 mb-16 relative">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+                2
+              </div>
+              <div className="flex-1 pt-2">
+                <h3 className="text-xl font-semibold mb-2">Design Your Thank You Cards</h3>
+                <p className="text-gray-600">
+                  Choose from our templates or create your own custom design. Add your personal touch to make your donors feel special.
                 </p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </div>
 
-            <AccordionItem value="step-3">
-              <AccordionTrigger className="text-left">
-                <div className="flex items-center gap-4">
-                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                    <span className="font-semibold">3</span>
-                  </div>
-                  <span className="font-semibold">We Handle The Rest</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <p className="text-gray-600 pl-12">
-                  Sit back and relax while we automatically send beautiful thank you cards to your donors.
+            {/* Step 3 */}
+            <div className="flex flex-col md:flex-row items-start gap-8 relative">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+                3
+              </div>
+              <div className="flex-1 pt-2">
+                <h3 className="text-xl font-semibold mb-2">Automatic Sending</h3>
+                <p className="text-gray-600">
+                  We handle everything else - from printing to mailing. Your donors receive beautiful thank you cards without any extra work from you.
                 </p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
