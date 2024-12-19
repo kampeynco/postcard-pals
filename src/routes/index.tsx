@@ -10,14 +10,12 @@ import PostcardsPage from "@/pages/PostcardsPage";
 import MonitoringPage from "@/pages/MonitoringPage";
 import Onboarding from "@/pages/Onboarding";
 import MainLayout from "@/components/layout/MainLayout";
-import Index from "@/pages/Index";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/index" element={<Index />} />
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
@@ -72,8 +70,11 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Catch all route - redirect to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Root route - redirect to signin or dashboard based on auth status */}
+      <Route path="/" element={<Navigate to="/signin" replace />} />
+
+      {/* Catch all route - redirect to signin */}
+      <Route path="*" element={<Navigate to="/signin" replace />} />
     </Routes>
   );
 };
