@@ -27,7 +27,7 @@ const SignUpPage = () => {
               html: `
                 <h1>Welcome to Thanks From Us!</h1>
                 <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
-                <p><a href="${window.location.origin}/signin?confirmation=success&email=${encodeURIComponent(session.user.email)}">Confirm Email</a></p>
+                <p><a href="${window.location.origin}/signin?confirmation=success&email=${encodeURIComponent(session.user.email || '')}">Confirm Email</a></p>
                 <p>If you did not create this account, please ignore this email.</p>
                 <p>Best regards,<br>Thanks From Us Team</p>
               `,
