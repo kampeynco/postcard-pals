@@ -7,6 +7,7 @@ import LandingPage from "@/pages/LandingPage";
 import PricingPage from "@/pages/PricingPage";
 import ActBlueSettings from "@/pages/ActBlueSettings";
 import PostcardsPage from "@/pages/PostcardsPage";
+import MonitoringPage from "@/pages/MonitoringPage";
 import MainLayout from "@/components/layout/MainLayout";
 
 const AppRoutes = () => {
@@ -45,6 +46,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <MainLayout>
               <PostcardsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/monitoring"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <MonitoringPage />
             </MainLayout>
           </ProtectedRoute>
         }
