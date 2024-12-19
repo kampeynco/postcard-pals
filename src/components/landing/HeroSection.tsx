@@ -36,7 +36,7 @@ export const HeroSection = () => {
         </div>
         
         {/* Validation Section */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+        <div className="flex flex-col md:flex-row items-center justify-center">
           {/* Avatar Stack */}
           <div className="flex -space-x-3">
             <Avatar className="border-2 border-white w-8 h-8">
