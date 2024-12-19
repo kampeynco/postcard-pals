@@ -9,16 +9,17 @@ const PublicNav = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <Link to="/" className="text-white font-semibold text-lg">
+            <Link to="/" className="text-[#9b87f5] font-semibold text-lg">
               PostCard
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
+              <span className="text-[#8E9196] text-sm">Powered by ActBlue</span>
               <Link
                 to="/pricing"
                 className={`${
                   location.pathname === "/pricing"
-                    ? "text-white"
-                    : "text-white/80 hover:text-white"
+                    ? "text-[#7E69AB]"
+                    : "text-[#8E9196] hover:text-[#7E69AB]"
                 } transition-colors duration-200`}
               >
                 Pricing
@@ -26,10 +27,17 @@ const PublicNav = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" className="text-white hover:text-white/80" asChild>
+            <Button 
+              variant="ghost" 
+              className="text-[#7E69AB] hover:text-[#6E59A5] hover:bg-[#D6BCFA]/10" 
+              asChild
+            >
               <Link to="/signin">Sign in</Link>
             </Button>
-            <Button className="bg-white text-[#4B5EE4] hover:bg-white/90" asChild>
+            <Button 
+              className="bg-[#9b87f5] text-white hover:bg-[#7E69AB]" 
+              asChild
+            >
               <Link to="/signup">Get Started</Link>
             </Button>
           </div>
