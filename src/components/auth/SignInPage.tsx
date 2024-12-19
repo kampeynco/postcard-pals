@@ -15,30 +15,12 @@ const SignInPage = () => {
     // Check for confirmation success message in URL
     const params = new URLSearchParams(location.search);
     if (params.get('confirmation') === 'success') {
-      // First update the profile to mark as confirmed, then sign out
-      const updateProfile = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { error } = await supabase
-            .from('profiles')
-            .update({ is_confirmed: true })
-            .eq('id', user.id);
-          
-          if (error) {
-            console.error('Error updating profile:', error);
-            toast.error("There was an error confirming your email.");
-          } else {
-            await supabase.auth.signOut();
-            toast.success("Email confirmed! Please sign in to continue.");
-          }
-        }
-      };
-      updateProfile();
+      toast.success("Email confirmed! Please sign in to continue.");
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        // Check if user's profile is confirmed
+        // Check if user's profile exists and is confirmed
         const { data: profile } = await supabase
           .from('profiles')
           .select('first_name, last_name, is_confirmed')
@@ -46,9 +28,24 @@ const SignInPage = () => {
           .single();
 
         if (!profile?.is_confirmed) {
-          toast.error("Please confirm your email before signing in.");
-          await supabase.auth.signOut();
-          return;
+          // Update profile to mark as confirmed if coming from confirmation link
+          if (params.get('confirmation') === 'success') {
+            const { error } = await supabase
+              .from('profiles')
+              .update({ is_confirmed: true })
+              .eq('id', session.user.id);
+            
+            if (error) {
+              console.error('Error updating profile:', error);
+              toast.error("There was an error confirming your email.");
+              await supabase.auth.signOut();
+              return;
+            }
+          } else {
+            toast.error("Please confirm your email before signing in.");
+            await supabase.auth.signOut();
+            return;
+          }
         }
 
         // If profile is incomplete, redirect to onboarding

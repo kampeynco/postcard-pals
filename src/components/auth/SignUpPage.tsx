@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
-import { AuthError } from "@supabase/supabase-js";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -14,31 +13,42 @@ const SignUpPage = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        console.log("User signed up, sending confirmation email");
+        console.log("New user signed in, checking if confirmation email needed");
         
-        // Send confirmation email using our Resend function
-        const { error } = await supabase.functions.invoke('send-email', {
-          body: {
-            to: [session.user.email],
-            subject: "Welcome to Thanks From Us - Please Confirm Your Email",
-            html: `
-              <h1>Welcome to Thanks From Us!</h1>
-              <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
-              <p><a href="${window.location.origin}/signin?confirmation=success">Confirm Email</a></p>
-              <p>If you did not create this account, please ignore this email.</p>
-              <p>Best regards,<br>Thanks From Us Team</p>
-            `,
-          }
-        });
+        // Check if this is a new signup by checking if profile exists and is not confirmed
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_confirmed')
+          .eq('id', session.user.id)
+          .single();
 
-        if (error) {
-          console.error('Error sending confirmation email:', error);
-          toast.error("There was an error sending your confirmation email. Please try again.");
-        } else {
-          toast.success("Please check your email to confirm your account.");
-          // Sign out the user after sending confirmation email
-          await supabase.auth.signOut();
-          navigate("/signin", { replace: true });
+        if (!profile?.is_confirmed) {
+          console.log("Sending confirmation email to new user");
+          
+          // Send confirmation email using our Resend function
+          const { error } = await supabase.functions.invoke('send-email', {
+            body: {
+              to: [session.user.email],
+              subject: "Welcome to Thanks From Us - Please Confirm Your Email",
+              html: `
+                <h1>Welcome to Thanks From Us!</h1>
+                <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
+                <p><a href="${window.location.origin}/signin?confirmation=success">Confirm Email</a></p>
+                <p>If you did not create this account, please ignore this email.</p>
+                <p>Best regards,<br>Thanks From Us Team</p>
+              `,
+            }
+          });
+
+          if (error) {
+            console.error('Error sending confirmation email:', error);
+            toast.error("There was an error sending your confirmation email. Please try again.");
+          } else {
+            toast.success("Please check your email to confirm your account.");
+            // Sign out the user after sending confirmation email
+            await supabase.auth.signOut();
+            navigate("/signin", { replace: true });
+          }
         }
       }
     });
