@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { ClipboardCheck, Send, ThumbsUp } from "lucide-react";
 
 export const HowItWorksSection = () => {
@@ -19,16 +18,24 @@ export const HowItWorksSection = () => {
           {/* Step 1 */}
           <div className="flex items-center gap-12 relative">
             <div className="w-1/2">
-              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
+              <div className="relative">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
                   1
                 </div>
-                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <ClipboardCheck className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
-              </Card>
-              {/* Dotted line connector */}
-              <div className="absolute left-1/2 top-full h-16 border-l-2 border-dashed border-gray-300"></div>
+                {/* Wavy line connector */}
+                <svg className="absolute left-1/2 top-full h-16 w-8 overflow-visible" preserveAspectRatio="none">
+                  <path
+                    d="M 4 0 Q 8 16, 4 32 Q 0 48, 4 64"
+                    stroke="#E5E7EB"
+                    strokeWidth="2"
+                    strokeDasharray="4 4"
+                    fill="none"
+                  />
+                </svg>
+              </div>
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect</h3>
@@ -41,16 +48,24 @@ export const HowItWorksSection = () => {
           {/* Step 2 */}
           <div className="flex items-center gap-12 relative mt-16">
             <div className="w-1/2">
-              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
+              <div className="relative">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
                   2
                 </div>
-                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <Send className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
-              </Card>
-              {/* Dotted line connector */}
-              <div className="absolute left-1/2 top-full h-16 border-l-2 border-dashed border-gray-300"></div>
+                {/* Wavy line connector */}
+                <svg className="absolute left-1/2 top-full h-16 w-8 overflow-visible" preserveAspectRatio="none">
+                  <path
+                    d="M 4 0 Q 8 16, 4 32 Q 0 48, 4 64"
+                    stroke="#E5E7EB"
+                    strokeWidth="2"
+                    strokeDasharray="4 4"
+                    fill="none"
+                  />
+                </svg>
+              </div>
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Process</h3>
@@ -63,14 +78,14 @@ export const HowItWorksSection = () => {
           {/* Step 3 */}
           <div className="flex items-center gap-12 mt-16">
             <div className="w-1/2">
-              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
+              <div className="relative">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
                   3
                 </div>
-                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <ThumbsUp className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
-              </Card>
+              </div>
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Deliver</h3>
