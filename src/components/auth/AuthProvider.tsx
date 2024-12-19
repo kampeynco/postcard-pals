@@ -33,6 +33,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkUserProfile = async (session: Session) => {
     try {
+      console.log("Checking user profile for:", session.user.email);
+      
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('first_name, last_name, is_confirmed')
@@ -52,13 +54,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       }
 
+      console.log("Profile data:", profile);
+
       // Check if email is confirmed
       if (!profile.is_confirmed && !noOnboardingRoutes.includes(location.pathname)) {
+        console.log("Email not confirmed, signing out user");
         await supabase.auth.signOut();
         setSession(null);
         toast.error("Please confirm your email before accessing this page.");
         navigate("/signin", { replace: true });
         return null;
+      }
+
+      // If email is confirmed but profile is incomplete, redirect to onboarding
+      if (profile.is_confirmed && (!profile.first_name || !profile.last_name) && !noOnboardingRoutes.includes(location.pathname)) {
+        console.log("Profile incomplete, redirecting to onboarding");
+        navigate("/onboarding", { replace: true });
+        return profile;
       }
 
       return profile;
@@ -70,17 +82,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    console.log("AuthProvider initialized");
+    
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log("Initial session check:", session?.user?.email);
+      
       if (session) {
         const profile = await checkUserProfile(session);
         if (!profile) return; // User was logged out due to deleted account or unconfirmed email
-
-        if (!noOnboardingRoutes.includes(location.pathname)) {
-          if (!profile.first_name || !profile.last_name) {
-            navigate("/onboarding", { replace: true });
-            return;
-          }
-        }
       }
       
       setSession(session);
@@ -90,6 +99,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log("Auth state changed:", _event, session?.user?.email);
+      
       if (session) {
         const profile = await checkUserProfile(session);
         if (!profile) return; // User was logged out

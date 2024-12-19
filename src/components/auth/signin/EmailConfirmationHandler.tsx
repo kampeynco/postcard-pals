@@ -17,6 +17,8 @@ const EmailConfirmationHandler = () => {
       const params = new URLSearchParams(location.search);
       const email = params.get('email');
       
+      console.log("Handling email confirmation for:", email);
+      
       // Step 1: Validate email parameter
       if (!email || !isValidEmail(email)) {
         console.error('Invalid or missing email in confirmation URL');
@@ -35,6 +37,8 @@ const EmailConfirmationHandler = () => {
           navigate('/signin');
           return;
         }
+
+        console.log("Current user:", user.email);
 
         // Step 3: Sign out user first
         await supabase.auth.signOut();
@@ -56,6 +60,7 @@ const EmailConfirmationHandler = () => {
         }
 
         // Step 5: Show success message and redirect
+        console.log("Email confirmed successfully");
         toast.success("Email confirmed successfully! Please sign in to continue.");
         
         // Step 6: Redirect to sign in page after a short delay
