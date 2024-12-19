@@ -40,6 +40,7 @@ const SignUpPage = () => {
             const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
               body: {
                 to: [session.user.email],
+                from: "Thanks From Us <noreply@thanksfromus.com>",
                 subject: "Welcome to Thanks From Us - Please Confirm Your Email",
                 html: `
                   <h1>Welcome to Thanks From Us!</h1>
