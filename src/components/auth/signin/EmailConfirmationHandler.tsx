@@ -17,9 +17,8 @@ const EmailConfirmationHandler = () => {
       const params = new URLSearchParams(location.search);
       const email = params.get('email');
       
-      console.log("Handling email confirmation for:", email);
+      console.log("Starting email confirmation process for:", email);
       
-      // Step 1: Validate email parameter
       if (!email || !isValidEmail(email)) {
         console.error('Invalid or missing email in confirmation URL');
         toast.error("Invalid confirmation link");
@@ -28,7 +27,6 @@ const EmailConfirmationHandler = () => {
       }
 
       try {
-        // Step 2: Get current user
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {
@@ -38,14 +36,10 @@ const EmailConfirmationHandler = () => {
           return;
         }
 
-        console.log("Current user:", user.email);
+        console.log("Found user for confirmation:", user.email);
 
-        // Step 3: Sign out user first
-        await supabase.auth.signOut();
-        console.log("User signed out successfully");
-
-        // Step 4: Call edge function to update profile
-        const { error: confirmError } = await supabase.functions.invoke('confirm-email', {
+        // Call edge function to update profile
+        const { data, error: confirmError } = await supabase.functions.invoke('confirm-email', {
           body: { 
             userId: user.id,
             email: email 
@@ -54,16 +48,27 @@ const EmailConfirmationHandler = () => {
 
         if (confirmError) {
           console.error('Error confirming email:', confirmError);
-          toast.error("There was an error confirming your email.");
+          toast.error("There was an error confirming your email. Please try again.");
           navigate('/signin');
           return;
         }
 
-        // Step 5: Show success message and redirect
+        console.log("Edge function response:", data);
+
+        if (!data?.success) {
+          console.error('Profile update failed:', data);
+          toast.error("Failed to confirm email. Please try again.");
+          navigate('/signin');
+          return;
+        }
+
         console.log("Email confirmed successfully");
         toast.success("Email confirmed successfully! Please sign in to continue.");
         
-        // Step 6: Redirect to sign in page after a short delay
+        // Sign out user after successful confirmation
+        await supabase.auth.signOut();
+        
+        // Redirect to sign in page after a short delay
         setTimeout(() => {
           navigate('/signin', { replace: true });
         }, 2000);
