@@ -28,6 +28,18 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailRequest: EmailRequest = await req.json();
+    
+    // Validate required fields
+    if (!emailRequest.to || !emailRequest.to.length) {
+      throw new Error("Recipient email is required");
+    }
+    if (!emailRequest.subject) {
+      throw new Error("Email subject is required");
+    }
+    if (!emailRequest.html) {
+      throw new Error("Email content is required");
+    }
+
     console.log("Sending email with Resend:", { 
       to: emailRequest.to, 
       subject: emailRequest.subject 
