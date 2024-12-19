@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -19,39 +18,26 @@ const EmailConfirmationHandler = () => {
           return;
         }
 
-        // Get user profile by email
-        const { data: { users }, error: getUserError } = await supabase.auth.admin.listUsers();
-        
-        if (getUserError) {
-          console.error('Error finding user:', getUserError);
-          toast.error("Could not verify your account. Please try signing in.");
-          return;
-        }
+        try {
+          // Update profile confirmation status
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ is_confirmed: true })
+            .eq('id', (await supabase.auth.getUser()).data.user?.id);
 
-        const user = users.find((u: User) => u.email === email);
-        if (!user) {
-          console.error('User not found with email:', email);
-          toast.error("Could not verify your account. Please try signing in.");
-          return;
-        }
+          if (updateError) {
+            console.error('Error updating profile:', updateError);
+            toast.error("There was an error confirming your email.");
+            return;
+          }
 
-        const userId = user.id;
-        console.log("Updating confirmation status for user:", userId);
-        
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ is_confirmed: true })
-          .eq('id', userId);
-        
-        if (updateError) {
-          console.error('Error updating profile:', updateError);
-          toast.error("There was an error confirming your email.");
-          return;
+          // Make sure user is logged out after confirmation
+          await supabase.auth.signOut();
+          toast.success("Email confirmed! Please sign in to continue.");
+        } catch (error) {
+          console.error('Error in confirmation process:', error);
+          toast.error("An error occurred during confirmation. Please try signing in.");
         }
-        
-        // Make sure user is logged out after confirmation
-        await supabase.auth.signOut();
-        toast.success("Email confirmed! Please sign in to continue.");
       }
     };
 

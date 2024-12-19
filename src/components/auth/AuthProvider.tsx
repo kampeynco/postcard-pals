@@ -52,6 +52,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       }
 
+      // Check if email is confirmed
+      if (!profile.is_confirmed && !noOnboardingRoutes.includes(location.pathname)) {
+        await supabase.auth.signOut();
+        setSession(null);
+        toast.error("Please confirm your email before accessing this page.");
+        navigate("/signin", { replace: true });
+        return null;
+      }
+
       return profile;
     } catch (error) {
       console.error('Error checking user profile:', error);
@@ -64,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         const profile = await checkUserProfile(session);
-        if (!profile) return; // User was logged out due to deleted account
+        if (!profile) return; // User was logged out due to deleted account or unconfirmed email
 
         if (!noOnboardingRoutes.includes(location.pathname)) {
           if (!profile.first_name || !profile.last_name) {
@@ -83,7 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         const profile = await checkUserProfile(session);
-        if (!profile) return; // User was logged out due to deleted account
+        if (!profile) return; // User was logged out
       }
       
       setSession(session);
