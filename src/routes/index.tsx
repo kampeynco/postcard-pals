@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SignInPage from "@/components/auth/SignInPage";
 import SignUpPage from "@/components/auth/SignUpPage";
@@ -38,6 +38,9 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* Redirect /index to root */}
+      <Route path="/index" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
