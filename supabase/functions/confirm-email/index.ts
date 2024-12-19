@@ -36,14 +36,22 @@ serve(async (req) => {
     // Update profile confirmation status
     const { data, error: updateError } = await supabaseAdmin
       .from('profiles')
-      .update({ is_confirmed: true })
+      .update({ 
+        is_confirmed: true,
+        updated_at: new Date().toISOString()
+      })
       .eq('id', userId)
-      .select()
+      .select('*')
       .single();
 
     if (updateError) {
       console.error('Error updating profile:', updateError);
       throw updateError;
+    }
+
+    if (!data) {
+      console.error('No profile found for user:', userId);
+      throw new Error('Profile not found');
     }
 
     console.log('Successfully confirmed email for user:', userId, 'Profile:', data);
@@ -64,6 +72,7 @@ serve(async (req) => {
     console.error('Error in confirm-email function:', error);
     return new Response(
       JSON.stringify({ 
+        success: false,
         error: error.message,
         details: error.toString()
       }),
