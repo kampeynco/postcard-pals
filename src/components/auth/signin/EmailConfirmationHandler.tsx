@@ -39,7 +39,7 @@ const EmailConfirmationHandler = () => {
         console.log("Found user for confirmation:", user.email);
 
         // Call edge function to update profile
-        const { data, error: confirmError } = await supabase.functions.invoke('confirm-email', {
+        const { data: confirmationData, error: confirmError } = await supabase.functions.invoke('confirm-email', {
           body: { 
             userId: user.id,
             email: email 
@@ -53,16 +53,16 @@ const EmailConfirmationHandler = () => {
           return;
         }
 
-        console.log("Edge function response:", data);
+        console.log("Edge function response:", confirmationData);
 
-        if (!data?.success) {
-          console.error('Profile update failed:', data);
+        if (!confirmationData?.success || !confirmationData?.profile?.is_confirmed) {
+          console.error('Profile update failed:', confirmationData);
           toast.error("Failed to confirm email. Please try again.");
           navigate('/signin');
           return;
         }
 
-        console.log("Email confirmed successfully");
+        console.log("Email confirmed successfully. Profile:", confirmationData.profile);
         toast.success("Email confirmed! Redirecting to dashboard...");
         
         // Redirect to dashboard after successful confirmation
