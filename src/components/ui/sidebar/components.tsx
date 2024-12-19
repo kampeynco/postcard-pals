@@ -11,17 +11,7 @@ import { useSidebar } from "./context";
 import { SidebarProps } from "./types";
 
 export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  (
-    {
-      side = "left",
-      variant = "sidebar",
-      collapsible = "offcanvas",
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({ side = "left", variant = "sidebar", collapsible = "offcanvas", className, children, ...props }, ref) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
     if (collapsible === "none") {
@@ -103,5 +93,3 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   }
 );
 Sidebar.displayName = "Sidebar";
-
-// ... Additional component exports for Header, Footer, Content, etc.
