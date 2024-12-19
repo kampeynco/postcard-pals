@@ -19,6 +19,8 @@ const SignInPage = () => {
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session); // Debug log
+
       if (session) {
         try {
           // Check if user's profile exists and is confirmed
@@ -35,29 +37,30 @@ const SignInPage = () => {
             return;
           }
 
-          if (!profile?.is_confirmed) {
-            // Update profile to mark as confirmed if coming from confirmation link
-            if (params.get('confirmation') === 'success') {
-              const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ is_confirmed: true })
-                .eq('id', session.user.id);
-              
-              if (updateError) {
-                console.error('Error updating profile:', updateError);
-                toast.error("There was an error confirming your email.");
-                await supabase.auth.signOut();
-                return;
-              }
-            } else {
-              toast.error("Please confirm your email before signing in.");
+          // Update profile confirmation status if coming from confirmation link
+          if (params.get('confirmation') === 'success' && !profile?.is_confirmed) {
+            console.log("Updating profile confirmation status"); // Debug log
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update({ is_confirmed: true })
+              .eq('id', session.user.id);
+            
+            if (updateError) {
+              console.error('Error updating profile:', updateError);
+              toast.error("There was an error confirming your email.");
               await supabase.auth.signOut();
               return;
             }
+          } else if (!profile?.is_confirmed) {
+            console.log("Profile not confirmed"); // Debug log
+            toast.error("Please confirm your email before signing in.");
+            await supabase.auth.signOut();
+            return;
           }
 
           // If profile is incomplete, redirect to onboarding
           if (!profile?.first_name || !profile?.last_name) {
+            console.log("Redirecting to onboarding"); // Debug log
             toast.success("Welcome! Let's set up your account.");
             navigate("/onboarding", { replace: true });
             return;
@@ -65,6 +68,7 @@ const SignInPage = () => {
 
           // Otherwise, redirect to requested page or dashboard
           const from = (location.state as any)?.from?.pathname || "/dashboard";
+          console.log("Redirecting to:", from); // Debug log
           navigate(from, { replace: true });
         } catch (error) {
           console.error('Error in sign in process:', error);
