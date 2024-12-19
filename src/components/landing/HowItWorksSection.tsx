@@ -15,18 +15,20 @@ export const HowItWorksSection = () => {
         </div>
 
         {/* Steps Container */}
-        <div className="max-w-3xl mx-auto space-y-20">
+        <div className="max-w-3xl mx-auto">
           {/* Step 1 */}
-          <div className="flex items-center gap-12">
+          <div className="flex items-center gap-12 relative">
             <div className="w-1/2">
-              <Card className="p-8 bg-white shadow-lg relative">
-                <div className="absolute -left-4 -top-4 w-12 h-12 bg-[#FFD666] rounded-full flex items-center justify-center text-2xl font-bold">
+              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
                   1
                 </div>
-                <div className="h-48 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-6">
-                  <ClipboardCheck className="w-20 h-20 text-[#4B5EE4]" />
+                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                  <ClipboardCheck className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
               </Card>
+              {/* Dotted line connector */}
+              <div className="absolute left-1/2 top-full h-16 border-l-2 border-dashed border-gray-300"></div>
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect</h3>
@@ -36,20 +38,19 @@ export const HowItWorksSection = () => {
             </div>
           </div>
 
-          {/* Connector Line */}
-          <div className="w-0.5 h-12 bg-gray-300 mx-auto"></div>
-
           {/* Step 2 */}
-          <div className="flex items-center gap-12">
+          <div className="flex items-center gap-12 relative mt-16">
             <div className="w-1/2">
-              <Card className="p-8 bg-white shadow-lg relative">
-                <div className="absolute -left-4 -top-4 w-12 h-12 bg-[#FFD666] rounded-full flex items-center justify-center text-2xl font-bold">
+              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
                   2
                 </div>
-                <div className="h-48 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-6">
-                  <Send className="w-20 h-20 text-[#4B5EE4]" />
+                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                  <Send className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
               </Card>
+              {/* Dotted line connector */}
+              <div className="absolute left-1/2 top-full h-16 border-l-2 border-dashed border-gray-300"></div>
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Process</h3>
@@ -59,18 +60,15 @@ export const HowItWorksSection = () => {
             </div>
           </div>
 
-          {/* Connector Line */}
-          <div className="w-0.5 h-12 bg-gray-300 mx-auto"></div>
-
           {/* Step 3 */}
-          <div className="flex items-center gap-12">
+          <div className="flex items-center gap-12 mt-16">
             <div className="w-1/2">
-              <Card className="p-8 bg-white shadow-lg relative">
-                <div className="absolute -left-4 -top-4 w-12 h-12 bg-[#FFD666] rounded-full flex items-center justify-center text-2xl font-bold">
+              <Card className="p-6 bg-white shadow-lg relative rounded-xl">
+                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold">
                   3
                 </div>
-                <div className="h-48 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-6">
-                  <ThumbsUp className="w-20 h-20 text-[#4B5EE4]" />
+                <div className="h-36 bg-[#4B5EE4]/10 rounded-lg flex items-center justify-center mb-4">
+                  <ThumbsUp className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
               </Card>
             </div>
