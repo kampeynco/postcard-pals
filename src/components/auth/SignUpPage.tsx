@@ -16,17 +16,24 @@ const SignUpPage = () => {
         console.log("New user signed in, checking if confirmation email needed");
         
         // Check if this is a new signup by checking if profile exists and is not confirmed
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('is_confirmed')
           .eq('id', session.user.id)
           .single();
 
+        if (profileError) {
+          console.error('Error checking profile:', profileError);
+          toast.error("There was an error during signup. Please try again.");
+          await supabase.auth.signOut();
+          return;
+        }
+
         if (!profile?.is_confirmed) {
           console.log("Sending confirmation email to new user");
           
           // Send confirmation email using our Resend function
-          const { error } = await supabase.functions.invoke('send-email', {
+          const { error: emailError } = await supabase.functions.invoke('send-email', {
             body: {
               to: [session.user.email],
               subject: "Welcome to Thanks From Us - Please Confirm Your Email",
@@ -40,15 +47,16 @@ const SignUpPage = () => {
             }
           });
 
-          if (error) {
-            console.error('Error sending confirmation email:', error);
-            toast.error("There was an error sending your confirmation email. Please try again.");
+          if (emailError) {
+            console.error('Error sending confirmation email:', emailError);
+            toast.error("There was an error sending your confirmation email. Please try signing in to resend it.");
           } else {
             toast.success("Please check your email to confirm your account.");
-            // Sign out the user after sending confirmation email
-            await supabase.auth.signOut();
-            navigate("/signin", { replace: true });
           }
+
+          // Sign out the user after sending confirmation email
+          await supabase.auth.signOut();
+          navigate("/signin", { replace: true });
         }
       }
     });
@@ -67,10 +75,23 @@ const SignUpPage = () => {
           </div>
           <Auth
             supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
+            appearance={{ 
+              theme: ThemeSupa,
+              className: {
+                button: 'disabled:opacity-50 disabled:cursor-not-allowed',
+              },
+            }}
             theme="light"
             providers={[]}
             view="sign_up"
+            localization={{
+              variables: {
+                sign_up: {
+                  button_label: "Sign up",
+                  loading_button_label: "Signing up...",
+                },
+              },
+            }}
           />
         </div>
       </div>
