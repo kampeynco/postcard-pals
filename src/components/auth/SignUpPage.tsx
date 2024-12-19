@@ -13,7 +13,9 @@ const SignUpPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session) {
+      if (event === "SIGNED_UP" && session) {
+        console.log("User signed up, sending confirmation email");
+        
         // Send confirmation email using our Resend function
         const { error } = await supabase.functions.invoke('send-email', {
           body: {
@@ -26,7 +28,6 @@ const SignUpPage = () => {
               <p>If you did not create this account, please ignore this email.</p>
               <p>Best regards,<br>Thanks From Us Team</p>
             `,
-            from: "Thanks From Us <noreply@thanksfromus.com>"
           }
         });
 
