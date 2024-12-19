@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
+import { User } from "@supabase/supabase-js";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const SignInPage = () => {
           return;
         }
 
-        const user = users.find(u => u.email === email);
+        const user = users.find((u: User) => u.email === email);
         if (!user) {
           console.error('User not found with email:', email);
           toast.error("Could not verify your account. Please try signing in.");
