@@ -76,8 +76,17 @@ export default function ActBlueAccountForm() {
         throw new Error("No authenticated user found");
       }
 
+      // Ensure all required fields are present and properly typed
       const insertData: ActBlueAccount = {
-        ...values,
+        committee_name: values.committee_name,
+        committee_type: values.committee_type,
+        candidate_name: values.candidate_name,
+        office_sought: values.office_sought,
+        street_address: values.street_address,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
+        disclaimer_text: values.disclaimer_text,
         user_id: user.id,
       };
 
