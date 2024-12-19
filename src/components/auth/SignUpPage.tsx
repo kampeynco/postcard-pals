@@ -13,7 +13,7 @@ const SignUpPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
-      if (event === "SIGNED_UP") {
+      if (event === "SIGNED_UP" as AuthChangeEvent) {
         toast.success("Please check your email to confirm your account.");
         navigate("/signin", { replace: true });
       }
