@@ -19,7 +19,7 @@ const LandingPage = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
-              <Link to="/login">Get Started</Link>
+              <Link to="/signup">Get Started</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <Link to="/pricing">View Pricing</Link>
