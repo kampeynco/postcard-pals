@@ -11,8 +11,8 @@ const LandingPage = () => {
       <PublicNav />
       <HeroSection />
       <ComparisonSection />
-      <FeaturesSection />
       <HowItWorksSection />
+      <FeaturesSection />
       <CallToAction />
     </div>
   );
