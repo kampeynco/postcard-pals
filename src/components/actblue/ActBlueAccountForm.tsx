@@ -20,6 +20,9 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type ActBlueAccount = Database["public"]["Tables"]["actblue_accounts"]["Insert"];
 
 const formSchema = z.object({
   committee_name: z.string().min(2, "Committee name must be at least 2 characters"),
@@ -73,10 +76,14 @@ export default function ActBlueAccountForm() {
         throw new Error("No authenticated user found");
       }
 
-      const { error } = await supabase.from("actblue_accounts").insert({
+      const insertData: ActBlueAccount = {
         ...values,
         user_id: user.id,
-      });
+      };
+
+      const { error } = await supabase
+        .from("actblue_accounts")
+        .insert(insertData);
       
       if (error) throw error;
 
