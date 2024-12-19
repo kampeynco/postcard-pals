@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export const HeroSection = () => {
   return (
@@ -35,12 +36,43 @@ export const HeroSection = () => {
         </div>
         
         {/* Validation Section */}
-        <div className="flex justify-center items-center">
-          <img 
-            src="/lovable-uploads/2cabfb70-f702-478f-8a8e-e762f458ecea.png" 
-            alt="135 users send thank yous faster with our platform" 
-            className="h-12 object-contain"
-          />
+        <div className="flex flex-col items-center">
+          {/* Avatar Stack */}
+          <div className="flex -space-x-3 mb-3">
+            <Avatar className="border-2 border-white w-8 h-8">
+              <AvatarImage src="https://i.pravatar.cc/100?img=1" />
+              <AvatarFallback>U1</AvatarFallback>
+            </Avatar>
+            <Avatar className="border-2 border-white w-8 h-8">
+              <AvatarImage src="https://i.pravatar.cc/100?img=2" />
+              <AvatarFallback>U2</AvatarFallback>
+            </Avatar>
+            <Avatar className="border-2 border-white w-8 h-8">
+              <AvatarImage src="https://i.pravatar.cc/100?img=3" />
+              <AvatarFallback>U3</AvatarFallback>
+            </Avatar>
+            <Avatar className="border-2 border-white w-8 h-8">
+              <AvatarImage src="https://i.pravatar.cc/100?img=4" />
+              <AvatarFallback>U4</AvatarFallback>
+            </Avatar>
+          </div>
+          {/* Star Rating */}
+          <div className="flex items-center gap-1 mb-1">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className="w-4 h-4 fill-current text-yellow-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            ))}
+          </div>
+          {/* Text */}
+          <p className="text-sm text-white/90">
+            <span className="font-semibold">135+ users</span> send thank yous faster with our platform
+          </p>
         </div>
       </div>
     </div>
