@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import PublicNav from "@/components/navigation/PublicNav";
+import { Footer } from "@/components/layout/Footer";
 import { useNavigate } from "react-router-dom";
 
 const PricingPage = () => {
@@ -42,7 +43,7 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <PublicNav />
       <div className="bg-[#4B5EE4] text-white pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,7 +58,7 @@ const PricingPage = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 mb-16">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {pricingPlans.map((plan) => (
             <Card 
@@ -106,6 +107,9 @@ const PricingPage = () => {
             </Card>
           ))}
         </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
       </div>
     </div>
   );
