@@ -1,69 +1,17 @@
 import { useEffect } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
-import { User } from "@supabase/supabase-js";
+import AuthForm from "./signin/AuthForm";
+import EmailConfirmationHandler from "./signin/EmailConfirmationHandler";
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Check for confirmation success message in URL
-    const params = new URLSearchParams(location.search);
-    
-    // If coming from confirmation link, update the profile
-    const updateConfirmationStatus = async () => {
-      if (params.get('confirmation') === 'success') {
-        const email = params.get('email');
-        if (!email) {
-          console.error('No email provided in confirmation URL');
-          toast.error("Invalid confirmation link");
-          return;
-        }
-
-        // Get user profile by email
-        const { data: { users }, error: getUserError } = await supabase.auth.admin.listUsers();
-        
-        if (getUserError) {
-          console.error('Error finding user:', getUserError);
-          toast.error("Could not verify your account. Please try signing in.");
-          return;
-        }
-
-        const user = users.find((u: User) => u.email === email);
-        if (!user) {
-          console.error('User not found with email:', email);
-          toast.error("Could not verify your account. Please try signing in.");
-          return;
-        }
-
-        const userId = user.id;
-        console.log("Updating confirmation status for user:", userId);
-        
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ is_confirmed: true })
-          .eq('id', userId);
-        
-        if (updateError) {
-          console.error('Error updating profile:', updateError);
-          toast.error("There was an error confirming your email.");
-          return;
-        }
-        
-        // Make sure user is logged out after confirmation
-        await supabase.auth.signOut();
-        toast.success("Email confirmed! Please sign in to continue.");
-      }
-    };
-
-    updateConfirmationStatus();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session);
 
@@ -122,34 +70,10 @@ const SignInPage = () => {
             <h2 className="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
             <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
           </div>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ 
-              theme: ThemeSupa,
-              className: {
-                button: 'w-full disabled:opacity-50 disabled:cursor-not-allowed',
-                container: 'space-y-4',
-                message: 'text-sm text-red-600',
-                input: 'w-full',
-                label: 'block text-sm font-medium text-gray-700',
-              },
-            }}
-            theme="light"
-            providers={[]}
-            view="sign_in"
-            localization={{
-              variables: {
-                sign_in: {
-                  button_label: "Sign in",
-                  loading_button_label: "Signing in...",
-                  email_label: "Email address",
-                  password_label: "Password",
-                },
-              },
-            }}
-          />
+          <AuthForm />
         </div>
       </div>
+      <EmailConfirmationHandler />
       <Footer />
     </div>
   );
