@@ -1,7 +1,7 @@
+import { useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
@@ -56,6 +56,8 @@ const SignInPage = () => {
           return;
         }
         
+        // Make sure user is logged out after confirmation
+        await supabase.auth.signOut();
         toast.success("Email confirmed! Please sign in to continue.");
       }
     };
