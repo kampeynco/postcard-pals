@@ -1,8 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const PublicNav = () => {
   const location = useLocation();
+  const { session } = useAuth();
   const isHomePage = location.pathname === "/";
 
   const scrollToSection = (sectionId: string) => {
@@ -51,19 +53,30 @@ const PublicNav = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              className="text-white hover:text-[#4B5EE4] hover:bg-white"
-              asChild
-            >
-              <Link to="/signin">Sign in</Link>
-            </Button>
-            <Button 
-              className="bg-white text-[#4B5EE4] hover:bg-white/90"
-              asChild
-            >
-              <Link to="/signup">Get Started</Link>
-            </Button>
+            {session ? (
+              <Button 
+                className="bg-white text-[#4B5EE4] hover:bg-white/90"
+                asChild
+              >
+                <Link to="/dashboard">Go to Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="text-white hover:text-[#4B5EE4] hover:bg-white"
+                  asChild
+                >
+                  <Link to="/signin">Sign in</Link>
+                </Button>
+                <Button 
+                  className="bg-white text-[#4B5EE4] hover:bg-white/90"
+                  asChild
+                >
+                  <Link to="/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
