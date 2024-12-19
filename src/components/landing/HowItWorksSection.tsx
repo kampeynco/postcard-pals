@@ -19,9 +19,6 @@ export const HowItWorksSection = () => {
           <div className="flex items-center gap-12 relative">
             <div className="w-1/2">
               <div className="relative">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
-                  1
-                </div>
                 <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <ClipboardCheck className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
@@ -29,7 +26,7 @@ export const HowItWorksSection = () => {
                 <svg className="absolute left-1/2 top-full h-16 w-8 overflow-visible" preserveAspectRatio="none">
                   <path
                     d="M 4 0 Q 8 16, 4 32 Q 0 48, 4 64"
-                    stroke="#E5E7EB"
+                    stroke="#4B5EE4"
                     strokeWidth="2"
                     strokeDasharray="4 4"
                     fill="none"
@@ -38,7 +35,12 @@ export const HowItWorksSection = () => {
               </div>
             </div>
             <div className="w-1/2">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-[#FFD666] rounded-full flex items-center justify-center text-lg font-bold">
+                  1
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Connect</h3>
+              </div>
               <p className="text-gray-600 text-lg">
                 Connect your ActBlue account to automatically sync your donation data
               </p>
@@ -49,9 +51,6 @@ export const HowItWorksSection = () => {
           <div className="flex items-center gap-12 relative mt-16">
             <div className="w-1/2">
               <div className="relative">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
-                  2
-                </div>
                 <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <Send className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
@@ -59,7 +58,7 @@ export const HowItWorksSection = () => {
                 <svg className="absolute left-1/2 top-full h-16 w-8 overflow-visible" preserveAspectRatio="none">
                   <path
                     d="M 4 0 Q 8 16, 4 32 Q 0 48, 4 64"
-                    stroke="#E5E7EB"
+                    stroke="#4B5EE4"
                     strokeWidth="2"
                     strokeDasharray="4 4"
                     fill="none"
@@ -68,7 +67,12 @@ export const HowItWorksSection = () => {
               </div>
             </div>
             <div className="w-1/2">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Process</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-[#FFD666] rounded-full flex items-center justify-center text-lg font-bold">
+                  2
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Process</h3>
+              </div>
               <p className="text-gray-600 text-lg">
                 We automatically generate personalized thank you cards for each donation
               </p>
@@ -79,16 +83,18 @@ export const HowItWorksSection = () => {
           <div className="flex items-center gap-12 mt-16">
             <div className="w-1/2">
               <div className="relative">
-                <div className="absolute -left-3 -top-3 w-10 h-10 bg-[#FFD666] rounded-full flex items-center justify-center text-xl font-bold z-10">
-                  3
-                </div>
                 <div className="h-32 w-32 bg-[#4B5EE4]/10 rounded-full flex items-center justify-center">
                   <ThumbsUp className="w-16 h-16 text-[#4B5EE4]" />
                 </div>
               </div>
             </div>
             <div className="w-1/2">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Deliver</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-[#FFD666] rounded-full flex items-center justify-center text-lg font-bold">
+                  3
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Deliver</h3>
+              </div>
               <p className="text-gray-600 text-lg">
                 Cards are automatically printed and mailed to your donors within 24 hours
               </p>
