@@ -49,7 +49,7 @@ const PublicNav = () => {
           <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
-              className="text-white hover:text-white/80"
+              className="text-white hover:text-[#4B5EE4]"
               asChild
             >
               <Link to="/signin">Sign in</Link>
