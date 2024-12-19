@@ -21,6 +21,9 @@ export const useAuth = () => {
 // List of public routes that don't require authentication
 const publicRoutes = ["/", "/pricing", "/signin", "/signup"];
 
+// List of routes that don't require onboarding
+const noOnboardingRoutes = [...publicRoutes, "/onboarding"];
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,14 +31,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      
+      if (session && !noOnboardingRoutes.includes(location.pathname)) {
+        // Check if user needs onboarding
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!profile?.first_name || !profile?.last_name) {
+          navigate("/onboarding", { replace: true });
+        }
+      }
+      
       setLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (!session && !publicRoutes.includes(location.pathname)) {
         navigate("/signin");

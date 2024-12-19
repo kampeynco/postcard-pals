@@ -5,14 +5,30 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
+import { toast } from "sonner";
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
+        // Check if user has a profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', session.user.id)
+          .single();
+
+        // If profile is incomplete, redirect to onboarding
+        if (!profile?.first_name || !profile?.last_name) {
+          toast.success("Welcome! Let's set up your account.");
+          navigate("/onboarding", { replace: true });
+          return;
+        }
+
+        // Otherwise, redirect to requested page or dashboard
         const from = (location.state as any)?.from?.pathname || "/dashboard";
         navigate(from, { replace: true });
       }
