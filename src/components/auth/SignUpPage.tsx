@@ -37,7 +37,7 @@ const SignUpPage = () => {
             setShowConfirmation(true);
             
             // Send confirmation email using our Resend function
-            const { error: emailError } = await supabase.functions.invoke('send-email', {
+            const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
               body: {
                 to: [session.user.email],
                 subject: "Welcome to Thanks From Us - Please Confirm Your Email",
@@ -55,7 +55,7 @@ const SignUpPage = () => {
               console.error('Error sending confirmation email:', emailError);
               toast.error("There was an error sending your confirmation email. Please try signing in to resend it.");
             } else {
-              console.log("Confirmation email sent successfully");
+              console.log("Confirmation email response:", emailData);
               toast.success("Please check your email to confirm your account.");
             }
 
