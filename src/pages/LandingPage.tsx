@@ -10,8 +10,8 @@ const LandingPage = () => {
     <div className="min-h-screen">
       <PublicNav />
       <HeroSection />
-      <FeaturesSection />
       <ComparisonSection />
+      <FeaturesSection />
       <HowItWorksSection />
       <CallToAction />
     </div>
