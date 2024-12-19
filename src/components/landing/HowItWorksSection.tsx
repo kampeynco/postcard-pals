@@ -14,7 +14,7 @@ export const HowItWorksSection = () => {
         {/* Steps Container */}
         <div className="max-w-3xl mx-auto">
           {/* Step 1 */}
-          <div className="flex flex-col items-center text-center relative mb-16">
+          <div className="flex flex-col items-center text-center mb-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-[#FFD666] rounded-full flex items-center justify-center text-lg font-bold">
                 1
@@ -25,7 +25,7 @@ export const HowItWorksSection = () => {
               Connect your ActBlue account to automatically sync your donation data
             </p>
             {/* Wavy line connector with arrow */}
-            <svg className="h-24 w-8 overflow-visible mb-16" preserveAspectRatio="none">
+            <svg className="h-24 w-8 overflow-visible mb-2" preserveAspectRatio="none">
               <path
                 d="M 4 0 Q 8 32, 4 64 Q 0 96, 4 112"
                 stroke="#4B5EE4"
@@ -45,7 +45,7 @@ export const HowItWorksSection = () => {
           </div>
 
           {/* Step 2 */}
-          <div className="flex flex-col items-center text-center relative mb-16">
+          <div className="flex flex-col items-center text-center mb-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-[#FFD666] rounded-full flex items-center justify-center text-lg font-bold">
                 2
@@ -56,7 +56,7 @@ export const HowItWorksSection = () => {
               We automatically generate personalized thank you cards for each donation
             </p>
             {/* Wavy line connector with arrow */}
-            <svg className="h-24 w-8 overflow-visible mb-16" preserveAspectRatio="none">
+            <svg className="h-24 w-8 overflow-visible mb-2" preserveAspectRatio="none">
               <path
                 d="M 4 0 Q 8 32, 4 64 Q 0 96, 4 112"
                 stroke="#4B5EE4"
