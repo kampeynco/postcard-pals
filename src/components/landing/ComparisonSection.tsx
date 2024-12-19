@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 export const ComparisonSection = () => {
   return (
     <div className="py-24 bg-white">

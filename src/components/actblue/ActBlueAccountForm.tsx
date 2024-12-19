@@ -41,7 +41,15 @@ export default function ActBlueAccountForm() {
       }
 
       const insertData: ActBlueAccount = {
-        ...values,
+        committee_type: values.committee_type,
+        committee_name: values.committee_name,
+        candidate_name: values.candidate_name,
+        office_sought: values.office_sought,
+        street_address: values.street_address,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
+        disclaimer_text: values.disclaimer_text,
         user_id: user.id,
       };
 
