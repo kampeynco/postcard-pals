@@ -19,9 +19,9 @@ const TopNav = () => {
           </Link>
           <nav className="flex items-center gap-6">
             <Link
-              to="/"
+              to="/dashboard"
               className={`${
-                isActive("/")
+                isActive("/dashboard")
                   ? "text-gray-900 border-b-2 border-emerald-600"
                   : "text-gray-500"
               } pb-4 pt-4`}
@@ -47,6 +47,16 @@ const TopNav = () => {
               } pb-4 pt-4`}
             >
               Donations
+            </Link>
+            <Link
+              to="/settings/actblue"
+              className={`${
+                isActive("/settings/actblue")
+                  ? "text-gray-900 border-b-2 border-emerald-600"
+                  : "text-gray-500"
+              } pb-4 pt-4`}
+            >
+              ActBlue Settings
             </Link>
           </nav>
         </div>

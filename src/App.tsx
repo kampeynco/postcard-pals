@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import TopNav from "./components/navigation/TopNav";
 import LandingPage from "./pages/LandingPage";
 import PricingPage from "./pages/PricingPage";
+import ActBlueSettings from "./pages/ActBlueSettings";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,17 @@ const App = () => (
                   <>
                     <TopNav />
                     <Dashboard />
+                  </>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/actblue"
+              element={
+                <ProtectedRoute>
+                  <>
+                    <TopNav />
+                    <ActBlueSettings />
                   </>
                 </ProtectedRoute>
               }
