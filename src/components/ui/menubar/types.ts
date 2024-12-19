@@ -5,6 +5,7 @@ import { menubarVariants } from "./menubar";
 export interface MenubarProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: VariantProps<typeof menubarVariants>["variant"];
   defaultValue?: string;
+  dir?: "ltr" | "rtl";
 }
 
 export interface MenubarMenuProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -26,7 +27,7 @@ export interface MenubarContentProps extends React.HTMLAttributes<HTMLDivElement
 export interface MenubarItemProps extends React.HTMLAttributes<HTMLDivElement> {
   inset?: boolean;
   disabled?: boolean;
-  onSelect?: (event: React.SyntheticEvent) => void;
+  onSelect?: (event: React.SyntheticEvent<HTMLDivElement, Event>) => void;
 }
 
 export interface MenubarCheckboxItemProps extends MenubarItemProps {

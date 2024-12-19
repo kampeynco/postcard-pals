@@ -14,7 +14,12 @@ const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
         className
       )}
       disabled={disabled}
-      onSelect={(event) => onSelect?.(event)}
+      onSelect={(event) => {
+        if (onSelect) {
+          const syntheticEvent = event as unknown as React.SyntheticEvent<HTMLDivElement, Event>;
+          onSelect(syntheticEvent);
+        }
+      }}
       {...props}
     />
   )
@@ -30,7 +35,12 @@ const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheckboxItem
         className
       )}
       checked={checked}
-      onSelect={(event) => onSelect?.(event)}
+      onSelect={(event) => {
+        if (onSelect) {
+          const syntheticEvent = event as unknown as React.SyntheticEvent<HTMLDivElement, Event>;
+          onSelect(syntheticEvent);
+        }
+      }}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -53,7 +63,12 @@ const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioItemProps>
         className
       )}
       value={value}
-      onSelect={(event) => onSelect?.(event)}
+      onSelect={(event) => {
+        if (onSelect) {
+          const syntheticEvent = event as unknown as React.SyntheticEvent<HTMLDivElement, Event>;
+          onSelect(syntheticEvent);
+        }
+      }}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

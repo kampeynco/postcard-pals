@@ -20,11 +20,12 @@ export const menubarVariants = cva(
 );
 
 const Menubar = React.forwardRef<HTMLDivElement, MenubarProps>(
-  ({ className, variant, defaultValue, ...props }, ref) => (
+  ({ className, variant, defaultValue, dir, ...props }, ref) => (
     <MenubarPrimitive.Root
       ref={ref}
       className={cn(menubarVariants({ variant }), className)}
       defaultValue={defaultValue}
+      dir={dir as "ltr" | "rtl"}
       {...props}
     />
   )
