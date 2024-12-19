@@ -27,10 +27,10 @@ const PublicNav = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
-              <Link to="https://preview--postcard-pals.lovable.app/login#auth-sign-in">Sign in</Link>
+              <Link to="/signin">Sign in</Link>
             </Button>
             <Button asChild>
-              <Link to="https://preview--postcard-pals.lovable.app/login#auth-sign-up">Get Started</Link>
+              <Link to="/signup">Get Started</Link>
             </Button>
           </div>
         </div>

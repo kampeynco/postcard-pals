@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import LoginPage from "@/components/auth/LoginPage";
+import SignInPage from "@/components/auth/SignInPage";
+import SignUpPage from "@/components/auth/SignUpPage";
 import Dashboard from "@/pages/Dashboard";
 import LandingPage from "@/pages/LandingPage";
 import PricingPage from "@/pages/PricingPage";
@@ -12,7 +13,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signin" element={<SignInPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
       <Route
         path="/dashboard"
         element={
