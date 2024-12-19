@@ -13,7 +13,7 @@ const SignUpPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session: Session | null) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_UP' && session) {
         console.log("New signup detected, session:", session.user.email);
         setShowConfirmation(true);
