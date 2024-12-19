@@ -12,10 +12,30 @@ const SignUpPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
-      if (event === "SIGNED_UP" as AuthChangeEvent) {
-        toast.success("Please check your email to confirm your account.");
-        navigate("/signin", { replace: true });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session) => {
+      if (event === "SIGNED_UP" && session) {
+        // Send confirmation email using our Resend function
+        const { error } = await supabase.functions.invoke('send-email', {
+          body: {
+            to: [session.user.email],
+            subject: "Welcome to Thanks From Us - Please Confirm Your Email",
+            html: `
+              <h1>Welcome to Thanks From Us!</h1>
+              <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
+              <p><a href="${window.location.origin}/signin?confirmation=success">Confirm Email</a></p>
+              <p>If you did not create this account, please ignore this email.</p>
+              <p>Best regards,<br>Thanks From Us Team</p>
+            `
+          }
+        });
+
+        if (error) {
+          console.error('Error sending confirmation email:', error);
+          toast.error("There was an error sending your confirmation email. Please try again.");
+        } else {
+          toast.success("Please check your email to confirm your account.");
+          navigate("/signin", { replace: true });
+        }
       }
     });
 
@@ -29,7 +49,7 @@ const SignUpPage = () => {
         <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold text-gray-900">Create an account</h2>
-            <p className="mt-2 text-sm text-gray-600">Get started with PostCard</p>
+            <p className="mt-2 text-sm text-gray-600">Get started with Thanks From Us</p>
           </div>
           <Auth
             supabaseClient={supabase}
