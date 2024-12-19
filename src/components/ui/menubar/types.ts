@@ -4,6 +4,7 @@ import { menubarVariants } from "./menubar";
 
 export interface MenubarProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: VariantProps<typeof menubarVariants>["variant"];
+  defaultValue?: string;
 }
 
 export interface MenubarMenuProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -25,6 +26,7 @@ export interface MenubarContentProps extends React.HTMLAttributes<HTMLDivElement
 export interface MenubarItemProps extends React.HTMLAttributes<HTMLDivElement> {
   inset?: boolean;
   disabled?: boolean;
+  onSelect?: (event: React.SyntheticEvent) => void;
 }
 
 export interface MenubarCheckboxItemProps extends MenubarItemProps {
@@ -34,5 +36,6 @@ export interface MenubarCheckboxItemProps extends MenubarItemProps {
 
 export interface MenubarRadioItemProps extends MenubarItemProps {
   checked?: boolean;
+  value: string;
   onCheckedChange?: (checked: boolean) => void;
 }

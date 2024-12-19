@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { type MenubarCheckboxItemProps, type MenubarItemProps, type MenubarRadioItemProps } from "./types";
 
 const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
-  ({ className, inset, disabled, ...props }, ref) => (
+  ({ className, inset, disabled, onSelect, ...props }, ref) => (
     <MenubarPrimitive.Item
       ref={ref}
       className={cn(
@@ -14,6 +14,7 @@ const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
         className
       )}
       disabled={disabled}
+      onSelect={(event) => onSelect?.(event)}
       {...props}
     />
   )
@@ -21,7 +22,7 @@ const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
 MenubarItem.displayName = MenubarPrimitive.Item.displayName;
 
 const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheckboxItemProps>(
-  ({ className, children, checked, ...props }, ref) => (
+  ({ className, children, checked, onSelect, ...props }, ref) => (
     <MenubarPrimitive.CheckboxItem
       ref={ref}
       className={cn(
@@ -29,6 +30,7 @@ const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheckboxItem
         className
       )}
       checked={checked}
+      onSelect={(event) => onSelect?.(event)}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -43,13 +45,15 @@ const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheckboxItem
 MenubarCheckboxItem.displayName = MenubarPrimitive.CheckboxItem.displayName;
 
 const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioItemProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ className, children, value, onSelect, ...props }, ref) => (
     <MenubarPrimitive.RadioItem
       ref={ref}
       className={cn(
         "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
+      value={value}
+      onSelect={(event) => onSelect?.(event)}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
