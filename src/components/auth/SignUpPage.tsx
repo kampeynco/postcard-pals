@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Session } from "@supabase/supabase-js";
+import { AuthError } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
@@ -14,7 +14,7 @@ const SignUpPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_UP' && session) {
+      if (session?.user && event === 'SIGNED_IN') {
         console.log("New signup detected, session:", session.user.email);
         setShowConfirmation(true);
         
@@ -68,8 +68,9 @@ const SignUpPage = () => {
           }, 5000);
 
         } catch (error) {
-          console.error("Error in signup process:", error);
-          toast.error("An unexpected error occurred. Please try again.");
+          const authError = error as AuthError;
+          console.error("Error in signup process:", authError);
+          toast.error(authError.message || "An unexpected error occurred. Please try again.");
           await supabase.auth.signOut();
         }
       }

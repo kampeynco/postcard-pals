@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 const ConfirmationMessage = () => {
   return (
     <div className="text-center space-y-4">
