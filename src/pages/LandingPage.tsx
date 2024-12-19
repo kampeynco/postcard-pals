@@ -2,14 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Check } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen">
-      <PublicNav />
-      
-      {/* Hero Section */}
-      <div className="bg-[#4B5EE4] text-white">
+      <div className="bg-[#4B5EE4] text-white relative">
+        <PublicNav />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center">
           <span className="bg-orange-500 text-white text-sm px-4 py-1 rounded-full">Never fall behind</span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mt-6 mb-6">
@@ -114,41 +113,55 @@ const LandingPage = () => {
       <div className="py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Here's How It Works</h2>
-          <div className="space-y-8">
-            <div className="flex items-start gap-4">
-              <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                <span className="font-semibold">1</span>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Connect ActBlue Account</h3>
-                <p className="text-gray-600">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="step-1">
+              <AccordionTrigger className="text-left">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+                    <span className="font-semibold">1</span>
+                  </div>
+                  <span className="font-semibold">Connect ActBlue Account</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-600 pl-12">
                   Just link to your ActBlue account. It takes less than 5 minutes to get everything registered.
                 </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                <span className="font-semibold">2</span>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Design Thank You Card</h3>
-                <p className="text-gray-600">
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="step-2">
+              <AccordionTrigger className="text-left">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+                    <span className="font-semibold">2</span>
+                  </div>
+                  <span className="font-semibold">Design Thank You Card</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-600 pl-12">
                   Choose from our templates or create your own custom design.
                 </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
-                <span className="font-semibold">3</span>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">We Handle The Rest</h3>
-                <p className="text-gray-600">
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="step-3">
+              <AccordionTrigger className="text-left">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+                    <span className="font-semibold">3</span>
+                  </div>
+                  <span className="font-semibold">We Handle The Rest</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-gray-600 pl-12">
                   Sit back and relax while we automatically send beautiful thank you cards to your donors.
                 </p>
-              </div>
-            </div>
-          </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
 
