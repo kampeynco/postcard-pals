@@ -8,11 +8,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+//  Input data
 interface EmailRequest {
+  from: string;
   to: string[];
   subject: string;
   html: string;
-  from?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailRequest: EmailRequest = await req.json();
     
     // Default from address if not provided
-    const fromAddress = emailRequest.from || "Thanks From Us Team <noreply@thanksfrom.us>";
+    const fromAddress = emailRequest.from || "Thanks From Us Team <noreply@thanksfromus.com>";
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -43,9 +44,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (res.ok) {
       const data = await res.json();
+
       return new Response(JSON.stringify(data), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
       });
     } else {
       const error = await res.text();
@@ -55,7 +60,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
   } catch (error: any) {
-    console.error("Error in send-email function:", error);
+    console.error("Error in sendemail function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
