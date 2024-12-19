@@ -40,104 +40,35 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Features Comparison Section */}
+      {/* How It Works Section - ShipBob Style */}
       <div className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Tired of manually<br />Thanking donors?
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-red-50 p-8 rounded-xl">
-              <h3 className="font-semibold mb-6">Thank You without Thanks From Us</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-2 text-red-600">
-                  <span className="text-lg">×</span>
-                  <span>1-2 hour mailing supplies</span>
-                </li>
-                <li className="flex items-start gap-2 text-red-600">
-                  <span className="text-lg">×</span>
-                  <span>2 hrs merging with mail merge</span>
-                </li>
-                <li className="flex items-start gap-2 text-red-600">
-                  <span className="text-lg">×</span>
-                  <span>4 hrs signing letters</span>
-                </li>
-                <li className="flex items-start gap-2 text-red-600">
-                  <span className="text-lg">×</span>
-                  <span>30 min dealing with payments</span>
-                </li>
-                <li className="flex items-start gap-2 text-red-600">
-                  <span className="text-lg">×</span>
-                  <span>3 hrs stuffing envelopes</span>
-                </li>
-                <li className="flex items-start gap-2 text-red-600 font-semibold">
-                  <span className="text-lg">×</span>
-                  <span>10+ hours of headaches</span>
-                </li>
-              </ul>
-            </div>
-            <div className="bg-green-50 p-8 rounded-xl">
-              <h3 className="font-semibold mb-6">Thank You with Thanks From Us</h3>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-2 text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>No supply runs</span>
-                </li>
-                <li className="flex items-center gap-2 text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>No merging with mail merge</span>
-                </li>
-                <li className="flex items-center gap-2 text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>No paper cuts</span>
-                </li>
-                <li className="flex items-center gap-2 text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>No signing letters</span>
-                </li>
-                <li className="flex items-center gap-2 text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>No stuffing envelopes</span>
-                </li>
-                <li className="flex items-center gap-2 text-green-600 font-semibold">
-                  <Check className="w-4 h-4" />
-                  <span>10+ hours of time saved</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works Section - Updated Design */}
-      <div className="py-24 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-16">Here's How It Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-16">How Thanks From Us Works</h2>
           <div className="relative">
             {/* Vertical connecting line */}
-            <div className="absolute left-[28px] top-[60px] bottom-[60px] w-0.5 bg-blue-200 hidden md:block"></div>
+            <div className="absolute left-[28px] top-0 bottom-0 w-0.5 bg-gray-200 hidden md:block"></div>
             
             {/* Step 1 */}
-            <div className="flex flex-col md:flex-row items-start gap-8 mb-16 relative">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+            <div className="flex flex-col md:flex-row items-start gap-8 mb-20 relative">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
                 1
               </div>
               <div className="flex-1 pt-2">
-                <h3 className="text-xl font-semibold mb-2">Connect ActBlue</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-bold mb-3 text-navy-900">Connect ActBlue</h3>
+                <p className="text-gray-600 text-lg">
                   Link your ActBlue account to automatically sync your donations. It takes less than 5 minutes to get everything set up.
                 </p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-col md:flex-row items-start gap-8 mb-16 relative">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+            <div className="flex flex-col md:flex-row items-start gap-8 mb-20 relative">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
                 2
               </div>
               <div className="flex-1 pt-2">
-                <h3 className="text-xl font-semibold mb-2">Design Your Thank You Cards</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-bold mb-3 text-navy-900">Design Your Thank You Cards</h3>
+                <p className="text-gray-600 text-lg">
                   Choose from our templates or create your own custom design. Add your personal touch to make your donors feel special.
                 </p>
               </div>
@@ -145,12 +76,12 @@ const LandingPage = () => {
 
             {/* Step 3 */}
             <div className="flex flex-col md:flex-row items-start gap-8 relative">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#4B5EE4] text-white flex items-center justify-center text-xl font-semibold z-10">
                 3
               </div>
               <div className="flex-1 pt-2">
-                <h3 className="text-xl font-semibold mb-2">Automatic Sending</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-bold mb-3 text-navy-900">Automatic Sending</h3>
+                <p className="text-gray-600 text-lg">
                   We handle everything else - from printing to mailing. Your donors receive beautiful thank you cards without any extra work from you.
                 </p>
               </div>
