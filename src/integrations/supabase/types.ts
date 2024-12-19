@@ -60,6 +60,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_verified: boolean | null
+          last_verified_at: string | null
           lob_id: string
           user_id: string | null
         }
@@ -68,6 +69,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_verified?: boolean | null
+          last_verified_at?: string | null
           lob_id: string
           user_id?: string | null
         }
@@ -76,6 +78,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_verified?: boolean | null
+          last_verified_at?: string | null
           lob_id?: string
           user_id?: string | null
         }
@@ -121,6 +124,7 @@ export type Database = {
           lob_webhook_id: string | null
           status: Database["public"]["Enums"]["postcard_status"]
           template_id: string
+          tracking_number: string | null
           user_id: string
         }
         Insert: {
@@ -132,6 +136,7 @@ export type Database = {
           lob_webhook_id?: string | null
           status?: Database["public"]["Enums"]["postcard_status"]
           template_id: string
+          tracking_number?: string | null
           user_id: string
         }
         Update: {
@@ -143,6 +148,7 @@ export type Database = {
           lob_webhook_id?: string | null
           status?: Database["public"]["Enums"]["postcard_status"]
           template_id?: string
+          tracking_number?: string | null
           user_id?: string
         }
         Relationships: [

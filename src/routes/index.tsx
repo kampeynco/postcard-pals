@@ -6,6 +6,7 @@ import Dashboard from "@/pages/Dashboard";
 import LandingPage from "@/pages/LandingPage";
 import PricingPage from "@/pages/PricingPage";
 import ActBlueSettings from "@/pages/ActBlueSettings";
+import PostcardsPage from "@/pages/PostcardsPage";
 import MainLayout from "@/components/layout/MainLayout";
 
 const AppRoutes = () => {
@@ -34,6 +35,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <MainLayout>
               <ActBlueSettings />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postcards"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <PostcardsPage />
             </MainLayout>
           </ProtectedRoute>
         }
