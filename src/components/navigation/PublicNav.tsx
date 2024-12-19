@@ -26,18 +26,22 @@ const PublicNav = () => {
               Thanks From Us
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
-              <button
-                onClick={() => scrollToSection('features')}
-                className="text-white/80 hover:text-white transition-colors duration-200"
-              >
-                Features
-              </button>
-              <button
-                onClick={() => scrollToSection('how-it-works')}
-                className="text-white/80 hover:text-white transition-colors duration-200"
-              >
-                How It Works
-              </button>
+              {isHomePage && (
+                <>
+                  <button
+                    onClick={() => scrollToSection('features')}
+                    className="text-white/80 hover:text-white transition-colors duration-200"
+                  >
+                    Features
+                  </button>
+                  <button
+                    onClick={() => scrollToSection('how-it-works')}
+                    className="text-white/80 hover:text-white transition-colors duration-200"
+                  >
+                    How It Works
+                  </button>
+                </>
+              )}
               <Link
                 to="/pricing"
                 className="text-white/80 hover:text-white transition-colors duration-200"
@@ -49,7 +53,7 @@ const PublicNav = () => {
           <div className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
-              className="text-white hover:text-[#4B5EE4]"
+              className="text-white hover:text-[#4B5EE4] hover:bg-white"
               asChild
             >
               <Link to="/signin">Sign in</Link>
