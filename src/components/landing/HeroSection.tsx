@@ -77,7 +77,7 @@ export const HeroSection = () => {
             </div>
             {/* Text */}
             <p className="text-sm text-white/90">
-              <span className="font-semibold">135+ users</span> send thank yous faster with our platform
+              <span className="font-semibold">135+ leaders</span> send thank yous faster
             </p>
           </div>
         </div>
