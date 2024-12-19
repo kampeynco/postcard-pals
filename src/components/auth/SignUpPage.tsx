@@ -98,7 +98,7 @@ const SignUpPage = () => {
               variables: {
                 sign_up: {
                   button_label: "Sign up",
-                  loading_button_label: "Creating your account...",
+                  loading_button_label: "Signing up...",
                   email_label: "Email address",
                   password_label: "Create a password",
                 },
