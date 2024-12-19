@@ -20,18 +20,20 @@ export const HeroSection = () => {
             <Link to="/signup">Send Thank You Faster →</Link>
           </Button>
         </div>
-        <div className="space-y-4 mb-12 max-w-xs mx-auto">
-          <div className="flex items-center gap-2 text-left">
-            <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
-            <span className="text-white/90">5-minute no-hassle setup</span>
-          </div>
-          <div className="flex items-center gap-2 text-left">
-            <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
-            <span className="text-white/90">Increase donor retention</span>
-          </div>
-          <div className="flex items-center gap-2 text-left">
-            <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
-            <span className="text-white/90">No more mail merges</span>
+        <div className="flex justify-center mb-12">
+          <div className="space-y-4 max-w-xs">
+            <div className="flex items-center gap-2 text-left">
+              <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
+              <span className="text-white/90">5-minute no-hassle setup</span>
+            </div>
+            <div className="flex items-center gap-2 text-left">
+              <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
+              <span className="text-white/90">Increase donor retention</span>
+            </div>
+            <div className="flex items-center gap-2 text-left">
+              <Check className="text-green-400 w-5 h-5 flex-shrink-0" />
+              <span className="text-white/90">No more mail merges</span>
+            </div>
           </div>
         </div>
         
