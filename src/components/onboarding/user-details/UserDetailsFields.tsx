@@ -14,6 +14,16 @@ interface UserDetailsFieldsProps {
   form: UseFormReturn<UserDetailsFormValues>;
 }
 
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-numeric characters
+  const number = value.replace(/[^\d]/g, "");
+  
+  // Format the number as (XXX) XXX-XXXX
+  if (number.length <= 3) return number;
+  if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
+  return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
+};
+
 export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
   return (
     <Form {...form}>
@@ -59,7 +69,7 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
         <FormField
           control={form.control}
           name="phone_number"
-          render={({ field }) => (
+          render={({ field: { onChange, ...field } }) => (
             <FormItem>
               <FormLabel className="text-gray-700 font-medium">Mobile Phone Number</FormLabel>
               <FormControl>
@@ -67,6 +77,10 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
                   type="tel" 
                   placeholder="(555) 555-5555"
                   className="border-gray-200 focus:border-brand-background focus:ring-brand-background h-12" 
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    onChange(formatted);
+                  }}
                   {...field} 
                 />
               </FormControl>
