@@ -18,6 +18,12 @@ const SignUpPage = () => {
         console.log("New signup detected, session:", session.user.email);
         
         try {
+          // Get the base URL without any trailing colons or slashes
+          const baseUrl = window.location.origin.replace(/:\/*$/, '');
+          const confirmationUrl = `${baseUrl}/signin?confirmation=success&email=${encodeURIComponent(session.user.email || '')}`;
+          
+          console.log("Generated confirmation URL:", confirmationUrl);
+
           // Send confirmation email using our Resend function
           const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
             body: {
@@ -27,7 +33,7 @@ const SignUpPage = () => {
               html: `
                 <h1>Welcome to Thanks From Us!</h1>
                 <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
-                <p><a href="${window.location.origin}/signin?confirmation=success&email=${encodeURIComponent(session.user.email || '')}">Confirm Email</a></p>
+                <p><a href="${confirmationUrl}">Confirm Email</a></p>
                 <p>If you did not create this account, please ignore this email.</p>
                 <p>Best regards,<br>Thanks From Us Team</p>
               `,
