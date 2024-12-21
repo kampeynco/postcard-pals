@@ -1,3 +1,4 @@
+import { useAuth } from "@/components/auth/AuthProvider";
 import PublicNav from "@/components/navigation/PublicNav";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ComparisonSection } from "@/components/landing/ComparisonSection";
@@ -7,6 +8,13 @@ import { CallToAction } from "@/components/landing/CallToAction";
 import { Footer } from "@/components/layout/Footer";
 
 const LandingPage = () => {
+  const { loading } = useAuth();
+
+  // Don't show loading spinner for public pages
+  if (loading) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen">
       <PublicNav />

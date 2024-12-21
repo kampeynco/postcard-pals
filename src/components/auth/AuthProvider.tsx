@@ -15,6 +15,7 @@ const noOnboardingRoutes = [...publicRoutes, ROUTES.ONBOARDING] as const;
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,19 +26,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleAuthStateChange = async (session: Session | null) => {
-    if (!session) return;
+    console.log("Auth state change handler called with session:", session?.user?.email);
     
+    if (!session) {
+      setSession(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       const result = await checkUserProfile(session);
+      console.log("Profile check result:", result);
+      
       if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
         navigate(ROUTES.ONBOARDING, { replace: true });
       }
+      setSession(session);
     } catch (error) {
       handleError(error as Error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleInitialNavigation = async (session: Session | null, result: ProfileCheckResult) => {
+    console.log("Initial navigation handler called with session:", session?.user?.email);
+    
     try {
       if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
         navigate(ROUTES.ONBOARDING, { replace: true });
@@ -51,24 +65,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     console.log("AuthProvider initialized");
-    
+    let isSubscribed = true;
+
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         console.log("Initial session check:", session?.user?.email);
-        setSession(session);
         
-        if (session) {
-          const result = await checkUserProfile(session);
-          console.log("Profile check result:", result);
-          await handleInitialNavigation(session, result);
-        } else if (!publicRoutes.includes(location.pathname as typeof publicRoutes[number])) {
-          navigate(ROUTES.SIGNIN, { replace: true });
+        if (error) throw error;
+
+        if (isSubscribed) {
+          setSession(session);
+          
+          if (session) {
+            const result = await checkUserProfile(session);
+            console.log("Profile check result:", result);
+            await handleInitialNavigation(session, result);
+          } else if (!publicRoutes.includes(location.pathname as typeof publicRoutes[number])) {
+            navigate(ROUTES.SIGNIN, { replace: true });
+          }
         }
-        
-        setLoading(false);
       } catch (error) {
         handleError(error as Error);
+      } finally {
+        if (isSubscribed) {
+          setLoading(false);
+          setInitialized(true);
+        }
       }
     };
 
@@ -78,14 +101,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log("Auth state changed:", _event, session?.user?.email);
-      setSession(session);
-      await handleAuthStateChange(session);
+      if (isSubscribed) {
+        await handleAuthStateChange(session);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isSubscribed = false;
+      subscription.unsubscribe();
+    };
   }, [navigate, location.pathname]);
 
-  if (loading) {
+  // Don't render anything until we've initialized
+  if (!initialized) {
     return <LoadingSpinner />;
   }
 
