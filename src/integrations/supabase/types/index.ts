@@ -1,2 +1,2 @@
 export * from './database';
-export * from './profile';
+export { Profile, ProfilesTable } from './profile';
