@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 import MainLayout from "@/components/layout/MainLayout";
 import { UserDetailsStep } from "@/components/onboarding/UserDetailsStep";
 import { ActBlueStep } from "@/components/onboarding/ActBlueStep";
@@ -15,6 +16,7 @@ const steps = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
+  const { loading } = useAuth();
   
   const progress = ((currentStep + 1) / steps.length) * 100;
   const CurrentStepComponent = steps[currentStep].component;
@@ -31,6 +33,16 @@ export default function Onboarding() {
     }
   };
 
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -42,7 +54,7 @@ export default function Onboarding() {
               <span
                 key={index}
                 className={`${
-                  index <= currentStep ? "text-brand-accent" : "text-gray-400"
+                  index <= currentStep ? "text-emerald-600" : "text-gray-400"
                 }`}
               >
                 {step.title}

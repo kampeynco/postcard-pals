@@ -8,17 +8,16 @@ export const checkUserProfile = async (session: Session) => {
     
     const { data: profile, error } = await supabase
       .from('profiles')
-      .select('first_name, last_name')
+      .select('first_name, last_name, phone_number')
       .eq('id', session.user.id)
       .maybeSingle();
 
     if (error) {
       console.error('Error fetching profile:', error);
-      toast.error("An error occurred while checking your profile. Please try again.");
+      toast.error("An error occurred while checking your profile");
       return { type: 'error' as const };
     }
 
-    // If no profile found
     if (!profile) {
       console.log("No profile found");
       return { type: 'deleted' as const };
@@ -26,7 +25,8 @@ export const checkUserProfile = async (session: Session) => {
 
     console.log("Profile data:", profile);
 
-    if (!profile.first_name || !profile.last_name) {
+    // Check if any required fields are missing
+    if (!profile.first_name || !profile.last_name || !profile.phone_number) {
       console.log("Profile incomplete");
       return { type: 'incomplete' as const, profile };
     }
@@ -34,7 +34,7 @@ export const checkUserProfile = async (session: Session) => {
     return { type: 'complete' as const, profile };
   } catch (error) {
     console.error('Error checking user profile:', error);
-    toast.error("An error occurred while checking your profile. Please try again.");
+    toast.error("An error occurred while checking your profile");
     return { type: 'error' as const };
   }
 };

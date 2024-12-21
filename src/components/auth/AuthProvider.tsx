@@ -18,48 +18,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleAuthStateChange = async (session: Session | null) => {
-    console.log("Handling auth state change:", session?.user?.email);
-    
-    if (session) {
-      try {
-        const result = await checkUserProfile(session);
-        console.log("Profile check result:", result);
-        
-        switch (result.type) {
-          case 'deleted':
-            console.log("Profile deleted or not found");
-            toast.error("Your profile appears to be missing. Please sign up again.");
-            await supabase.auth.signOut();
-            navigate("/signup", { replace: true });
-            break;
-          case 'incomplete':
-            console.log("Profile incomplete, current path:", location.pathname);
-            if (!noOnboardingRoutes.includes(location.pathname)) {
-              navigate("/onboarding", { replace: true });
-            }
-            break;
-          case 'complete':
-            console.log("Profile complete, current path:", location.pathname);
-            if (location.pathname === "/onboarding") {
-              navigate("/dashboard", { replace: true });
-            }
-            break;
-          case 'error':
-            console.log("Error checking profile");
-            // Error already handled in checkUserProfile
-            break;
-        }
-      } catch (error) {
-        console.error("Error in handleAuthStateChange:", error);
-        toast.error("An unexpected error occurred. Please try again.");
-      }
-    } else if (!publicRoutes.includes(location.pathname)) {
-      console.log("No session, redirecting to signin");
-      navigate("/signin", { replace: true });
-    }
-  };
-
   useEffect(() => {
     console.log("AuthProvider initialized");
     
@@ -67,10 +25,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         console.log("Initial session check:", session?.user?.email);
-        if (session) {
-          await handleAuthStateChange(session);
-        }
         setSession(session);
+        
+        if (session) {
+          const result = await checkUserProfile(session);
+          console.log("Profile check result:", result);
+          
+          if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname)) {
+            navigate("/onboarding", { replace: true });
+          } else if (result.type === 'complete' && location.pathname === "/onboarding") {
+            navigate("/dashboard", { replace: true });
+          }
+        } else if (!publicRoutes.includes(location.pathname)) {
+          navigate("/signin", { replace: true });
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error("Error in initializeAuth:", error);
@@ -85,8 +54,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log("Auth state changed:", _event, session?.user?.email);
-      await handleAuthStateChange(session);
       setSession(session);
+      
+      if (session) {
+        const result = await checkUserProfile(session);
+        console.log("Profile check on auth change:", result);
+        
+        if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname)) {
+          navigate("/onboarding", { replace: true });
+        }
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -99,5 +76,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Re-export useAuth from the context
 export { useAuth } from "@/contexts/AuthContext";
