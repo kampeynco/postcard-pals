@@ -11,3 +11,5 @@ export const ROUTES = {
   POSTCARDS: '/postcards',
   MONITORING: '/monitoring',
 } as const;
+
+export type AppRoute = typeof ROUTES[keyof typeof ROUTES];

@@ -9,8 +9,8 @@ import { ROUTES } from "@/constants/routes";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ProfileCheckResult } from "@/types/auth";
 
-const publicRoutes = [ROUTES.HOME, ROUTES.PRICING, ROUTES.SIGNIN, ROUTES.SIGNUP];
-const noOnboardingRoutes = [...publicRoutes, ROUTES.ONBOARDING];
+const publicRoutes = [ROUTES.HOME, ROUTES.PRICING, ROUTES.SIGNIN, ROUTES.SIGNUP] as const;
+const noOnboardingRoutes = [...publicRoutes, ROUTES.ONBOARDING] as const;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     try {
       const result = await checkUserProfile(session);
-      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname)) {
+      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
         navigate(ROUTES.ONBOARDING, { replace: true });
       }
     } catch (error) {
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleInitialNavigation = async (session: Session | null, result: ProfileCheckResult) => {
     try {
-      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname)) {
+      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
         navigate(ROUTES.ONBOARDING, { replace: true });
       } else if (result.type === 'complete' && location.pathname === ROUTES.ONBOARDING) {
         navigate(ROUTES.DASHBOARD, { replace: true });
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const result = await checkUserProfile(session);
           console.log("Profile check result:", result);
           await handleInitialNavigation(session, result);
-        } else if (!publicRoutes.includes(location.pathname)) {
+        } else if (!publicRoutes.includes(location.pathname as typeof publicRoutes[number])) {
           navigate(ROUTES.SIGNIN, { replace: true });
         }
         
