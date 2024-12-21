@@ -17,7 +17,6 @@ interface UserDetailsFormProps {
 }
 
 export function UserDetailsForm({ onSuccess }: UserDetailsFormProps) {
-  const { toast } = useToast();
   const form = useForm<UserDetailsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,18 +45,10 @@ export function UserDetailsForm({ onSuccess }: UserDetailsFormProps) {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Profile updated successfully",
-      });
-      
+      toast.success("Profile updated successfully");
       onSuccess();
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-      });
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
