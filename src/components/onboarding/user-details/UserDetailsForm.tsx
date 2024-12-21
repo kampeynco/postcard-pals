@@ -4,14 +4,13 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { UserDetailsFields } from "./UserDetailsFields";
+import { UserDetailsFormValues } from "./types";
 
 const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone_number: z.string().min(10, "Please enter a valid phone number"),
 });
-
-type UserDetailsFormValues = z.infer<typeof formSchema>;
 
 interface UserDetailsFormProps {
   onSuccess: () => void;

@@ -8,13 +8,10 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { UserDetailsFormValues } from "./types";
 
 interface UserDetailsFieldsProps {
-  form: UseFormReturn<{
-    first_name: string;
-    last_name: string;
-    phone_number: string;
-  }>;
+  form: UseFormReturn<UserDetailsFormValues>;
 }
 
 export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
