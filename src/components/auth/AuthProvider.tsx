@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, is_confirmed')
+        .select('first_name, last_name')
         .eq('id', session.user.id)
         .single();
 
@@ -56,21 +56,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       console.log("Profile data:", profile);
 
-      // Check if email is confirmed
-      if (!profile.is_confirmed && !noOnboardingRoutes.includes(location.pathname)) {
-        console.log("Email not confirmed, signing out user");
-        await supabase.auth.signOut();
-        setSession(null);
-        toast.error("Please confirm your email before accessing this page.");
-        navigate("/signin", { replace: true });
-        return null;
+      // If profile is incomplete, redirect to onboarding
+      if (!profile.first_name || !profile.last_name) {
+        if (!noOnboardingRoutes.includes(location.pathname)) {
+          console.log("Profile incomplete, redirecting to onboarding");
+          navigate("/onboarding", { replace: true });
+        }
+        return profile;
       }
 
-      // If email is confirmed but profile is incomplete, redirect to onboarding
-      if (profile.is_confirmed && (!profile.first_name || !profile.last_name) && !noOnboardingRoutes.includes(location.pathname)) {
-        console.log("Profile incomplete, redirecting to onboarding");
-        navigate("/onboarding", { replace: true });
-        return profile;
+      // If profile is complete and user is on onboarding, redirect to dashboard
+      if (location.pathname === "/onboarding") {
+        navigate("/dashboard", { replace: true });
       }
 
       return profile;
@@ -88,8 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Initial session check:", session?.user?.email);
       
       if (session) {
-        const profile = await checkUserProfile(session);
-        if (!profile) return; // User was logged out due to deleted account or unconfirmed email
+        await checkUserProfile(session);
       }
       
       setSession(session);
@@ -102,8 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Auth state changed:", _event, session?.user?.email);
       
       if (session) {
-        const profile = await checkUserProfile(session);
-        if (!profile) return; // User was logged out
+        await checkUserProfile(session);
       }
       
       setSession(session);

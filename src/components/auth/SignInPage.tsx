@@ -5,7 +5,6 @@ import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
-import EmailConfirmationHandler from "./signin/EmailConfirmationHandler";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -17,23 +16,16 @@ const SignInPage = () => {
 
       if (session) {
         try {
-          // Check if user's profile exists and is confirmed
+          // Check if user's profile is complete
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('first_name, last_name, is_confirmed')
+            .select('first_name, last_name')
             .eq('id', session.user.id)
             .single();
 
           if (profileError) {
             console.error('Error fetching profile:', profileError);
             toast.error("There was an error signing in. Please try again.");
-            await supabase.auth.signOut();
-            return;
-          }
-
-          if (!profile?.is_confirmed) {
-            console.log("Profile not confirmed");
-            toast.error("Please confirm your email before signing in.");
             await supabase.auth.signOut();
             return;
           }
@@ -73,7 +65,6 @@ const SignInPage = () => {
           <AuthForm />
         </div>
       </div>
-      <EmailConfirmationHandler />
       <Footer />
     </div>
   );
