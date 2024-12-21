@@ -11,14 +11,14 @@ export const checkUserProfile = async (session: Session): Promise<ProfileCheckRe
       
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, phone_number')
+        .select('*')
         .eq('id', session.user.id)
         .maybeSingle();
 
       if (error) {
         console.error('Error fetching profile:', error);
         toast.error("An error occurred while checking your profile");
-        throw error;
+        return { type: 'error' as const };
       }
 
       if (!profile) {
