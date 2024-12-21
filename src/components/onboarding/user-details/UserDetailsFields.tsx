@@ -17,15 +17,19 @@ interface UserDetailsFieldsProps {
 export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
   return (
     <Form {...form}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="first_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel className="text-gray-700">First Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your first name" {...field} />
+                <Input 
+                  placeholder="Enter your first name" 
+                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -37,9 +41,13 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
           name="last_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel className="text-gray-700">Last Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your last name" {...field} />
+                <Input 
+                  placeholder="Enter your last name" 
+                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -52,11 +60,12 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
         name="phone_number"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Mobile Phone Number</FormLabel>
+            <FormLabel className="text-gray-700">Mobile Phone Number</FormLabel>
             <FormControl>
               <Input 
                 type="tel" 
                 placeholder="(555) 555-5555"
+                className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
                 {...field} 
               />
             </FormControl>

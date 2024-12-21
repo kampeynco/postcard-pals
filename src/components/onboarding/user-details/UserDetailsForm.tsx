@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { UserDetailsFields } from "./UserDetailsFields";
 import { UserDetailsFormValues } from "./types";
 
@@ -62,11 +62,15 @@ export function UserDetailsForm({ onSuccess }: UserDetailsFormProps) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <UserDetailsFields form={form} />
-      <div className="flex justify-end pt-4">
-        <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
+      <div className="flex justify-end">
+        <button 
+          type="submit" 
+          className="bg-brand-background text-brand-text px-6 py-2.5 rounded-md hover:bg-opacity-90 transition-colors flex items-center gap-2"
+        >
           Continue
+          <span className="inline-block">→</span>
         </button>
       </div>
     </form>
