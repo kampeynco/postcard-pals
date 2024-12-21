@@ -4,6 +4,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthContext } from "@/contexts/AuthContext";
 import { checkUserProfile } from "@/utils/profileUtils";
+import { toast } from "sonner";
 
 // List of public routes that don't require authentication
 const publicRoutes = ["/", "/pricing", "/signin", "/signup"];
@@ -18,28 +19,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const handleAuthStateChange = async (session: Session | null) => {
+    console.log("Handling auth state change:", session?.user?.email);
+    
     if (session) {
-      const result = await checkUserProfile(session);
-      
-      switch (result.type) {
-        case 'deleted':
-          navigate("/signup", { replace: true });
-          break;
-        case 'incomplete':
-          if (!noOnboardingRoutes.includes(location.pathname)) {
-            navigate("/onboarding", { replace: true });
-          }
-          break;
-        case 'complete':
-          if (location.pathname === "/onboarding") {
-            navigate("/dashboard", { replace: true });
-          }
-          break;
-        case 'error':
-          // Error already handled in checkUserProfile
-          break;
+      try {
+        const result = await checkUserProfile(session);
+        console.log("Profile check result:", result);
+        
+        switch (result.type) {
+          case 'deleted':
+            console.log("Profile deleted or not found");
+            toast.error("Your profile appears to be missing. Please sign up again.");
+            await supabase.auth.signOut();
+            navigate("/signup", { replace: true });
+            break;
+          case 'incomplete':
+            console.log("Profile incomplete, current path:", location.pathname);
+            if (!noOnboardingRoutes.includes(location.pathname)) {
+              navigate("/onboarding", { replace: true });
+            }
+            break;
+          case 'complete':
+            console.log("Profile complete, current path:", location.pathname);
+            if (location.pathname === "/onboarding") {
+              navigate("/dashboard", { replace: true });
+            }
+            break;
+          case 'error':
+            console.log("Error checking profile");
+            // Error already handled in checkUserProfile
+            break;
+        }
+      } catch (error) {
+        console.error("Error in handleAuthStateChange:", error);
+        toast.error("An unexpected error occurred. Please try again.");
       }
     } else if (!publicRoutes.includes(location.pathname)) {
+      console.log("No session, redirecting to signin");
       navigate("/signin", { replace: true });
     }
   };
@@ -47,14 +63,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     console.log("AuthProvider initialized");
     
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Initial session check:", session?.user?.email);
-      if (session) {
-        handleAuthStateChange(session);
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("Initial session check:", session?.user?.email);
+        if (session) {
+          await handleAuthStateChange(session);
+        }
+        setSession(session);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error in initializeAuth:", error);
+        setLoading(false);
+        toast.error("Error initializing authentication");
       }
-      setSession(session);
-      setLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     const {
       data: { subscription },

@@ -10,17 +10,18 @@ export const checkUserProfile = async (session: Session) => {
       .from('profiles')
       .select('first_name, last_name')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching profile:', error);
-      if (error.code === 'PGRST116') {
-        // Profile not found - user likely deleted
-        await supabase.auth.signOut();
-        toast.error("Your account appears to have been deleted. Please sign up again.");
-        return { type: 'deleted' as const };
-      }
-      throw error;
+      toast.error("An error occurred while checking your profile. Please try again.");
+      return { type: 'error' as const };
+    }
+
+    // If no profile found
+    if (!profile) {
+      console.log("No profile found");
+      return { type: 'deleted' as const };
     }
 
     console.log("Profile data:", profile);
