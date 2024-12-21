@@ -1,2 +1,1 @@
-export * from './database';
-export type { Profile, ProfilesTable } from './profile';
+export type * from './database';

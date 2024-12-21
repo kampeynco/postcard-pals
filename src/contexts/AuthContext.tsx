@@ -1,10 +1,5 @@
 import { createContext, useContext } from "react";
-import { Session } from "@supabase/supabase-js";
-
-type AuthContextType = {
-  session: Session | null;
-  loading: boolean;
-};
+import type { AuthContextType } from "@/types/auth";
 
 export const AuthContext = createContext<AuthContextType>({ 
   session: null, 
