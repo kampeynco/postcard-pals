@@ -10,7 +10,7 @@ export interface Profile {
   is_confirmed: boolean | null;
 }
 
-export type ProfilesTable = {
+export interface ProfilesTable {
   Row: Profile;
   Insert: Omit<Profile, 'created_at' | 'updated_at'>;
   Update: Partial<Profile>;
