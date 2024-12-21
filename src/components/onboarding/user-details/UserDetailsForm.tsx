@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { UserDetailsFields } from "./UserDetailsFields";
 import { UserDetailsFormValues } from "./types";
+import { ArrowRight } from "lucide-react";
 
 const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
@@ -53,15 +54,15 @@ export function UserDetailsForm({ onSuccess }: UserDetailsFormProps) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <UserDetailsFields form={form} />
       <div className="flex justify-end">
         <button 
           type="submit" 
-          className="bg-brand-background text-brand-text px-6 py-2.5 rounded-md hover:bg-opacity-90 transition-colors flex items-center gap-2"
+          className="bg-brand-background text-brand-text px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2 text-base font-medium"
         >
           Continue
-          <span className="inline-block">→</span>
+          <ArrowRight className="w-5 h-5" />
         </button>
       </div>
     </form>
