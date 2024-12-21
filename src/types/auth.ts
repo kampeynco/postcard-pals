@@ -1,4 +1,4 @@
-import { Profile } from "@/integrations/supabase/types";
+import type { Profile } from "@/integrations/supabase/types";
 
 export type ProfileCheckResult =
   | { type: 'complete'; profile: Profile }
