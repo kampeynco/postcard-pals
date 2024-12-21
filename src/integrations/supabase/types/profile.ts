@@ -1,4 +1,4 @@
-import { Database } from './database';
+import type { Database } from './database';
 
 export interface Profile {
   id: string;
