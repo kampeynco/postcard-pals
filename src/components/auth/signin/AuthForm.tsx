@@ -2,8 +2,18 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { AuthError } from "@supabase/supabase-js";
 
 const AuthForm = () => {
+  const handleError = (error: AuthError) => {
+    console.error("Auth error:", error);
+    if (error.message.includes("Invalid login credentials")) {
+      toast.error("Invalid email or password. Please try again.");
+    } else {
+      toast.error("An error occurred during sign in. Please try again.");
+    }
+  };
+
   return (
     <Auth
       supabaseClient={supabase}
@@ -32,14 +42,7 @@ const AuthForm = () => {
           },
         },
       }}
-      onError={(error) => {
-        console.error("Auth error:", error);
-        if (error.message.includes("Invalid login credentials")) {
-          toast.error("Invalid email or password. Please try again.");
-        } else {
-          toast.error("An error occurred during sign in. Please try again.");
-        }
-      }}
+      onError={handleError}
     />
   );
 };
