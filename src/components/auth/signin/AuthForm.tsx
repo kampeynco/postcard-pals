@@ -3,10 +3,10 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { AuthError } from "@supabase/supabase-js";
-import type { AuthChangeEvent } from "@supabase/supabase-js";
+import type { Provider } from "@supabase/supabase-js";
 
 const AuthForm = () => {
-  const handleAuthEvent = async (event: AuthChangeEvent, session: any) => {
+  const handleAuthEvent = async (event: any, session: any) => {
     if (event === "SIGNED_IN") {
       toast.success("Successfully signed in!");
     } else if (event === "SIGNED_OUT") {
@@ -28,8 +28,7 @@ const AuthForm = () => {
         },
       }}
       theme="light"
-      providers={[]}
-      onlyThirdPartyProviders={false}
+      providers={[] as Provider[]}
       redirectTo={window.location.origin}
       view="sign_in"
       showLinks={true}
@@ -44,6 +43,14 @@ const AuthForm = () => {
             password_input_placeholder: "Enter your password",
           },
         },
+      }}
+      onError={(error: AuthError) => {
+        console.error("Auth error:", error);
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password. Please try again.");
+        } else {
+          toast.error(error.message || "An error occurred during sign in. Please try again.");
+        }
       }}
     />
   );
