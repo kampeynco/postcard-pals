@@ -1,34 +1,39 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
-import { FormValues } from "./types";
+import { useFormContext } from "react-hook-form";
+import { FormValues, OfficeType } from "./types";
 
-interface CandidateFieldsProps {
-  form: UseFormReturn<FormValues>;
-}
-
-const POLITICAL_OFFICES = [
-  { value: "president", label: "President of the United States" },
-  { value: "us_senate", label: "U.S. Senator" },
-  { value: "us_house", label: "U.S. Representative" },
-  { value: "governor", label: "State Governor" },
-  { value: "lt_governor", label: "Lieutenant Governor" },
-  { value: "state_senate", label: "State Senator" },
-  { value: "state_house", label: "State Representative" },
-  { value: "attorney_general", label: "State Attorney General" },
-  { value: "secretary_state", label: "Secretary of State" },
-  { value: "state_treasurer", label: "State Treasurer" },
-  { value: "mayor", label: "Mayor" },
-  { value: "city_council", label: "City Council Member" },
-  { value: "county_commissioner", label: "County Commissioner" },
-  { value: "district_attorney", label: "District Attorney" },
-  { value: "school_board", label: "School Board Member" }
+const officeOptions: OfficeType[] = [
+  // Federal Offices
+  "U.S. President",
+  "U.S. Senator",
+  "U.S. Representative",
+  // State Offices
+  "Governor",
+  "Lieutenant Governor",
+  "State Senator",
+  "State Representative",
+  "Attorney General",
+  "Secretary of State",
+  "State Treasurer",
+  // Local Offices
+  "Mayor",
+  "City Council Member",
+  "County Commissioner",
+  "District Attorney",
+  "Sheriff",
+  "School Board Member"
 ];
 
-export const CandidateFields = ({ form }: CandidateFieldsProps) => {
+export const CandidateFields = () => {
+  const form = useFormContext<FormValues>();
+  const showFields = form.watch("committee_type") === "candidate";
+
+  if (!showFields) return null;
+
   return (
-    <>
+    <div className="space-y-4">
       <FormField
         control={form.control}
         name="candidate_name"
@@ -52,13 +57,13 @@ export const CandidateFields = ({ form }: CandidateFieldsProps) => {
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select office sought" />
+                  <SelectValue placeholder="Select an office" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {POLITICAL_OFFICES.map((office) => (
-                  <SelectItem key={office.value} value={office.value}>
-                    {office.label}
+                {officeOptions.map((office) => (
+                  <SelectItem key={office} value={office}>
+                    {office}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -67,6 +72,6 @@ export const CandidateFields = ({ form }: CandidateFieldsProps) => {
           </FormItem>
         )}
       />
-    </>
+    </div>
   );
 };
