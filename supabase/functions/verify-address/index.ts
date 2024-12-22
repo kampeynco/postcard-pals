@@ -5,9 +5,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Content-Type': 'application/json'
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -20,9 +22,36 @@ serve(async (req) => {
       throw new Error('Missing required address fields')
     }
 
+    // Get auth user from the request
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('No authorization header')
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Extract the JWT token
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      console.error('Auth error:', authError)
+      throw new Error('Authentication failed')
+    }
+
     const lob = getLobClient()
     
     try {
+      console.log('Attempting Lob verification with:', {
+        primary_line: address.street,
+        city: address.city,
+        state: address.state,
+        zip_code: address.zip_code
+      })
+
       const verificationResult = await lob.usVerifications.verify({
         primary_line: address.street,
         city: address.city,
@@ -31,25 +60,6 @@ serve(async (req) => {
       })
 
       console.log('Lob verification result:', verificationResult)
-
-      // Get auth user from the request
-      const authHeader = req.headers.get('Authorization')
-      if (!authHeader) {
-        throw new Error('No authorization header')
-      }
-
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      )
-
-      // Extract the JWT token
-      const token = authHeader.replace('Bearer ', '')
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-      
-      if (authError || !user) {
-        throw new Error('Authentication failed')
-      }
 
       // Store verification result
       const { data: savedAddress, error: dbError } = await supabase
@@ -81,7 +91,7 @@ serve(async (req) => {
 
       return new Response(
         JSON.stringify(response),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: corsHeaders }
       )
     } catch (lobError) {
       console.error('Lob API error:', lobError)
@@ -98,7 +108,7 @@ serve(async (req) => {
       }),
       { 
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: corsHeaders
       }
     )
   }

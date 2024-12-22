@@ -52,14 +52,18 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       setLoading(true);
       console.log("Verifying address:", address);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
         toast.error("Authentication required");
         return;
       }
 
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       console.log("Verification response:", data);
