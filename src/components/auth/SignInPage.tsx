@@ -5,6 +5,7 @@ import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
+import { AuthError } from "@supabase/supabase-js";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -16,21 +17,14 @@ const SignInPage = () => {
 
       if (event === 'SIGNED_IN' && session) {
         try {
-          // Check if user's profile is complete
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('first_name, last_name, is_confirmed')
             .eq('id', session.user.id)
             .single();
 
-          if (profileError) {
-            console.error('Error fetching profile:', profileError);
-            toast.error("There was an error signing in. Please try again.");
-            await supabase.auth.signOut();
-            return;
-          }
+          if (profileError) throw profileError;
 
-          // If profile is incomplete, redirect to onboarding
           if (!profile?.is_confirmed) {
             console.log("Redirecting to onboarding");
             toast.success("Welcome! Let's set up your account.");
@@ -38,14 +32,17 @@ const SignInPage = () => {
             return;
           }
 
-          // Otherwise, redirect to requested page or dashboard
           const from = (location.state as any)?.from?.pathname || "/dashboard";
           console.log("Redirecting to:", from);
           toast.success("Welcome back!");
           navigate(from, { replace: true });
         } catch (error) {
           console.error('Error in sign in process:', error);
-          toast.error("An unexpected error occurred. Please try again.");
+          if (error instanceof AuthError) {
+            toast.error(error.message);
+          } else {
+            toast.error("An unexpected error occurred. Please try again.");
+          }
           await supabase.auth.signOut();
         }
       } else if (event === 'SIGNED_OUT') {
@@ -54,9 +51,6 @@ const SignInPage = () => {
         toast.info("Your account has been updated.");
       } else if (event === 'PASSWORD_RECOVERY') {
         toast.info("Check your email for password reset instructions.");
-      } else if (event === 'INITIAL_SESSION') {
-        // Handle initial session load silently
-        console.log("Initial session loaded");
       }
     });
 
