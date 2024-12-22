@@ -17,15 +17,15 @@ const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
           : 'border-orange-500 border-2 shadow-lg'
       } bg-white`}
     >
-      {plan.popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="bg-orange-500 text-white text-sm font-medium px-3 py-1 rounded-full">
-            Most Popular
-          </span>
-        </div>
-      )}
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
+          {plan.popular && (
+            <span className="bg-orange-500 text-white text-sm font-medium px-3 py-1 rounded-full">
+              Most Popular
+            </span>
+          )}
+        </div>
         <CardDescription className="text-gray-600">{plan.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
