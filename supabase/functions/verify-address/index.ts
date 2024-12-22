@@ -15,24 +15,16 @@ serve(async (req) => {
   }
 
   try {
-    // Get the request body as text first
-    const bodyText = await req.text();
-    console.log('Raw request body:', bodyText);
+    // Get the request body
+    const requestBody = await req.text();
+    console.log('Raw request body:', requestBody);
 
-    if (!bodyText) {
+    if (!requestBody) {
       throw new Error('Request body is empty');
     }
 
     // Parse the JSON body
-    let parsedBody;
-    try {
-      parsedBody = JSON.parse(bodyText);
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      throw new Error(`Invalid JSON format: ${parseError.message}`);
-    }
-
-    const { address } = parsedBody;
+    let { address } = JSON.parse(requestBody);
     console.log('Parsed address:', address);
 
     if (!address || !address.street || !address.city || !address.state || !address.zip_code) {
