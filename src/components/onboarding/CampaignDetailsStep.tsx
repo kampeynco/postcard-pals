@@ -27,11 +27,11 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         return;
       }
 
-      // First, create the ActBlue account
       const insertData: ActBlueAccount = {
         committee_name: values.committee_name,
         committee_type: values.committee_type,
-        office_sought: values.office_sought,
+        candidate_name: values.committee_type === 'candidate' ? values.candidate_name : null,
+        office_sought: values.committee_type === 'candidate' ? values.office_sought : null,
         user_id: session.user.id,
         disclaimer_text: values.disclaimer_text,
         street_address: verifiedAddress.street,
@@ -47,7 +47,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
 
       const { error: actblueError } = await supabase
         .from("actblue_accounts")
-        .insert(insertData);
+        .insert([insertData]);
 
       if (actblueError) {
         console.error('Error creating ActBlue account:', actblueError);
