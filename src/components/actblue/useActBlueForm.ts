@@ -14,7 +14,7 @@ export const useActBlueForm = () => {
     defaultValues: {
       committee_type: "candidate",
       candidate_name: "",
-      office_sought: "",
+      office_sought: "U.S. Representative", // Changed from empty string to a valid enum value
       committee_name: "",
       street_address: "",
       city: "",

@@ -15,7 +15,7 @@ export default function ActBlueAccountForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <CommitteeTypeField form={form} />
         <CommitteeNameField form={form} />
-        {committeeType === "candidate" && <CandidateFields form={form} />}
+        {committeeType === "candidate" && <CandidateFields />}
         <AddressFields form={form} />
         <DisclaimerField form={form} />
         <Button type="submit">Save ActBlue Settings</Button>
