@@ -69,7 +69,7 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-1">Create Your Profile</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-1">Create Your Profile</h2>
         <p className="text-gray-500 text-sm">Tell us about yourself</p>
       </div>
 
@@ -80,9 +80,13 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
             name="first_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel className="text-gray-700">First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your first name" {...field} />
+                  <Input 
+                    placeholder="Enter your first name" 
+                    className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -94,9 +98,13 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
             name="last_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel className="text-gray-700">Last Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your last name" {...field} />
+                  <Input 
+                    placeholder="Enter your last name" 
+                    className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -104,8 +112,12 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
           />
 
           <div className="space-y-2">
-            <FormLabel>Email</FormLabel>
-            <Input value={session?.user.email} disabled />
+            <FormLabel className="text-gray-700">Email</FormLabel>
+            <Input 
+              value={session?.user.email} 
+              disabled 
+              className="bg-gray-50 border-gray-200"
+            />
           </div>
 
           <FormField
@@ -113,10 +125,11 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
             name="phone_number"
             render={({ field: { onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Mobile Phone</FormLabel>
+                <FormLabel className="text-gray-700">Mobile Phone</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="(555) 555-5555"
+                    className="border-gray-200 focus:border-brand-background focus:ring-brand-background"
                     {...field}
                     onChange={(e) => {
                       const formatted = formatPhoneNumber(e.target.value);
@@ -129,7 +142,12 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
             )}
           />
 
-          <Button type="submit" className="w-full">Continue</Button>
+          <Button 
+            type="submit" 
+            className="w-full bg-brand-background hover:bg-brand-background/90 text-white font-medium py-2.5"
+          >
+            Continue
+          </Button>
         </form>
       </Form>
     </div>

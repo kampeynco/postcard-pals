@@ -20,11 +20,11 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8F9FE]">
       <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-12">
         <div className="flex gap-12">
           <OnboardingProgress currentStep={step} />
-          <div className="flex-1 max-w-[640px]">
+          <div className="flex-1 max-w-[640px] bg-white rounded-xl shadow-sm p-8">
             {step === 1 && <CreateProfileStep onNext={handleNext} />}
             {step === 2 && <CampaignDetailsStep onNext={handleNext} />}
             {step === 3 && <IntegrateActBlueStep onNext={handleNext} />}

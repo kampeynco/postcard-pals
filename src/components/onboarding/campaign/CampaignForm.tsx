@@ -51,9 +51,13 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           name="committee_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Campaign Legal Name</FormLabel>
+              <FormLabel className="text-gray-700">Campaign Legal Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter campaign name" {...field} />
+                <Input 
+                  placeholder="Enter campaign name" 
+                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -65,10 +69,10 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           name="office_sought"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Office Sought</FormLabel>
+              <FormLabel className="text-gray-700">Office Sought</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-gray-200 focus:border-brand-background focus:ring-brand-background">
                     <SelectValue placeholder="Select an office" />
                   </SelectTrigger>
                 </FormControl>
@@ -86,13 +90,13 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
         />
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Office Address</h3>
+          <h3 className="text-lg font-medium text-gray-900">Office Address</h3>
           <AddressVerification onVerified={setVerifiedAddress} />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full"
+          className="w-full bg-brand-background hover:bg-brand-background/90 text-white font-medium py-2.5"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Saving..." : "Continue"}
