@@ -12,7 +12,9 @@ const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
   return (
     <Card 
       className={`relative flex flex-col ${
-        !plan.popular ? 'border-[#4B5EE4] shadow-lg' : 'border-gray-200'
+        !plan.popular 
+          ? 'border-[#4B5EE4] shadow-lg' 
+          : 'border-orange-500 border-2 shadow-lg'
       } bg-white`}
     >
       {plan.popular && (
