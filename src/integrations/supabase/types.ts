@@ -18,6 +18,9 @@ export type Database = {
           created_at: string | null
           disclaimer_text: string
           id: string
+          is_active: boolean
+          is_created: boolean
+          is_onboarded: boolean
           office_sought: string | null
           state: string
           street_address: string
@@ -32,6 +35,9 @@ export type Database = {
           created_at?: string | null
           disclaimer_text: string
           id?: string
+          is_active?: boolean
+          is_created?: boolean
+          is_onboarded?: boolean
           office_sought?: string | null
           state: string
           street_address: string
@@ -46,6 +52,9 @@ export type Database = {
           created_at?: string | null
           disclaimer_text?: string
           id?: string
+          is_active?: boolean
+          is_created?: boolean
+          is_onboarded?: boolean
           office_sought?: string | null
           state?: string
           street_address?: string

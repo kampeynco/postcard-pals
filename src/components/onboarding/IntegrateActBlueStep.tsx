@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { toast } from "sonner";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
@@ -7,10 +10,24 @@ interface IntegrateActBlueStepProps {
 
 export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
   const navigate = useNavigate();
+  const { session } = useAuth();
 
-  const handleComplete = () => {
-    onNext();
-    navigate("/dashboard");
+  const handleComplete = async () => {
+    try {
+      // Update ActBlue account to mark onboarding as complete
+      const { error } = await supabase
+        .from("actblue_accounts")
+        .update({ is_onboarded: true })
+        .eq("user_id", session?.user.id);
+
+      if (error) throw error;
+
+      toast.success("Setup completed successfully!");
+      onNext();
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error("Failed to complete setup");
+    }
   };
 
   return (

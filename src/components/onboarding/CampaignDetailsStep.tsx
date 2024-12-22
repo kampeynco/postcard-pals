@@ -51,6 +51,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
           city: "",
           state: "",
           zip_code: "",
+          is_created: true // Set is_created to true when campaign details are saved
         });
 
       if (error) throw error;

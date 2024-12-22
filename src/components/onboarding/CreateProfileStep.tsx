@@ -47,16 +47,18 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const { error } = await supabase
+      // Update profile with user details and set is_confirmed to true
+      const { error: profileError } = await supabase
         .from("profiles")
         .update({
           first_name: values.first_name,
           last_name: values.last_name,
           phone_number: values.phone_number,
+          is_confirmed: true
         })
         .eq("id", session?.user.id);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
       toast.success("Profile updated successfully");
       onNext();
