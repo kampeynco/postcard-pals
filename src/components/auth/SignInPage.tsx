@@ -14,7 +14,7 @@ const SignInPage = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session);
 
-      if (event === 'USER_SIGNED_IN' && session) {
+      if (event === 'SIGNED_IN' && session) {
         try {
           // Check if user's profile is complete
           const { data: profile, error: profileError } = await supabase
@@ -50,12 +50,13 @@ const SignInPage = () => {
         }
       } else if (event === 'SIGNED_OUT') {
         toast.info("You have been signed out.");
-      } else if (event === 'USER_DELETED') {
-        toast.error("Your account has been deleted.");
+      } else if (event === 'USER_UPDATED') {
+        toast.info("Your account has been updated.");
       } else if (event === 'PASSWORD_RECOVERY') {
         toast.info("Check your email for password reset instructions.");
-      } else if (event === 'AUTH_ERROR') {
-        toast.error("Invalid email or password. Please try again.");
+      } else if (event === 'INITIAL_SESSION') {
+        // Handle initial session load silently
+        console.log("Initial session loaded");
       }
     });
 
