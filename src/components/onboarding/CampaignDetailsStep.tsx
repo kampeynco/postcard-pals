@@ -27,9 +27,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         return;
       }
 
-      console.log('Attempting to save campaign details with values:', values);
-      console.log('Verified address:', verifiedAddress);
-
+      // First, create the ActBlue account
       const insertData: ActBlueAccount = {
         committee_name: values.committee_name,
         committee_type: values.committee_type,
@@ -45,22 +43,22 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         is_active: false
       };
 
-      console.log('Inserting data into actblue_accounts:', insertData);
+      console.log('Creating ActBlue account with data:', insertData);
 
-      const { error } = await supabase
+      const { error: actblueError } = await supabase
         .from("actblue_accounts")
         .insert(insertData);
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+      if (actblueError) {
+        console.error('Error creating ActBlue account:', actblueError);
+        throw actblueError;
       }
 
-      console.log('Campaign details saved successfully');
+      console.log('ActBlue account created successfully');
       toast.success("Campaign details saved successfully");
       onNext();
     } catch (error) {
-      console.error('Error saving campaign details:', error);
+      console.error('Error in campaign details submission:', error);
       if (error instanceof Error) {
         toast.error(`Failed to save campaign details: ${error.message}`);
       } else {
