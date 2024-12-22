@@ -116,7 +116,7 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
 
   return (
     <Card className="p-6 bg-white shadow-sm border border-gray-100">
-      <h3 className="text-lg font-semibold mb-4 text-gray-900">Verify Address</h3>
+      <h3 className="text-lg font-semibold mb-4 text-gray-900">Verify Office Address</h3>
       <div className="space-y-4">
         <AddressForm address={address} onChange={setAddress} />
         <Button 
