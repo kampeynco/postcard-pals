@@ -21,6 +21,7 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       if (!validateAddress(address)) return;
       
       setLoading(true);
+      console.log('Starting address verification for:', address);
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -29,20 +30,13 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       }
 
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: {
-          address: {
-            street: address.street.trim(),
-            city: address.city.trim(),
-            state: address.state.trim(),
-            zip_code: address.zip_code.trim()
-          }
-        }
+        body: { address }
       });
 
-      console.log("Verification response:", data);
+      console.log('Verification response:', data);
 
       if (error) {
-        console.error("Verification error:", error);
+        console.error('Verification error:', error);
         toast.error(error.message || "Failed to verify address");
         return;
       }

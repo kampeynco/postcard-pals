@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,20 +43,6 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    // Extract the JWT token
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
-    if (authError || !user) {
-      console.error('Auth error:', authError)
-      throw new Error('Authentication failed')
-    }
-
     // Format address for Lob API
     const verificationRequest = {
       primary_line: address.street.trim(),
@@ -84,10 +69,12 @@ serve(async (req) => {
       body: JSON.stringify(verificationRequest)
     });
 
+    console.log('Lob API response status:', lobResponse.status);
+
     if (!lobResponse.ok) {
-      const errorData = await lobResponse.text();
-      console.error('Lob API error response:', errorData);
-      throw new Error(`Lob API error: ${lobResponse.status} - ${errorData}`);
+      const errorText = await lobResponse.text();
+      console.error('Lob API error response:', errorText);
+      throw new Error(`Lob API error: ${lobResponse.status} - ${errorText}`);
     }
 
     const verificationResult = await lobResponse.json();
@@ -101,24 +88,6 @@ serve(async (req) => {
       'deliverable_missing_unit'
     ].includes(verificationResult.deliverability);
 
-    // Store verification result
-    const { data: savedAddress, error: dbError } = await supabase
-      .from('addresses')
-      .insert({
-        address_data: verificationResult,
-        lob_id: verificationResult.id,
-        is_verified: isDeliverable,
-        user_id: user.id,
-        last_verified_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      throw new Error('Failed to save address verification result');
-    }
-
     // Format the response
     const response = {
       is_verified: isDeliverable,
@@ -129,8 +98,7 @@ serve(async (req) => {
       deliverability: verificationResult.deliverability,
       deliverability_analysis: verificationResult.deliverability_analysis,
       lob_confidence: verificationResult.lob_confidence,
-      object: verificationResult.object,
-      ...savedAddress
+      object: verificationResult.object
     };
 
     return new Response(
