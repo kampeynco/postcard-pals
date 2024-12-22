@@ -17,13 +17,11 @@ const SignInPage = () => {
 
       if (event === 'SIGNED_IN' && session) {
         try {
-          const { data: profile, error: profileError } = await supabase
+          const { data: profile } = await supabase
             .from('profiles')
             .select('first_name, last_name, is_confirmed')
             .eq('id', session.user.id)
             .single();
-
-          if (profileError) throw profileError;
 
           if (!profile?.is_confirmed) {
             console.log("Redirecting to onboarding");
