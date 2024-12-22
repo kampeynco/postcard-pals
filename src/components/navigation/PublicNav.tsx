@@ -28,22 +28,18 @@ const PublicNav = () => {
               Thanks From Us
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
-              {isHomePage && (
-                <>
-                  <button
-                    onClick={() => scrollToSection('features')}
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    Features
-                  </button>
-                  <button
-                    onClick={() => scrollToSection('how-it-works')}
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    How It Works
-                  </button>
-                </>
-              )}
+              <button
+                onClick={() => scrollToSection('features')}
+                className="text-white/80 hover:text-white transition-colors duration-200"
+              >
+                Features
+              </button>
+              <button
+                onClick={() => scrollToSection('how-it-works')}
+                className="text-white/80 hover:text-white transition-colors duration-200"
+              >
+                How It Works
+              </button>
               <Link
                 to="/pricing"
                 className="text-white/80 hover:text-white transition-colors duration-200"
