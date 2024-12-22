@@ -14,9 +14,9 @@ serve(async (req) => {
 
   try {
     const { address } = await req.json()
-    const lob = getLobClient()
-    
     console.log('Verifying address:', address)
+    
+    const lob = getLobClient()
     
     const verificationResult = await lob.usVerifications.verify({
       primary_line: address.street,
@@ -27,6 +27,7 @@ serve(async (req) => {
 
     console.log('Verification result:', verificationResult)
 
+    // Store the verification result in Supabase
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -37,7 +38,9 @@ serve(async (req) => {
       .insert({
         address_data: verificationResult,
         lob_id: verificationResult.id,
-        is_verified: verificationResult.deliverability !== 'undeliverable'
+        is_verified: verificationResult.deliverability !== 'undeliverable',
+        user_id: req.headers.get('x-user-id'),
+        last_verified_at: new Date().toISOString()
       })
       .select()
       .single()
@@ -45,7 +48,14 @@ serve(async (req) => {
     if (dbError) throw dbError
 
     return new Response(
-      JSON.stringify(savedAddress),
+      JSON.stringify({
+        is_verified: verificationResult.deliverability !== 'undeliverable',
+        street: verificationResult.primary_line,
+        city: verificationResult.components.city,
+        state: verificationResult.components.state,
+        zip_code: verificationResult.components.zip_code,
+        ...savedAddress
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
