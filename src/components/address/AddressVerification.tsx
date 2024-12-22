@@ -10,31 +10,75 @@ interface AddressVerificationProps {
   onVerified: (verifiedAddress: any) => void;
 }
 
+interface AddressInput {
+  street: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}
+
 export const AddressVerification = ({ onVerified }: AddressVerificationProps) => {
-  const [address, setAddress] = useState({
+  const [address, setAddress] = useState<AddressInput>({
     street: "",
     city: "",
     state: "",
-    zipCode: "",
+    zip_code: "",
   });
   const [loading, setLoading] = useState(false);
 
+  const validateAddress = () => {
+    if (!address.street || !address.city || !address.state || !address.zip_code) {
+      toast.error("Please fill in all address fields");
+      return false;
+    }
+
+    if (address.state.length !== 2) {
+      toast.error("Please enter a valid 2-letter state code");
+      return false;
+    }
+
+    if (!/^\d{5}(-\d{4})?$/.test(address.zip_code)) {
+      toast.error("Please enter a valid ZIP code (e.g., 12345 or 12345-6789)");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleVerify = async () => {
     try {
-      setLoading(true);
+      if (!validateAddress()) return;
       
-      // Get the current user's ID
+      setLoading(true);
+      console.log("Verifying address:", address);
+      
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No authenticated user found");
+      if (!user) {
+        toast.error("Authentication required");
+        return;
+      }
 
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address },
-        headers: {
-          'x-user-id': user.id
-        }
       });
 
-      if (error) throw error;
+      console.log("Verification response:", data);
+
+      if (error) {
+        console.error("Verification error:", error);
+        toast.error(error.message || "Failed to verify address");
+        return;
+      }
+
+      if (!data) {
+        toast.error("No response from address verification service");
+        return;
+      }
+
+      if (data.error) {
+        toast.error(data.error.message || "Address verification failed");
+        return;
+      }
 
       if (data.is_verified) {
         toast.success("Address verified successfully!");
@@ -49,7 +93,7 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       }
     } catch (error) {
       console.error('Error verifying address:', error);
-      toast.error("Failed to verify address");
+      toast.error("Failed to verify address. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,18 +129,18 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
             <Input
               id="state"
               value={address.state}
-              onChange={(e) => setAddress({ ...address, state: e.target.value })}
+              onChange={(e) => setAddress({ ...address, state: e.target.value.toUpperCase() })}
               placeholder="CA"
               maxLength={2}
               className="mt-1"
             />
           </div>
           <div>
-            <Label htmlFor="zipCode" className="text-sm font-medium text-gray-700">ZIP Code</Label>
+            <Label htmlFor="zip_code" className="text-sm font-medium text-gray-700">ZIP Code</Label>
             <Input
-              id="zipCode"
-              value={address.zipCode}
-              onChange={(e) => setAddress({ ...address, zipCode: e.target.value })}
+              id="zip_code"
+              value={address.zip_code}
+              onChange={(e) => setAddress({ ...address, zip_code: e.target.value })}
               placeholder="12345"
               className="mt-1"
             />
