@@ -52,7 +52,6 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       if (testKeywords.some(keyword => 
         address.street.toLowerCase().includes(keyword.toLowerCase()))) {
         testAddress.zip_code = '11111';
-        // For test addresses, we'll use a standard city/state if not provided
         if (!testAddress.city || !testAddress.state) {
           testAddress.city = 'San Francisco';
           testAddress.state = 'CA';
@@ -88,8 +87,26 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
           state: data.state,
           zip_code: data.zip_code
         };
+
+        // Save verified address to the database
+        const { error: saveError } = await supabase
+          .from('addresses')
+          .insert({
+            user_id: session.user.id,
+            lob_id: data.object,
+            address_data: data,
+            is_verified: true,
+            last_verified_at: new Date().toISOString()
+          });
+
+        if (saveError) {
+          console.error('Error saving address:', saveError);
+          toast.error("Failed to save verified address");
+          return;
+        }
+
         setVerifiedAddress(verified);
-        toast.success("Address verified successfully!");
+        toast.success("Address verified and saved successfully!");
         onVerified(verified);
       } else {
         toast.error(`Address verification failed: ${data.deliverability}`);
@@ -105,8 +122,8 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
   if (verifiedAddress) {
     return (
       <Card className="p-6 bg-white shadow-sm border border-gray-100">
-        <h3 className="text-lg font-semibold mb-4 text-gray-900">Verified Address</h3>
         <div className="space-y-2 text-gray-700">
+          <h3 className="text-lg font-medium text-gray-900">Office Address</h3>
           <p>{verifiedAddress.street}</p>
           <p>{verifiedAddress.city}, {verifiedAddress.state} {verifiedAddress.zip_code}</p>
         </div>
