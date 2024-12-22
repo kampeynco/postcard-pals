@@ -1,4 +1,4 @@
-import { LobVerificationRequest } from './types';
+import { LobVerificationRequest } from "./types.ts";
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
