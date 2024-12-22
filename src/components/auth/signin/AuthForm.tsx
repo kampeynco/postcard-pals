@@ -33,7 +33,20 @@ const AuthForm = () => {
             email_input_placeholder: "Enter your email",
             password_input_placeholder: "Enter your password",
           },
+          forgotten_password: {
+            button_label: "Reset password",
+            loading_button_label: "Sending reset instructions...",
+            email_label: "Email address",
+            email_input_placeholder: "Enter your email",
+          },
         },
+      }}
+      onError={(error) => {
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password. Please try again.");
+        } else {
+          toast.error("An error occurred while signing in. Please try again.");
+        }
       }}
     />
   );
