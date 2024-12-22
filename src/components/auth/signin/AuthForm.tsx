@@ -41,13 +41,6 @@ const AuthForm = () => {
           },
         },
       }}
-      onError={(error) => {
-        if (error.message.includes("Invalid login credentials")) {
-          toast.error("Invalid email or password. Please try again.");
-        } else {
-          toast.error("An error occurred while signing in. Please try again.");
-        }
-      }}
     />
   );
 };
