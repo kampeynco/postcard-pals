@@ -21,55 +21,67 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🔵 [1] Verification request received');
+    
     // Get the request body
     const requestBody = await req.text();
-    console.log('Raw request body:', requestBody);
+    console.log('🔵 [2] Raw request body:', requestBody);
 
     if (!requestBody) {
+      console.error('🔴 Request body is empty');
       throw new Error('Request body is empty');
     }
 
     // Parse the JSON body
     const { address } = JSON.parse(requestBody) as AddressVerificationRequest;
-    console.log('Parsed address:', address);
+    console.log('🔵 [3] Parsed address:', address);
 
     if (!address || !address.street) {
+      console.error('🔴 Missing required address fields');
       throw new Error('Missing required address fields');
     }
 
     // Get auth user from the request
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
+      console.error('🔴 No authorization header');
       throw new Error('No authorization header');
     }
+    console.log('🔵 [4] Authorization header present');
 
-    // Format address for Lob API - first attempt with city/state
-    const verificationRequest = {
-      primary_line: address.street.trim()
-    };
-
-    // Check if we have city and state
+    // Format verification request based on available data
+    let verificationRequest;
+    
+    // First attempt: Try with city and state if available
     if (address.city?.trim() && address.state?.trim()) {
-      Object.assign(verificationRequest, {
+      console.log('🔵 [5a] Attempting verification with city/state');
+      verificationRequest = {
+        primary_line: address.street.trim(),
         city: address.city.trim(),
         state: address.state.trim()
-      });
-    } else if (address.zip_code?.trim()) {
-      // Fallback to zip code if city/state not available
-      Object.assign(verificationRequest, {
+      };
+    } 
+    // Second attempt: Fall back to zip code
+    else if (address.zip_code?.trim()) {
+      console.log('🔵 [5b] Attempting verification with zip code');
+      verificationRequest = {
+        primary_line: address.street.trim(),
         zip_code: address.zip_code.trim()
-      });
+      };
     } else {
+      console.error('🔴 Must provide either city/state or zip code');
       throw new Error('Must provide either city/state or zip code');
     }
 
-    console.log('Verification request:', verificationRequest);
+    console.log('🔵 [6] Verification request:', verificationRequest);
 
-    // Call Lob API directly using fetch
+    // Call Lob API
     const lobApiKey = Deno.env.get('LOB_TEST_SECRET_KEY');
     if (!lobApiKey) {
+      console.error('🔴 Lob API key not found');
       throw new Error('Lob API key not found');
     }
+    console.log('🔵 [7] Lob API key found');
 
     const lobResponse = await fetch('https://api.lob.com/v1/us_verifications', {
       method: 'POST',
@@ -81,16 +93,16 @@ serve(async (req) => {
       body: JSON.stringify(verificationRequest)
     });
 
-    console.log('Lob API response status:', lobResponse.status);
+    console.log('🔵 [8] Lob API response status:', lobResponse.status);
 
     if (!lobResponse.ok) {
       const errorText = await lobResponse.text();
-      console.error('Lob API error response:', errorText);
+      console.error('🔴 Lob API error response:', errorText);
       throw new Error(`Lob API error: ${lobResponse.status} - ${errorText}`);
     }
 
     const verificationResult = await lobResponse.json();
-    console.log('Lob verification result:', verificationResult);
+    console.log('🔵 [9] Lob verification result:', verificationResult);
 
     // Check deliverability status
     const isDeliverable = [
@@ -99,6 +111,11 @@ serve(async (req) => {
       'deliverable_incorrect_unit',
       'deliverable_missing_unit'
     ].includes(verificationResult.deliverability);
+
+    console.log('🔵 [10] Deliverability status:', {
+      status: verificationResult.deliverability,
+      isDeliverable
+    });
 
     // Format the response
     const response = {
@@ -113,13 +130,15 @@ serve(async (req) => {
       object: verificationResult.object
     };
 
+    console.log('🔵 [11] Sending response:', response);
+
     return new Response(
       JSON.stringify(response),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error in verify-address function:', error);
+    console.error('🔴 Error in verify-address function:', error);
     return new Response(
       JSON.stringify({ 
         error: {
