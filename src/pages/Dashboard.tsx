@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { QuickActions } from "@/components/dashboard/QuickActions";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { DonationActivity, Stats } from "@/types/donations";
 import { toast } from "sonner";
 
@@ -111,23 +110,19 @@ const Dashboard = () => {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
-      <DashboardHeader />
-      <DashboardStats stats={stats} />
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
-          {isLoadingActivity ? (
-            <div className="animate-pulse space-y-4">
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-32 bg-gray-200 rounded"></div>
-            </div>
-          ) : (
-            <RecentActivity activities={recentActivity || []} />
-          )}
-        </div>
-        <div>
-          <QuickActions />
-        </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
       </div>
+      <DashboardStats stats={stats} />
+      <DashboardCharts />
+      {isLoadingActivity ? (
+        <div className="animate-pulse space-y-4">
+          <div className="h-12 bg-gray-200 rounded"></div>
+          <div className="h-32 bg-gray-200 rounded"></div>
+        </div>
+      ) : (
+        <RecentActivity activities={recentActivity || []} />
+      )}
     </div>
   );
 };

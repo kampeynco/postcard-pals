@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Mail, Users, AlertTriangle } from "lucide-react";
+import { Users, Clock, CheckCircle } from "lucide-react";
 
 interface StatsProps {
   stats: {
@@ -34,48 +34,48 @@ export const DashboardStats = ({ stats }: StatsProps) => {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-      <Card className="p-6">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-emerald-50 rounded-lg">
-            <Mail className="h-6 w-6 text-emerald-600" />
+    <div className="grid gap-4 md:grid-cols-3 mb-8">
+      <Card className="p-6 bg-white">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <Users className="h-4 w-4" />
+            <span>All Donations</span>
           </div>
-          <div className="flex-1">
-            <p className="text-gray-500 mb-1">Total Donations</p>
-            <h3 className="text-2xl font-bold mb-2">{stats.totalDonations}</h3>
-            <p className={`text-sm ${donationChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-semibold">{stats.totalDonations}</span>
+            <span className={`text-sm ${donationChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {donationChange >= 0 ? '↑' : '↓'} {Math.abs(donationChange)}% vs last month
-            </p>
+            </span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-emerald-50 rounded-lg">
-            <Users className="h-6 w-6 text-emerald-600" />
+      <Card className="p-6 bg-white">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <Clock className="h-4 w-4" />
+            <span>Active Templates</span>
           </div>
-          <div className="flex-1">
-            <p className="text-gray-500 mb-1">Active Templates</p>
-            <h3 className="text-2xl font-bold mb-2">{stats.activeTemplates}</h3>
-            <p className={`text-sm ${templateChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-semibold">{stats.activeTemplates}</span>
+            <span className={`text-sm ${templateChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {templateChange >= 0 ? '↑' : '↓'} {Math.abs(templateChange)}% vs last month
-            </p>
+            </span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6">
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-emerald-50 rounded-lg">
-            <AlertTriangle className="h-6 w-6 text-emerald-600" />
+      <Card className="p-6 bg-white">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <CheckCircle className="h-4 w-4" />
+            <span>Failed Postcards</span>
           </div>
-          <div className="flex-1">
-            <p className="text-gray-500 mb-1">Failed Postcards</p>
-            <h3 className="text-2xl font-bold mb-2">{stats.failedPostcards}</h3>
-            <p className={`text-sm ${failureChange <= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-semibold">{stats.failedPostcards}</span>
+            <span className={`text-sm ${failureChange <= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {failureChange <= 0 ? '↓' : '↑'} {Math.abs(failureChange)}% vs last month
-            </p>
+            </span>
           </div>
         </div>
       </Card>
