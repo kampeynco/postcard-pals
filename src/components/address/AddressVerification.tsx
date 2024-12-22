@@ -15,6 +15,7 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
     zip_code: "",
   });
   const [loading, setLoading] = useState(false);
+  const [verifiedAddress, setVerifiedAddress] = useState<AddressInput | null>(null);
 
   const handleVerify = async () => {
     try {
@@ -81,13 +82,15 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       }
 
       if (data.is_verified) {
-        toast.success("Address verified successfully!");
-        onVerified({
+        const verified = {
           street: data.street,
           city: data.city,
           state: data.state,
           zip_code: data.zip_code
-        });
+        };
+        setVerifiedAddress(verified);
+        toast.success("Address verified successfully!");
+        onVerified(verified);
       } else {
         toast.error(`Address verification failed: ${data.deliverability}`);
       }
@@ -99,19 +102,22 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
     }
   };
 
+  if (verifiedAddress) {
+    return (
+      <Card className="p-6 bg-white shadow-sm border border-gray-100">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Verified Address</h3>
+        <div className="space-y-2 text-gray-700">
+          <p>{verifiedAddress.street}</p>
+          <p>{verifiedAddress.city}, {verifiedAddress.state} {verifiedAddress.zip_code}</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="p-6 bg-white shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold mb-4 text-gray-900">Verify Address</h3>
       <div className="space-y-4">
-        <div className="text-sm text-gray-600 mb-4">
-          <p>For testing, you can use these special addresses:</p>
-          <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>"commercial highrise" - Deliverable commercial address</li>
-            <li>"residential house" - Deliverable residential address</li>
-            <li>"missing unit" - Address missing unit number</li>
-            <li>"undeliverable no match" - Undeliverable address</li>
-          </ul>
-        </div>
         <AddressForm address={address} onChange={setAddress} />
         <Button 
           onClick={handleVerify} 
