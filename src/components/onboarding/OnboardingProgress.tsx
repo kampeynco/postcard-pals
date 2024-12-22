@@ -6,45 +6,73 @@ interface OnboardingProgressProps {
 
 export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => {
   const steps = [
-    "Create Profile",
-    "Campaign Details",
-    "Integrate ActBlue"
+    {
+      number: 1,
+      title: "Create Profile",
+      description: "Set up your account details"
+    },
+    {
+      number: 2,
+      title: "Campaign Details",
+      description: "Tell us about your campaign"
+    },
+    {
+      number: 3,
+      title: "Integrate ActBlue",
+      description: "Connect your donation platform"
+    }
   ];
 
   return (
-    <div className="flex flex-col gap-8 pr-12 border-r border-gray-200 min-w-[200px]">
-      {steps.map((step, index) => (
-        <div key={index} className="flex items-center gap-3">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-              currentStep > index + 1
-                ? "bg-brand-background text-white"
-                : currentStep === index + 1
-                ? "bg-brand-background text-white"
-                : "bg-gray-100 text-gray-400"
-            }`}
-          >
-            {currentStep > index + 1 ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <span className="text-sm font-medium">
-                {index + 1}
-              </span>
+    <div className="space-y-8">
+      <div className="text-sm font-medium text-gray-500">Setup Progress</div>
+      <div className="relative">
+        {steps.map((step, index) => (
+          <div key={step.number} className="relative pb-12 last:pb-0">
+            {index !== steps.length - 1 && (
+              <div
+                className={`absolute left-4 top-8 -ml-px h-full w-0.5 ${
+                  currentStep > step.number ? 'bg-brand-background' : 'bg-gray-200'
+                }`}
+                aria-hidden="true"
+              />
             )}
+            <div className="relative flex items-start group">
+              <div className="flex-shrink-0">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                    currentStep > step.number
+                      ? 'bg-brand-background'
+                      : currentStep === step.number
+                      ? 'bg-brand-background'
+                      : 'bg-gray-200'
+                  }`}
+                >
+                  {currentStep > step.number ? (
+                    <Check className="h-4 w-4 text-white" />
+                  ) : (
+                    <span className={`text-sm font-medium ${
+                      currentStep >= step.number ? 'text-white' : 'text-gray-500'
+                    }`}>
+                      {step.number}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="ml-4">
+                <h3 className={`text-sm font-medium ${
+                  currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  {step.description}
+                </p>
+              </div>
+            </div>
           </div>
-          <span
-            className={`text-sm ${
-              currentStep === index + 1 
-                ? "text-gray-900 font-medium" 
-                : currentStep > index + 1
-                ? "text-brand-background font-medium"
-                : "text-gray-500"
-            }`}
-          >
-            {step}
-          </span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
