@@ -111,10 +111,11 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                />
+                {currentPage === 1 ? (
+                  <PaginationPrevious className="pointer-events-none opacity-50" />
+                ) : (
+                  <PaginationPrevious onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} />
+                )}
               </PaginationItem>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <PaginationItem key={page}>
@@ -127,10 +128,11 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
                 </PaginationItem>
               ))}
               <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                />
+                {currentPage === totalPages ? (
+                  <PaginationNext className="pointer-events-none opacity-50" />
+                ) : (
+                  <PaginationNext onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} />
+                )}
               </PaginationItem>
             </PaginationContent>
           </Pagination>
