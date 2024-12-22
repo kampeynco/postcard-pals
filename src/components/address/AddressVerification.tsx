@@ -29,8 +29,32 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
         return;
       }
 
+      // For testing, if the street contains a test keyword, set zip_code to "11111"
+      const testAddress = { ...address };
+      const testKeywords = [
+        'commercial highrise',
+        'residential highrise',
+        'residential house',
+        'po box',
+        'rural route',
+        'puerto rico',
+        'military',
+        'department of state',
+        'deliverable',
+        'missing unit',
+        'incorrect unit',
+        'unnecessary unit',
+        'undeliverable block match',
+        'undeliverable no match'
+      ];
+
+      if (testKeywords.some(keyword => 
+        address.street.toLowerCase().includes(keyword.toLowerCase()))) {
+        testAddress.zip_code = '11111';
+      }
+
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: { address }
+        body: { address: testAddress }
       });
 
       console.log('Verification response:', data);
@@ -60,7 +84,7 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
           zip_code: data.zip_code
         });
       } else {
-        toast.error("Could not verify address. Please check the details.");
+        toast.error(`Address verification failed: ${data.deliverability}`);
       }
     } catch (error) {
       console.error('Error verifying address:', error);
@@ -74,6 +98,15 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
     <Card className="p-6 bg-white shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold mb-4 text-gray-900">Verify Address</h3>
       <div className="space-y-4">
+        <div className="text-sm text-gray-600 mb-4">
+          <p>For testing, you can use these special addresses:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>"commercial highrise" - Deliverable commercial address</li>
+            <li>"residential house" - Deliverable residential address</li>
+            <li>"missing unit" - Address missing unit number</li>
+            <li>"undeliverable no match" - Undeliverable address</li>
+          </ul>
+        </div>
         <AddressForm address={address} onChange={setAddress} />
         <Button 
           onClick={handleVerify} 

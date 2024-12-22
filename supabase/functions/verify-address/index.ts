@@ -48,7 +48,7 @@ serve(async (req) => {
       primary_line: address.street.trim(),
       city: address.city.trim(),
       state: address.state.trim(),
-      zip_code: address.zip_code.trim(),
+      zip_code: address.zip_code.trim()
     };
 
     console.log('Verification request:', verificationRequest);
@@ -97,7 +97,7 @@ serve(async (req) => {
       zip_code: verificationResult.components.zip_code,
       deliverability: verificationResult.deliverability,
       deliverability_analysis: verificationResult.deliverability_analysis,
-      lob_confidence: verificationResult.lob_confidence,
+      lob_confidence: verificationResult.lob_confidence_score,
       object: verificationResult.object
     };
 
