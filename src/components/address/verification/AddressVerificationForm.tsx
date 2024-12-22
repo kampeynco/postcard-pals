@@ -18,8 +18,8 @@ export const AddressVerificationForm = ({ onVerified }: AddressVerificationFormP
 
   const { loading, verifyAddress } = useAddressVerification(onVerified);
 
-  const handleVerify = () => {
-    verifyAddress(address);
+  const handleVerify = async () => {
+    await verifyAddress(address);
   };
 
   return (
