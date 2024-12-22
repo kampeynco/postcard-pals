@@ -1,6 +1,7 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const AuthForm = () => {
   return (
@@ -26,8 +27,18 @@ const AuthForm = () => {
             loading_button_label: "Signing in...",
             email_label: "Email address",
             password_label: "Password",
+            email_input_placeholder: "Enter your email",
+            password_input_placeholder: "Enter your password",
           },
         },
+      }}
+      onError={(error) => {
+        console.error("Auth error:", error);
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password. Please try again.");
+        } else {
+          toast.error("An error occurred during sign in. Please try again.");
+        }
       }}
     />
   );

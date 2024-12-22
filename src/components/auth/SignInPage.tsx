@@ -19,7 +19,7 @@ const SignInPage = () => {
           // Check if user's profile is complete
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('first_name, last_name')
+            .select('first_name, last_name, is_confirmed')
             .eq('id', session.user.id)
             .single();
 
@@ -31,7 +31,7 @@ const SignInPage = () => {
           }
 
           // If profile is incomplete, redirect to onboarding
-          if (!profile?.first_name || !profile?.last_name) {
+          if (!profile?.is_confirmed) {
             console.log("Redirecting to onboarding");
             toast.success("Welcome! Let's set up your account.");
             navigate("/onboarding", { replace: true });
@@ -41,6 +41,7 @@ const SignInPage = () => {
           // Otherwise, redirect to requested page or dashboard
           const from = (location.state as any)?.from?.pathname || "/dashboard";
           console.log("Redirecting to:", from);
+          toast.success("Welcome back!");
           navigate(from, { replace: true });
         } catch (error) {
           console.error('Error in sign in process:', error);
