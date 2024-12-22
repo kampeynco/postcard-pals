@@ -30,6 +30,18 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
         return;
       }
 
+      // Get the user's ActBlue account
+      const { data: actblueAccounts, error: actblueError } = await supabase
+        .from('actblue_accounts')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (actblueError || !actblueAccounts) {
+        toast.error("Please set up your ActBlue account first");
+        return;
+      }
+
       // For testing, if the street contains a test keyword, set zip_code to "11111"
       const testAddress = { ...address };
       const testKeywords = [
@@ -88,11 +100,11 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
           zip_code: data.zip_code
         };
 
-        // Save verified address to the database
+        // Save verified address to the database with actblue_account_id
         const { error: saveError } = await supabase
           .from('addresses')
           .insert({
-            user_id: session.user.id,
+            actblue_account_id: actblueAccounts.id,
             lob_id: data.object,
             address_data: data,
             is_verified: true,

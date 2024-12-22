@@ -65,33 +65,41 @@ export type Database = {
       }
       addresses: {
         Row: {
+          actblue_account_id: string | null
           address_data: Json
           created_at: string | null
           id: string
           is_verified: boolean | null
           last_verified_at: string | null
           lob_id: string
-          user_id: string | null
         }
         Insert: {
+          actblue_account_id?: string | null
           address_data: Json
           created_at?: string | null
           id?: string
           is_verified?: boolean | null
           last_verified_at?: string | null
           lob_id: string
-          user_id?: string | null
         }
         Update: {
+          actblue_account_id?: string | null
           address_data?: Json
           created_at?: string | null
           id?: string
           is_verified?: boolean | null
           last_verified_at?: string | null
           lob_id?: string
-          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "addresses_actblue_account_id_fkey"
+            columns: ["actblue_account_id"]
+            isOneToOne: false
+            referencedRelation: "actblue_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       default_templates: {
         Row: {
