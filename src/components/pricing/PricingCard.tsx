@@ -12,12 +12,12 @@ const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
   return (
     <Card 
       className={`relative flex flex-col ${
-        plan.popular ? 'border-[#4B5EE4] shadow-lg' : 'border-gray-200'
+        !plan.popular ? 'border-[#4B5EE4] shadow-lg' : 'border-gray-200'
       } bg-white`}
     >
       {plan.popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="bg-[#4B5EE4] text-white text-sm font-medium px-3 py-1 rounded-full">
+          <span className="bg-orange-500 text-white text-sm font-medium px-3 py-1 rounded-full">
             Most Popular
           </span>
         </div>
@@ -34,7 +34,7 @@ const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
         <ul className="space-y-3">
           {plan.features.map((feature, index) => (
             <li key={`${plan.name}-feature-${index}`} className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-[#4B5EE4]" />
+              <Check className={`h-4 w-4 ${!plan.popular ? 'text-[#4B5EE4]' : 'text-orange-500'}`} />
               <span className="text-gray-700">{feature}</span>
             </li>
           ))}
@@ -43,7 +43,7 @@ const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
       <CardFooter>
         <Button 
           className={`w-full ${
-            plan.popular 
+            !plan.popular 
               ? 'bg-[#4B5EE4] hover:bg-[#4B5EE4]/90 text-white' 
               : 'bg-orange-500 hover:bg-orange-600 text-white'
           }`}
