@@ -27,12 +27,15 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         return;
       }
 
+      console.log('Attempting to save campaign details with values:', values);
+      console.log('Verified address:', verifiedAddress);
+
       const insertData: ActBlueAccount = {
         committee_name: values.committee_name,
+        committee_type: "candidate", // Since this is the onboarding flow, we set this as candidate
         office_sought: values.office_sought,
-        committee_type: "candidate",
         user_id: session.user.id,
-        disclaimer_text: "Paid for by " + values.committee_name,
+        disclaimer_text: `Paid for by ${values.committee_name}`,
         street_address: verifiedAddress.street,
         city: verifiedAddress.city,
         state: verifiedAddress.state,
@@ -42,7 +45,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         is_active: false
       };
 
-      console.log('Attempting to save campaign details:', insertData);
+      console.log('Inserting data into actblue_accounts:', insertData);
 
       const { error } = await supabase
         .from("actblue_accounts")
