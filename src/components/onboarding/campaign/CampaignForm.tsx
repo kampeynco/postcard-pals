@@ -22,6 +22,7 @@ interface CampaignFormProps {
 
 export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
   const [verifiedAddress, setVerifiedAddress] = useState<AddressInput | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -32,7 +33,14 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
   });
 
   const handleSubmit = async (values: FormValues) => {
-    await onSubmit(values, verifiedAddress);
+    try {
+      setIsSubmitting(true);
+      await onSubmit(values, verifiedAddress);
+    } catch (error) {
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,7 +90,13 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           <AddressVerification onVerified={setVerifiedAddress} />
         </div>
 
-        <Button type="submit" className="w-full">Continue</Button>
+        <Button 
+          type="submit" 
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Saving..." : "Continue"}
+        </Button>
       </form>
     </Form>
   );
