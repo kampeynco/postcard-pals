@@ -29,11 +29,11 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
         return;
       }
 
+      // Make sure we're sending the request body correctly
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: JSON.stringify({ address }), // Ensure body is stringified
+        body: { address }, // Remove JSON.stringify as supabase.functions.invoke handles this
         headers: {
           Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
         }
       });
 
