@@ -11,14 +11,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AddressVerification } from "@/components/address/AddressVerification";
 
+const officeOptions = [
+  // Federal Offices
+  "U.S. President",
+  "U.S. Senator",
+  "U.S. Representative",
+  // State Offices
+  "Governor",
+  "Lieutenant Governor",
+  "State Senator",
+  "State Representative",
+  "Attorney General",
+  "Secretary of State",
+  "State Treasurer",
+  // Local Offices
+  "Mayor",
+  "City Council Member",
+  "County Commissioner",
+  "District Attorney",
+  "Sheriff",
+  "School Board Member"
+] as const;
+
 const formSchema = z.object({
   committee_name: z.string().min(2, "Campaign name must be at least 2 characters"),
-  office_sought: z.string().min(2, "Office sought must be at least 2 characters"),
+  office_sought: z.enum(officeOptions, {
+    required_error: "Please select an office",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -33,7 +58,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       committee_name: "",
-      office_sought: "",
+      office_sought: "U.S. Representative",
     },
   });
 
@@ -111,9 +136,20 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Office Sought</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter office sought" {...field} />
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an office" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {officeOptions.map((office) => (
+                      <SelectItem key={office} value={office}>
+                        {office}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
