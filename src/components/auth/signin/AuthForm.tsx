@@ -19,7 +19,7 @@ const AuthForm = () => {
       }}
       theme="light"
       providers={[] as Provider[]}
-      redirectTo={window.location.origin}
+      redirectTo={`${window.location.origin}/auth/callback`}
       view="sign_in"
       showLinks={true}
       localization={{

@@ -13,37 +13,21 @@ const SignInPage = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Check for existing session on mount
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        handleSignedInUser(session);
+      }
+    };
+    
+    checkExistingSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
-        try {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('first_name, last_name, is_confirmed')
-            .eq('id', session.user.id)
-            .single();
-
-          if (!profile?.is_confirmed) {
-            console.log("Redirecting to onboarding");
-            toast.success("Welcome! Let's set up your account.");
-            navigate(ROUTES.ONBOARDING, { replace: true });
-            return;
-          }
-
-          const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
-          console.log("Redirecting to:", from);
-          toast.success("Welcome back!");
-          navigate(from, { replace: true });
-        } catch (error) {
-          console.error('Error in sign in process:', error);
-          if (error instanceof AuthError) {
-            toast.error(error.message);
-          } else {
-            toast.error("An unexpected error occurred. Please try again.");
-          }
-          await supabase.auth.signOut();
-        }
+        await handleSignedInUser(session);
       }
     });
 
@@ -51,6 +35,38 @@ const SignInPage = () => {
       subscription.unsubscribe();
     };
   }, [navigate, location]);
+
+  const handleSignedInUser = async (session: any) => {
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, is_confirmed')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      if (!profile?.is_confirmed) {
+        console.log("Redirecting to onboarding");
+        toast.success("Welcome! Let's set up your account.");
+        navigate(ROUTES.ONBOARDING, { replace: true });
+        return;
+      }
+
+      const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
+      console.log("Redirecting to:", from);
+      toast.success("Welcome back!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error('Error in sign in process:', error);
+      if (error instanceof AuthError) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+      await supabase.auth.signOut();
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

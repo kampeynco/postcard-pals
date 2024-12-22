@@ -54,22 +54,14 @@ export const useAuthStateChange = () => {
 
     const initializeAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        console.log("Initial session check:", session?.user?.email);
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+        console.log("Initial session check:", initialSession?.user?.email);
         
         if (error) throw error;
 
         if (isSubscribed) {
-          if (session) {
-            const onboardingStatus = await checkOnboardingStatus(session);
-            setSession(session);
-            
-            if (!onboardingStatus.completed && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
-              navigate(ROUTES.ONBOARDING, { 
-                replace: true,
-                state: { step: onboardingStatus.step } 
-              });
-            }
+          if (initialSession) {
+            await handleAuthStateChange(initialSession);
           } else if (!publicRoutes.includes(location.pathname as typeof publicRoutes[number])) {
             navigate(ROUTES.SIGNIN, { replace: true });
           }
@@ -78,7 +70,6 @@ export const useAuthStateChange = () => {
         handleError(error as Error);
       } finally {
         if (isSubscribed) {
-          setLoading(false);
           setInitialized(true);
         }
       }
@@ -101,5 +92,5 @@ export const useAuthStateChange = () => {
     };
   }, [navigate, location.pathname]);
 
-  return { session, loading, initialized };
+  return { session, loading, initialized, setSession };
 };
