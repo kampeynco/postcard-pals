@@ -2,18 +2,23 @@ import { AddressInput } from "../types";
 import { toast } from "sonner";
 
 export const validateAddress = (address: AddressInput): boolean => {
-  if (!address.street || !address.city || !address.state || !address.zip_code) {
-    toast.error("Please fill in all address fields");
+  if (!address.street.trim()) {
+    toast.error("Please enter a street address");
     return false;
   }
 
-  if (address.state.length !== 2) {
-    toast.error("Please enter a valid 2-letter state code");
+  if (!address.city.trim()) {
+    toast.error("Please enter a city");
     return false;
   }
 
-  if (!/^\d{5}(-\d{4})?$/.test(address.zip_code)) {
-    toast.error("Please enter a valid ZIP code (e.g., 12345 or 12345-6789)");
+  if (!address.state) {
+    toast.error("Please select a state");
+    return false;
+  }
+
+  if (!/^\d{5}$/.test(address.zip_code)) {
+    toast.error("Please enter a valid 5-digit ZIP code");
     return false;
   }
 

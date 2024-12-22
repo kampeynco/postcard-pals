@@ -21,7 +21,6 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       if (!validateAddress(address)) return;
       
       setLoading(true);
-      console.log("Verifying address:", address);
       
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -29,11 +28,14 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
         return;
       }
 
-      // Make sure we're sending the request body correctly
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: { address }, // Remove JSON.stringify as supabase.functions.invoke handles this
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
+        body: {
+          address: {
+            street: address.street.trim(),
+            city: address.city.trim(),
+            state: address.state.trim(),
+            zip_code: address.zip_code.trim()
+          }
         }
       });
 

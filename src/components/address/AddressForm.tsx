@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddressInput } from "./types";
+import { US_STATES } from "./utils/constants";
 
 interface AddressFormProps {
   address: AddressInput;
@@ -33,22 +35,30 @@ export const AddressForm = ({ address, onChange }: AddressFormProps) => {
         </div>
         <div>
           <Label htmlFor="state" className="text-sm font-medium text-gray-700">State</Label>
-          <Input
-            id="state"
+          <Select
             value={address.state}
-            onChange={(e) => onChange({ ...address, state: e.target.value.toUpperCase() })}
-            placeholder="CA"
-            maxLength={2}
-            className="mt-1"
-          />
+            onValueChange={(value) => onChange({ ...address, state: value })}
+          >
+            <SelectTrigger id="state" className="mt-1">
+              <SelectValue placeholder="Select state" />
+            </SelectTrigger>
+            <SelectContent>
+              {US_STATES.map(({ code, name }) => (
+                <SelectItem key={code} value={code}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="zip_code" className="text-sm font-medium text-gray-700">ZIP Code</Label>
           <Input
             id="zip_code"
             value={address.zip_code}
-            onChange={(e) => onChange({ ...address, zip_code: e.target.value })}
+            onChange={(e) => onChange({ ...address, zip_code: e.target.value.replace(/\D/g, '').slice(0, 5) })}
             placeholder="12345"
+            maxLength={5}
             className="mt-1"
           />
         </div>
