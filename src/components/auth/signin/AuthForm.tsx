@@ -22,6 +22,9 @@ const AuthForm = () => {
       redirectTo={window.location.origin}
       view="sign_in"
       showLinks={true}
+      onError={(error) => {
+        console.error("Auth error:", error);
+      }}
       localization={{
         variables: {
           sign_in: {

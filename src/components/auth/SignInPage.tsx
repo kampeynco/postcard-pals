@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
 import { AuthError } from "@supabase/supabase-js";
+import { ROUTES } from "@/constants/routes";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const SignInPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session);
+      console.log("Auth state changed:", event, session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
         try {
@@ -26,11 +27,11 @@ const SignInPage = () => {
           if (!profile?.is_confirmed) {
             console.log("Redirecting to onboarding");
             toast.success("Welcome! Let's set up your account.");
-            navigate("/onboarding", { replace: true });
+            navigate(ROUTES.ONBOARDING, { replace: true });
             return;
           }
 
-          const from = (location.state as any)?.from?.pathname || "/dashboard";
+          const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
           console.log("Redirecting to:", from);
           toast.success("Welcome back!");
           navigate(from, { replace: true });
@@ -43,16 +44,12 @@ const SignInPage = () => {
           }
           await supabase.auth.signOut();
         }
-      } else if (event === 'SIGNED_OUT') {
-        toast.info("You have been signed out.");
-      } else if (event === 'USER_UPDATED') {
-        toast.info("Your account has been updated.");
-      } else if (event === 'PASSWORD_RECOVERY') {
-        toast.info("Check your email for password reset instructions.");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate, location]);
 
   return (
