@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormValues, formSchema, officeOptions } from "./types";
+import { FormValues, formSchema, officeOptions, committeeTypes } from "./types";
 import { AddressVerification } from "@/components/address/AddressVerification";
 import { useState } from "react";
 import type { AddressInput } from "@/components/address/types";
@@ -28,7 +28,9 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       committee_name: "",
+      committee_type: "candidate",
       office_sought: "U.S. Representative",
+      disclaimer_text: "",
     },
   });
 
@@ -66,6 +68,33 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
 
         <FormField
           control={form.control}
+          name="committee_type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Committee Type</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="border-gray-200 focus:border-brand-background focus:ring-brand-background">
+                    <SelectValue placeholder="Select committee type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {committeeTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type === "candidate" ? "Candidate" :
+                       type === "political_action_committee" ? "Political Action Committee" :
+                       "Non-Profit"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="office_sought"
           render={({ field }) => (
             <FormItem>
@@ -84,6 +113,24 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="disclaimer_text"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Legal Disclaimer</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Paid for by" 
+                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
+                  {...field} 
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

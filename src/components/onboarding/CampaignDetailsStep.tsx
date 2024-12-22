@@ -32,10 +32,10 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
 
       const insertData: ActBlueAccount = {
         committee_name: values.committee_name,
-        committee_type: "candidate", // Since this is the onboarding flow, we set this as candidate
+        committee_type: values.committee_type,
         office_sought: values.office_sought,
         user_id: session.user.id,
-        disclaimer_text: `Paid for by ${values.committee_name}`,
+        disclaimer_text: values.disclaimer_text,
         street_address: verifiedAddress.street,
         city: verifiedAddress.city,
         state: verifiedAddress.state,
