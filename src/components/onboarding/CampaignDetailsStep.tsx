@@ -27,34 +27,47 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         return;
       }
 
+      // Prepare the data for insertion
       const insertData: ActBlueAccount = {
+        user_id: session.user.id,
         committee_name: values.committee_name,
         committee_type: values.committee_type,
         candidate_name: values.committee_type === 'candidate' ? values.candidate_name : null,
         office_sought: values.committee_type === 'candidate' ? values.office_sought : null,
-        user_id: session.user.id,
-        disclaimer_text: values.disclaimer_text,
         street_address: verifiedAddress.street,
         city: verifiedAddress.city,
         state: verifiedAddress.state,
         zip_code: verifiedAddress.zip_code,
+        disclaimer_text: values.disclaimer_text,
         is_created: true,
         is_onboarded: false,
         is_active: false
       };
 
-      console.log('Creating ActBlue account with data:', insertData);
-
-      const { error: actblueError } = await supabase
+      // Check if an account already exists for this user
+      const { data: existingAccount } = await supabase
         .from("actblue_accounts")
-        .insert([insertData]);
+        .select("id")
+        .eq("user_id", session.user.id)
+        .single();
 
-      if (actblueError) {
-        console.error('Error creating ActBlue account:', actblueError);
-        throw actblueError;
+      if (existingAccount) {
+        // Update existing account
+        const { error: updateError } = await supabase
+          .from("actblue_accounts")
+          .update(insertData)
+          .eq("user_id", session.user.id);
+
+        if (updateError) throw updateError;
+      } else {
+        // Create new account
+        const { error: insertError } = await supabase
+          .from("actblue_accounts")
+          .insert([insertData]);
+
+        if (insertError) throw insertError;
       }
 
-      console.log('ActBlue account created successfully');
       toast.success("Campaign details saved successfully");
       onNext();
     } catch (error) {

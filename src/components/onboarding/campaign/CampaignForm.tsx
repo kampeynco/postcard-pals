@@ -29,6 +29,7 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
     defaultValues: {
       committee_name: "",
       committee_type: "candidate",
+      candidate_name: "",
       office_sought: "U.S. Representative",
       disclaimer_text: "",
     },
@@ -55,13 +56,9 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           name="committee_name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700">Committee Legal Name</FormLabel>
+              <FormLabel>Committee Name</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Enter committee name" 
-                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
-                  {...field} 
-                />
+                <Input placeholder="Enter committee name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -73,19 +70,19 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           name="committee_type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700">Committee Type</FormLabel>
+              <FormLabel>Committee Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="border-gray-200 focus:border-brand-background focus:ring-brand-background">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select committee type" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {committeeTypes.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type === "candidate" ? "Candidate" :
+                      {type === "candidate" ? "Candidate Committee" :
                        type === "political_action_committee" ? "Political Action Committee" :
-                       "Non-Profit"}
+                       "Non-Profit Organization"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -96,30 +93,46 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
         />
 
         {committeeType === "candidate" && (
-          <FormField
-            control={form.control}
-            name="office_sought"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Office Sought</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <>
+            <FormField
+              control={form.control}
+              name="candidate_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Candidate Name</FormLabel>
                   <FormControl>
-                    <SelectTrigger className="border-gray-200 focus:border-brand-background focus:ring-brand-background">
-                      <SelectValue placeholder="Select an office" />
-                    </SelectTrigger>
+                    <Input placeholder="Enter candidate name" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    {officeOptions.map((office) => (
-                      <SelectItem key={office} value={office}>
-                        {office}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="office_sought"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office Sought</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an office" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {officeOptions.map((office) => (
+                        <SelectItem key={office} value={office}>
+                          {office}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
 
         <FormField
@@ -127,13 +140,9 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
           name="disclaimer_text"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700">Legal Disclaimer</FormLabel>
+              <FormLabel>Legal Disclaimer</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Paid for by" 
-                  className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
-                  {...field} 
-                />
+                <Input placeholder="Paid for by..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -146,7 +155,7 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
 
         <Button 
           type="submit" 
-          className="w-full bg-brand-background hover:bg-brand-background/90 text-white font-medium py-2.5"
+          className="w-full"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Saving..." : "Continue"}

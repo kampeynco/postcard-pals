@@ -29,14 +29,10 @@ export const committeeTypes = [
 ] as const;
 
 export const formSchema = z.object({
-  committee_name: z.string().min(2, "Campaign name must be at least 2 characters"),
-  committee_type: z.enum(committeeTypes, {
-    required_error: "Please select a committee type",
-  }),
+  committee_name: z.string().min(2, "Committee name must be at least 2 characters"),
+  committee_type: z.enum(committeeTypes),
   candidate_name: z.string().optional(),
-  office_sought: z.enum(officeOptions, {
-    required_error: "Please select an office",
-  }),
+  office_sought: z.enum(officeOptions).optional(),
   disclaimer_text: z.string().min(1, "Disclaimer text is required"),
 });
 
