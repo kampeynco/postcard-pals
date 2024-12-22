@@ -13,13 +13,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormValues, formSchema, officeOptions } from "./types";
 import { AddressVerification } from "@/components/address/AddressVerification";
+import { useState } from "react";
+import type { AddressInput } from "@/components/address/types";
 
 interface CampaignFormProps {
-  onSubmit: (values: FormValues) => Promise<void>;
-  onAddressVerified: (address: any) => Promise<void>;
+  onSubmit: (values: FormValues, verifiedAddress: AddressInput | null) => Promise<void>;
 }
 
-export const CampaignForm = ({ onSubmit, onAddressVerified }: CampaignFormProps) => {
+export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
+  const [verifiedAddress, setVerifiedAddress] = useState<AddressInput | null>(null);
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,9 +31,13 @@ export const CampaignForm = ({ onSubmit, onAddressVerified }: CampaignFormProps)
     },
   });
 
+  const handleSubmit = async (values: FormValues) => {
+    await onSubmit(values, verifiedAddress);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="committee_name"
@@ -72,7 +79,7 @@ export const CampaignForm = ({ onSubmit, onAddressVerified }: CampaignFormProps)
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Office Address</h3>
-          <AddressVerification onVerified={onAddressVerified} />
+          <AddressVerification onVerified={setVerifiedAddress} />
         </div>
 
         <Button type="submit" className="w-full">Continue</Button>

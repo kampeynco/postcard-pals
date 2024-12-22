@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { CampaignForm } from "./campaign/CampaignForm";
 import type { FormValues } from "./campaign/types";
+import type { AddressInput } from "../address/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
@@ -11,8 +12,13 @@ interface CampaignDetailsStepProps {
 export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
   const { session } = useAuth();
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: FormValues, verifiedAddress: AddressInput | null) => {
     try {
+      if (!verifiedAddress) {
+        toast.error("Please verify your address before continuing");
+        return;
+      }
+
       const { error } = await supabase
         .from("actblue_accounts")
         .insert({
@@ -21,10 +27,10 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
           committee_type: "candidate",
           user_id: session?.user.id,
           disclaimer_text: "Paid for by " + values.committee_name,
-          street_address: "",
-          city: "",
-          state: "",
-          zip_code: "",
+          street_address: verifiedAddress.street,
+          city: verifiedAddress.city,
+          state: verifiedAddress.state,
+          zip_code: verifiedAddress.zip_code,
           is_created: true
         });
 
@@ -33,26 +39,8 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
       toast.success("Campaign details saved successfully");
       onNext();
     } catch (error) {
+      console.error('Error saving campaign details:', error);
       toast.error("Failed to save campaign details");
-    }
-  };
-
-  const handleAddressVerified = async (verifiedAddress: any) => {
-    try {
-      const { error } = await supabase
-        .from("actblue_accounts")
-        .update({
-          street_address: verifiedAddress.street,
-          city: verifiedAddress.city,
-          state: verifiedAddress.state,
-          zip_code: verifiedAddress.zip_code,
-        })
-        .eq("user_id", session?.user.id);
-
-      if (error) throw error;
-      toast.success("Address verified and saved");
-    } catch (error) {
-      toast.error("Failed to save address");
     }
   };
 
@@ -63,10 +51,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         <p className="text-gray-500 text-sm">Tell us about your campaign</p>
       </div>
 
-      <CampaignForm 
-        onSubmit={onSubmit}
-        onAddressVerified={handleAddressVerified}
-      />
+      <CampaignForm onSubmit={onSubmit} />
     </div>
   );
 };
