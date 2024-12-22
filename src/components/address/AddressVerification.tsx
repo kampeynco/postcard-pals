@@ -51,6 +51,11 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
       if (testKeywords.some(keyword => 
         address.street.toLowerCase().includes(keyword.toLowerCase()))) {
         testAddress.zip_code = '11111';
+        // For test addresses, we'll use a standard city/state if not provided
+        if (!testAddress.city || !testAddress.state) {
+          testAddress.city = 'San Francisco';
+          testAddress.state = 'CA';
+        }
       }
 
       const { data, error } = await supabase.functions.invoke('verify-address', {

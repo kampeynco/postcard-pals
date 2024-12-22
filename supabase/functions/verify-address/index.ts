@@ -33,7 +33,7 @@ serve(async (req) => {
     const { address } = JSON.parse(requestBody) as AddressVerificationRequest;
     console.log('Parsed address:', address);
 
-    if (!address || !address.street || !address.city || !address.state || !address.zip_code) {
+    if (!address || !address.street) {
       throw new Error('Missing required address fields');
     }
 
@@ -43,13 +43,25 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    // Format address for Lob API
+    // Format address for Lob API - first attempt with city/state
     const verificationRequest = {
-      primary_line: address.street.trim(),
-      city: address.city.trim(),
-      state: address.state.trim(),
-      zip_code: address.zip_code.trim()
+      primary_line: address.street.trim()
     };
+
+    // Check if we have city and state
+    if (address.city?.trim() && address.state?.trim()) {
+      Object.assign(verificationRequest, {
+        city: address.city.trim(),
+        state: address.state.trim()
+      });
+    } else if (address.zip_code?.trim()) {
+      // Fallback to zip code if city/state not available
+      Object.assign(verificationRequest, {
+        zip_code: address.zip_code.trim()
+      });
+    } else {
+      throw new Error('Must provide either city/state or zip code');
+    }
 
     console.log('Verification request:', verificationRequest);
 
