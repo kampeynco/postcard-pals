@@ -15,17 +15,32 @@ serve(async (req) => {
   }
 
   try {
-    const { address } = await req.json()
-    console.log('Received address for verification:', address)
+    let address;
+    try {
+      const body = await req.text();
+      console.log('Raw request body:', body);
+      
+      if (!body) {
+        throw new Error('Request body is empty');
+      }
+      
+      const parsedBody = JSON.parse(body);
+      address = parsedBody.address;
+      
+      console.log('Parsed address:', address);
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      throw new Error(`Invalid JSON format: ${parseError.message}`);
+    }
     
     if (!address || !address.street || !address.city || !address.state || !address.zip_code) {
-      throw new Error('Missing required address fields')
+      throw new Error('Missing required address fields');
     }
 
     // Get auth user from the request
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      throw new Error('No authorization header')
+      throw new Error('No authorization header');
     }
 
     const supabase = createClient(
