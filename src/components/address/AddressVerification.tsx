@@ -58,6 +58,10 @@ export const AddressVerification = ({ onVerified }: AddressVerificationProps) =>
         return;
       }
 
+      // Stringify the body to ensure proper JSON formatting
+      const requestBody = JSON.stringify({ address });
+      console.log("Request body:", requestBody);
+
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address },
         headers: {

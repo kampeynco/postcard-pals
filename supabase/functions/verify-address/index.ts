@@ -15,24 +15,26 @@ serve(async (req) => {
   }
 
   try {
-    let address;
+    // Get the request body as text first
+    const bodyText = await req.text();
+    console.log('Raw request body:', bodyText);
+
+    if (!bodyText) {
+      throw new Error('Request body is empty');
+    }
+
+    // Parse the JSON body
+    let parsedBody;
     try {
-      const body = await req.text();
-      console.log('Raw request body:', body);
-      
-      if (!body) {
-        throw new Error('Request body is empty');
-      }
-      
-      const parsedBody = JSON.parse(body);
-      address = parsedBody.address;
-      
-      console.log('Parsed address:', address);
+      parsedBody = JSON.parse(bodyText);
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       throw new Error(`Invalid JSON format: ${parseError.message}`);
     }
-    
+
+    const { address } = parsedBody;
+    console.log('Parsed address:', address);
+
     if (!address || !address.street || !address.city || !address.state || !address.zip_code) {
       throw new Error('Missing required address fields');
     }
