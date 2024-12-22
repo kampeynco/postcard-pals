@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 
 const Onboarding = () => {
+  const location = useLocation();
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    if (location.state?.step) {
+      setStep(location.state.step);
+    }
+  }, [location.state]);
 
   const handleNext = () => {
     setStep((prev) => prev + 1);

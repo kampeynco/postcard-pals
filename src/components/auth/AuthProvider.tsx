@@ -25,6 +25,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   };
 
+  const checkOnboardingStatus = async (session: Session) => {
+    try {
+      // Check profile status
+      const profileResult = await checkUserProfile(session);
+      if (profileResult.type === 'incomplete') {
+        return { step: 1 };
+      }
+
+      // Check campaign creation status
+      const { data: actblueAccount } = await supabase
+        .from('actblue_accounts')
+        .select('is_created, is_onboarded')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!actblueAccount?.is_created) {
+        return { step: 2 };
+      }
+
+      if (!actblueAccount?.is_onboarded) {
+        return { step: 3 };
+      }
+
+      return { completed: true };
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      return { step: 1 };
+    }
+  };
+
   const handleAuthStateChange = async (session: Session | null) => {
     console.log("Auth state change handler called with session:", session?.user?.email);
     
@@ -35,31 +65,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const result = await checkUserProfile(session);
-      console.log("Profile check result:", result);
+      const onboardingStatus = await checkOnboardingStatus(session);
       
-      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
-        navigate(ROUTES.ONBOARDING, { replace: true });
+      if (!onboardingStatus.completed && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
+        navigate(ROUTES.ONBOARDING, { 
+          replace: true,
+          state: { step: onboardingStatus.step } 
+        });
       }
       setSession(session);
     } catch (error) {
       handleError(error as Error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleInitialNavigation = async (session: Session | null, result: ProfileCheckResult) => {
-    console.log("Initial navigation handler called with session:", session?.user?.email);
-    
-    try {
-      if (result.type === 'incomplete' && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
-        navigate(ROUTES.ONBOARDING, { replace: true });
-      } else if (result.type === 'complete' && location.pathname === ROUTES.ONBOARDING) {
-        navigate(ROUTES.DASHBOARD, { replace: true });
-      }
-    } catch (error) {
-      handleError(error as Error);
     }
   };
 
@@ -75,12 +93,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
 
         if (isSubscribed) {
-          setSession(session);
-          
           if (session) {
-            const result = await checkUserProfile(session);
-            console.log("Profile check result:", result);
-            await handleInitialNavigation(session, result);
+            const onboardingStatus = await checkOnboardingStatus(session);
+            setSession(session);
+            
+            if (!onboardingStatus.completed && !noOnboardingRoutes.includes(location.pathname as typeof noOnboardingRoutes[number])) {
+              navigate(ROUTES.ONBOARDING, { 
+                replace: true,
+                state: { step: onboardingStatus.step } 
+              });
+            }
           } else if (!publicRoutes.includes(location.pathname as typeof publicRoutes[number])) {
             navigate(ROUTES.SIGNIN, { replace: true });
           }
@@ -112,7 +134,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [navigate, location.pathname]);
 
-  // Don't render anything until we've initialized
   if (!initialized) {
     return <LoadingSpinner />;
   }

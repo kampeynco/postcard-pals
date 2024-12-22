@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
+import { ROUTES } from "@/constants/routes";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
@@ -14,17 +15,19 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
 
   const handleComplete = async () => {
     try {
-      // Update ActBlue account to mark onboarding as complete
       const { error } = await supabase
         .from("actblue_accounts")
-        .update({ is_onboarded: true })
+        .update({ 
+          is_onboarded: true,
+          is_active: true
+        })
         .eq("user_id", session?.user.id);
 
       if (error) throw error;
 
       toast.success("Setup completed successfully!");
       onNext();
-      navigate("/dashboard");
+      navigate(ROUTES.DASHBOARD);
     } catch (error) {
       toast.error("Failed to complete setup");
     }

@@ -47,7 +47,6 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      // Update profile with user details and set is_confirmed to true
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
