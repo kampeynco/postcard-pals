@@ -25,7 +25,6 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
 
   return (
     <div className="space-y-8">
-      <div className="text-sm font-medium text-gray-500">Setup Progress</div>
       <div className="relative">
         {steps.map((step, index) => (
           <div key={step.number} className="relative pb-12 last:pb-0">

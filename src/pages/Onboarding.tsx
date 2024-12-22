@@ -6,13 +6,9 @@ import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueSt
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 
 const OnboardingTopBar = () => (
-  <div className="border-b border-gray-200">
+  <div className="bg-[#4B5EE4]">
     <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-4">
-      <img 
-        src="/lovable-uploads/186a6d19-d7b8-4119-95a6-69cee8fb4406.png" 
-        alt="Thanks From Us" 
-        className="h-8"
-      />
+      <span className="text-white font-semibold text-lg">Thanks From Us</span>
     </div>
   </div>
 );
