@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
 import { AuthError } from "@supabase/supabase-js";
 import { ROUTES } from "@/constants/routes";
+import { checkOnboardingStatus } from "@/utils/onboarding";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -38,23 +39,22 @@ const SignInPage = () => {
 
   const handleSignedInUser = async (session: any) => {
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('first_name, last_name, is_confirmed')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      if (!profile?.is_confirmed) {
-        console.log("Redirecting to onboarding");
-        toast.success("Welcome! Let's set up your account.");
-        navigate(ROUTES.ONBOARDING, { replace: true });
+      // First check onboarding status
+      const onboardingStatus = await checkOnboardingStatus(session);
+      
+      if (!onboardingStatus.completed) {
+        console.log("Redirecting to onboarding step:", onboardingStatus.step);
+        toast.success("Welcome! Let's complete your account setup.");
+        navigate(ROUTES.ONBOARDING, { 
+          replace: true,
+          state: { step: onboardingStatus.step }
+        });
         return;
       }
 
+      // If onboarding is complete, proceed with normal sign in
       const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
-      console.log("Redirecting to:", from);
+      console.log("Onboarding complete. Redirecting to:", from);
       toast.success("Welcome back!");
       navigate(from, { replace: true });
     } catch (error) {
