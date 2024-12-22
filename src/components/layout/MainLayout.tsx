@@ -1,4 +1,4 @@
-import TopNav from "@/components/navigation/TopNav";
+import { TopNav } from "@/components/navigation/TopNav";
 
 interface MainLayoutProps {
   children: React.ReactNode;

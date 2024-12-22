@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const UserProfileMenu = () => {
+export const UserProfileMenu = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -54,5 +54,3 @@ const UserProfileMenu = () => {
     </DropdownMenu>
   );
 };
-
-export default UserProfileMenu;

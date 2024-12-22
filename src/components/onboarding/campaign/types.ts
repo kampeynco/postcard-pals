@@ -33,6 +33,7 @@ export const formSchema = z.object({
   committee_type: z.enum(committeeTypes, {
     required_error: "Please select a committee type",
   }),
+  candidate_name: z.string().optional(),
   office_sought: z.enum(officeOptions, {
     required_error: "Please select an office",
   }),
