@@ -4,19 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  useEffect(() => {
-    // If user is not authenticated, redirect to landing page
-    if (!session?.user) {
-      navigate("/");
-    }
-  }, [session, navigate]);
+  // If user is authenticated, redirect to dashboard
+  if (session?.user) {
+    navigate("/dashboard", { replace: true });
+    return null;
+  }
 
   const handleSignOut = async () => {
     try {
@@ -32,14 +31,7 @@ const Index = () => {
     }
   };
 
-  if (!session?.user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-      </div>
-    );
-  }
-
+  // Show landing page for non-authenticated users
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -63,18 +55,15 @@ const Index = () => {
               </Button>
             </div>
             <div className="space-y-4">
-              <p className="text-gray-600">
-                Signed in as: <span className="font-medium">{session.user.email}</span>
-              </p>
               <div className="flex gap-4">
-                <Button onClick={() => navigate("/dashboard")}>
-                  Go to Dashboard
+                <Button onClick={() => navigate("/signin")}>
+                  Sign In
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => navigate("/settings/actblue")}
+                  onClick={() => navigate("/signup")}
                 >
-                  ActBlue Settings
+                  Sign Up
                 </Button>
               </div>
             </div>
