@@ -15,9 +15,9 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-background to-brand-accent/20 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-4xl">
-        <div className="bg-white rounded-xl shadow-lg p-8 md:p-12">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-12">
+        <div className="bg-white rounded-xl">
           {step === 1 && (
             <UserDetailsStep onNext={handleNext} onBack={handleBack} />
           )}

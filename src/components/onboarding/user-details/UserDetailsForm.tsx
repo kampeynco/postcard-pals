@@ -8,9 +8,9 @@ import { UserDetailsFormValues } from "./types";
 import { ArrowRight } from "lucide-react";
 
 const formSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters"),
-  last_name: z.string().min(2, "Last name must be at least 2 characters"),
-  phone_number: z.string().min(10, "Please enter a valid phone number"),
+  first_name: z.string().min(2, "Campaign name must be at least 2 characters"),
+  last_name: z.string().min(2, "Description must be at least 2 characters"),
+  phone_number: z.string().min(1, "Please select a campaign type"),
 });
 
 interface UserDetailsFormProps {
@@ -59,7 +59,7 @@ export function UserDetailsForm({ onSuccess }: UserDetailsFormProps) {
       <div className="flex justify-end">
         <button 
           type="submit" 
-          className="bg-brand-background text-brand-text px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2 text-base font-medium"
+          className="bg-[#4361ee] text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2 text-base font-medium w-full justify-center"
         >
           Continue
           <ArrowRight className="w-5 h-5" />
