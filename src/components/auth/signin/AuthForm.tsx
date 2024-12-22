@@ -32,7 +32,7 @@ const AuthForm = () => {
           },
         },
       }}
-      onAuthError={(error) => {
+      onError={(error) => {
         console.error("Auth error:", error);
         if (error.message.includes("Invalid login credentials")) {
           toast.error("Invalid email or password. Please try again.");
