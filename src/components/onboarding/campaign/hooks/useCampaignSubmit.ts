@@ -33,18 +33,7 @@ export const useCampaignSubmit = (onNext: () => void) => {
         throw new Error("Please fill in all candidate information");
       }
 
-      // Check for existing account
-      const { data: existingAccount, error: fetchError } = await supabase
-        .from("actblue_accounts")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (fetchError) {
-        console.error('Error checking existing account:', fetchError);
-        throw fetchError;
-      }
-
+      // Insert ActBlue account
       const accountData = {
         user_id: user.id,
         committee_name: values.committee_name,
@@ -61,66 +50,45 @@ export const useCampaignSubmit = (onNext: () => void) => {
         is_active: false
       };
 
-      let actblueAccountId: string;
+      console.log('Inserting ActBlue account:', accountData);
 
-      if (existingAccount) {
-        console.log('Updating existing account:', existingAccount.id);
-        const { data: updatedAccount, error: updateError } = await supabase
-          .from("actblue_accounts")
-          .update(accountData)
-          .eq("id", existingAccount.id)
-          .select()
-          .single();
+      const { data: actblueAccount, error: accountError } = await supabase
+        .from("actblue_accounts")
+        .insert([accountData])
+        .select()
+        .single();
 
-        if (updateError) {
-          console.error('Error updating ActBlue account:', updateError);
-          throw updateError;
-        }
-        if (!updatedAccount) {
-          console.error('No account returned after update');
-          throw new Error("Failed to update ActBlue account");
-        }
-        actblueAccountId = existingAccount.id;
-      } else {
-        console.log('Creating new account');
-        const { data: newAccount, error: insertError } = await supabase
-          .from("actblue_accounts")
-          .insert([accountData])
-          .select()
-          .single();
-
-        if (insertError) {
-          console.error('Error inserting ActBlue account:', insertError);
-          throw insertError;
-        }
-        if (!newAccount) {
-          console.error('No account returned after insert');
-          throw new Error("Failed to create ActBlue account");
-        }
-        actblueAccountId = newAccount.id;
+      if (accountError) {
+        console.error('Error creating ActBlue account:', accountError);
+        throw accountError;
       }
 
-      console.log('Successfully saved ActBlue account:', actblueAccountId);
+      if (!actblueAccount) {
+        console.error('No account returned after insert');
+        throw new Error("Failed to create ActBlue account");
+      }
 
-      // Save address data
+      console.log('Successfully created ActBlue account:', actblueAccount.id);
+
+      // Insert address with upsert operation
       const addressData = {
-        street: verifiedAddress.street,
-        city: verifiedAddress.city,
-        state: verifiedAddress.state,
-        zip_code: verifiedAddress.zip_code
+        actblue_account_id: actblueAccount.id,
+        lob_id: 'manual_verification',
+        address_data: {
+          street: verifiedAddress.street,
+          city: verifiedAddress.city,
+          state: verifiedAddress.state,
+          zip_code: verifiedAddress.zip_code
+        },
+        is_verified: true,
+        last_verified_at: new Date().toISOString()
       };
+
+      console.log('Upserting address:', addressData);
 
       const { error: addressError } = await supabase
         .from("addresses")
-        .upsert({
-          actblue_account_id: actblueAccountId,
-          lob_id: 'manual_verification',
-          address_data: addressData,
-          is_verified: true,
-          last_verified_at: new Date().toISOString()
-        }, {
-          onConflict: 'actblue_account_id'
-        });
+        .upsert(addressData);
 
       if (addressError) {
         console.error('Error saving address:', addressError);
@@ -129,7 +97,7 @@ export const useCampaignSubmit = (onNext: () => void) => {
 
       console.log('Successfully saved all data');
       toast.success("Campaign details saved successfully");
-      onNext(); // Call onNext after successful save
+      onNext();
     } catch (error) {
       console.error('Error in campaign details submission:', error);
       if (error instanceof Error) {
@@ -137,7 +105,7 @@ export const useCampaignSubmit = (onNext: () => void) => {
       } else {
         toast.error("Failed to save campaign details. Please try again.");
       }
-      throw error; // Re-throw to handle in the component
+      throw error;
     }
   };
 

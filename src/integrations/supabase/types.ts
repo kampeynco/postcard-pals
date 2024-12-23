@@ -95,7 +95,7 @@ export type Database = {
           {
             foreignKeyName: "addresses_actblue_account_id_fkey"
             columns: ["actblue_account_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "actblue_accounts"
             referencedColumns: ["id"]
           },
