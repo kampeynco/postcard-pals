@@ -9,9 +9,10 @@ import { Copy } from "lucide-react";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
+  onBack: () => void;
 }
 
-export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
+export const IntegrateActBlueStep = ({ onNext, onBack }: IntegrateActBlueStepProps) => {
   const navigate = useNavigate();
   const { session } = useAuth();
 
@@ -78,6 +79,15 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
       <Button onClick={handleComplete} className="w-full">
         Complete Setup
       </Button>
+
+      <div className="text-center">
+        <button 
+          onClick={onBack}
+          className="text-gray-500 hover:text-gray-700 text-sm"
+        >
+          Back to previous step
+        </button>
+      </div>
     </div>
   );
 };

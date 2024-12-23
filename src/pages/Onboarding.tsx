@@ -27,6 +27,10 @@ const Onboarding = () => {
     setStep((prev) => prev + 1);
   };
 
+  const handleBack = () => {
+    setStep((prev) => Math.max(1, prev - 1));
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F9FE]">
       <OnboardingTopBar />
@@ -34,8 +38,8 @@ const Onboarding = () => {
         <div className="flex gap-12">
           <div className="flex-1 bg-white rounded-xl shadow-sm p-8">
             {step === 1 && <CreateProfileStep onNext={handleNext} />}
-            {step === 2 && <CampaignDetailsStep onNext={handleNext} />}
-            {step === 3 && <IntegrateActBlueStep onNext={handleNext} />}
+            {step === 2 && <CampaignDetailsStep onNext={handleNext} onBack={handleBack} />}
+            {step === 3 && <IntegrateActBlueStep onNext={handleNext} onBack={handleBack} />}
           </div>
           <div className="w-80">
             <OnboardingProgress currentStep={step} />

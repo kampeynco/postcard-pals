@@ -9,11 +9,12 @@ import type { Json } from "@/integrations/supabase/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
+  onBack: () => void;
 }
 
 type ActBlueAccount = Database["public"]["Tables"]["actblue_accounts"]["Insert"];
 
-export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
+export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps) => {
   const { session } = useAuth();
 
   const onSubmit = async (values: FormValues, verifiedAddress: AddressInput | null) => {
@@ -115,6 +116,15 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
       </div>
 
       <CampaignForm onSubmit={onSubmit} />
+      
+      <div className="text-center mt-4">
+        <button 
+          onClick={onBack}
+          className="text-gray-500 hover:text-gray-700 text-sm"
+        >
+          Back to previous step
+        </button>
+      </div>
     </div>
   );
 };
