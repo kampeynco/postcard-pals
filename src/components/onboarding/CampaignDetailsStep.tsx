@@ -29,13 +29,15 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
         return;
       }
 
-      // Prepare the ActBlue account data
+      // Prepare the ActBlue account data with all required fields
       const insertData: ActBlueAccount = {
         user_id: session.user.id,
         committee_name: values.committee_name,
         committee_type: values.committee_type,
+        // Only include candidate-specific fields for candidate committee type
         candidate_name: values.committee_type === 'candidate' ? values.candidate_name : null,
         office_sought: values.committee_type === 'candidate' ? values.office_sought : null,
+        // Always include address fields
         street_address: verifiedAddress.street,
         city: verifiedAddress.city,
         state: verifiedAddress.state,
@@ -81,23 +83,24 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
         actblueAccountId = newAccount.id;
       }
 
-      // Save the verified address
+      // Prepare address data as Json type
       const addressData = {
-        actblue_account_id: actblueAccountId,
-        lob_id: 'manual_verification',
-        address_data: {
-          street: verifiedAddress.street,
-          city: verifiedAddress.city,
-          state: verifiedAddress.state,
-          zip_code: verifiedAddress.zip_code
-        } as Json,
-        is_verified: true,
-        last_verified_at: new Date().toISOString()
-      };
+        street: verifiedAddress.street,
+        city: verifiedAddress.city,
+        state: verifiedAddress.state,
+        zip_code: verifiedAddress.zip_code
+      } as Json;
 
+      // Save the verified address
       const { error: addressError } = await supabase
         .from("addresses")
-        .upsert(addressData, {
+        .upsert({
+          actblue_account_id: actblueAccountId,
+          lob_id: 'manual_verification',
+          address_data: addressData,
+          is_verified: true,
+          last_verified_at: new Date().toISOString()
+        }, {
           onConflict: 'actblue_account_id'
         });
 
