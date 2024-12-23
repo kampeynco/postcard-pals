@@ -58,26 +58,25 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
           <li>Click on the People navigation link on left sidebar</li>
           <li>Click on the Invite Someone button</li>
           <li>Copy and paste the email below into the field</li>
+          <div className="mt-4 flex items-center gap-2">
+            <Input 
+              value="integrate@thankfromus.com"
+              readOnly
+              disabled
+              className="bg-gray-50"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleCopyEmail}
+              className="flex-shrink-0"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
           <li>Select the Integrations role</li>
           <li>Click the Grant Access button</li>
         </ol>
-
-        <div className="mt-4 flex items-center gap-2">
-          <Input 
-            value="integrate@thankfromus.com"
-            readOnly
-            disabled
-            className="bg-gray-50"
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleCopyEmail}
-            className="flex-shrink-0"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       <Button onClick={handleComplete} className="w-full">
