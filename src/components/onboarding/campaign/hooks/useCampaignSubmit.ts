@@ -33,7 +33,18 @@ export const useCampaignSubmit = (onNext: () => void) => {
         throw new Error("Please fill in all candidate information");
       }
 
-      // Insert ActBlue account
+      // Check for existing account first
+      const { data: existingAccount, error: fetchError } = await supabase
+        .from("actblue_accounts")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Error checking existing account:', fetchError);
+        throw fetchError;
+      }
+
       const accountData = {
         user_id: user.id,
         committee_name: values.committee_name,
@@ -50,25 +61,42 @@ export const useCampaignSubmit = (onNext: () => void) => {
         is_active: false
       };
 
-      console.log('Inserting ActBlue account:', accountData);
+      let actblueAccount;
 
-      const { data: actblueAccount, error: accountError } = await supabase
-        .from("actblue_accounts")
-        .insert([accountData])
-        .select()
-        .single();
+      if (existingAccount) {
+        console.log('Updating existing account:', existingAccount.id);
+        const { data: updated, error: updateError } = await supabase
+          .from("actblue_accounts")
+          .update(accountData)
+          .eq("id", existingAccount.id)
+          .select()
+          .single();
 
-      if (accountError) {
-        console.error('Error creating ActBlue account:', accountError);
-        throw accountError;
+        if (updateError) {
+          console.error('Error updating ActBlue account:', updateError);
+          throw updateError;
+        }
+        actblueAccount = updated;
+      } else {
+        console.log('Creating new account');
+        const { data: created, error: insertError } = await supabase
+          .from("actblue_accounts")
+          .insert([accountData])
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('Error creating ActBlue account:', insertError);
+          throw insertError;
+        }
+        actblueAccount = created;
       }
 
       if (!actblueAccount) {
-        console.error('No account returned after insert');
-        throw new Error("Failed to create ActBlue account");
+        throw new Error("Failed to save ActBlue account");
       }
 
-      console.log('Successfully created ActBlue account:', actblueAccount.id);
+      console.log('Successfully saved ActBlue account:', actblueAccount.id);
 
       // Insert address with upsert operation
       const addressData = {
