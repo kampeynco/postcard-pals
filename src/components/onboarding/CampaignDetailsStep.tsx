@@ -5,6 +5,7 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import type { FormValues } from "./campaign/types";
 import type { AddressInput } from "../address/types";
 import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
@@ -84,7 +85,7 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
       const addressData = {
         actblue_account_id: actblueAccountId,
         lob_id: 'manual_verification',
-        address_data: verifiedAddress,
+        address_data: verifiedAddress as Json,
         is_verified: true,
         last_verified_at: new Date().toISOString()
       };
