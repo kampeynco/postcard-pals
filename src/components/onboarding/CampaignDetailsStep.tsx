@@ -3,6 +3,7 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import { submitCampaignDetails } from "./campaign/CampaignSubmission";
 import type { FormValues } from "./campaign/types";
 import type { AddressInput } from "../address/types";
+import { toast } from "sonner";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
