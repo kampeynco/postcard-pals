@@ -32,6 +32,8 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
   const committeeType = form.watch("committee_type");
 
   const handleSubmit = async (values: FormValues) => {
+    if (isSubmitting) return;
+    
     try {
       setIsSubmitting(true);
       await onSubmit(values, verifiedAddress);
