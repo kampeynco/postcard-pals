@@ -38,9 +38,9 @@ export const useCampaignSubmit = (onNext: () => void) => {
         .from("actblue_accounts")
         .select("id")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+      if (fetchError) {
         console.error('Error checking existing account:', fetchError);
         throw fetchError;
       }
@@ -76,7 +76,10 @@ export const useCampaignSubmit = (onNext: () => void) => {
           console.error('Error updating ActBlue account:', updateError);
           throw updateError;
         }
-        
+        if (!updatedAccount) {
+          console.error('No account returned after update');
+          throw new Error("Failed to update ActBlue account");
+        }
         actblueAccountId = existingAccount.id;
       } else {
         console.log('Creating new account');
@@ -96,6 +99,8 @@ export const useCampaignSubmit = (onNext: () => void) => {
         }
         actblueAccountId = newAccount.id;
       }
+
+      console.log('Successfully saved ActBlue account:', actblueAccountId);
 
       // Save address data
       const addressData = {

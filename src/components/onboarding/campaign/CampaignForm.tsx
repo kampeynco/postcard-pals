@@ -37,6 +37,8 @@ export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
     try {
       setIsSubmitting(true);
       await onSubmit(values, verifiedAddress);
+    } catch (error) {
+      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }
