@@ -5,6 +5,7 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import type { FormValues } from "./campaign/types";
 import type { AddressInput } from "../address/types";
 import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
