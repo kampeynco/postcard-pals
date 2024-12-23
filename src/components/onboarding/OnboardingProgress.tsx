@@ -19,7 +19,7 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
     {
       number: 3,
       title: "Integrate ActBlue",
-      description: "Connect your donation platform"
+      description: "Grant access to ActBlue"
     }
   ];
 
