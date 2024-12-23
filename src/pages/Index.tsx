@@ -23,7 +23,7 @@ const Index = () => {
     try {
       setIsSigningOut(true);
       await supabase.auth.signOut();
-      navigate(ROUTES.INDEX);
+      navigate(ROUTES.HOME);  // Changed from ROUTES.INDEX to ROUTES.HOME
       toast.success("Signed out successfully");
     } catch (error) {
       console.error("Error signing out:", error);
