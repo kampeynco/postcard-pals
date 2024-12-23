@@ -25,10 +25,9 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface CreateProfileStepProps {
   onNext: () => void;
-  onBack?: () => void;
 }
 
-export const CreateProfileStep = ({ onNext, onBack }: CreateProfileStepProps) => {
+export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
   const { session } = useAuth();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -151,15 +150,6 @@ export const CreateProfileStep = ({ onNext, onBack }: CreateProfileStepProps) =>
           </Button>
         </form>
       </Form>
-
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="text-gray-500 hover:text-gray-700 text-sm mt-4 block mx-auto"
-        >
-          Back
-        </button>
-      )}
     </div>
   );
 };

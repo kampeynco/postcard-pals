@@ -1,25 +1,110 @@
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { CampaignForm } from "./campaign/CampaignForm";
-import { submitCampaignDetails } from "./campaign/CampaignSubmission";
 import type { FormValues } from "./campaign/types";
 import type { AddressInput } from "../address/types";
-import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
-  onBack?: () => void;
 }
 
-export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps) => {
+type ActBlueAccount = Database["public"]["Tables"]["actblue_accounts"]["Insert"];
+
+export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
   const { session } = useAuth();
 
   const onSubmit = async (values: FormValues, verifiedAddress: AddressInput | null) => {
-    if (!session?.user?.id) {
-      toast.error("Please sign in to continue");
-      return;
-    }
+    try {
+      if (!session?.user?.id) {
+        toast.error("Please sign in to continue");
+        return;
+      }
 
-    await submitCampaignDetails(values, verifiedAddress, session.user.id, onNext);
+      if (!verifiedAddress) {
+        toast.error("Please verify your address before continuing");
+        return;
+      }
+
+      // Prepare the ActBlue account data
+      const insertData: ActBlueAccount = {
+        user_id: session.user.id,
+        committee_name: values.committee_name,
+        committee_type: values.committee_type,
+        candidate_name: values.committee_type === 'candidate' ? values.candidate_name : null,
+        office_sought: values.committee_type === 'candidate' ? values.office_sought : null,
+        street_address: verifiedAddress.street,
+        city: verifiedAddress.city,
+        state: verifiedAddress.state,
+        zip_code: verifiedAddress.zip_code,
+        disclaimer_text: values.disclaimer_text,
+        is_created: true,
+        is_onboarded: false,
+        is_active: false
+      };
+
+      // Check if an account already exists for this user
+      const { data: existingAccount, error: fetchError } = await supabase
+        .from("actblue_accounts")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      let actblueAccountId: string;
+
+      if (existingAccount) {
+        // Update existing account
+        const { error: updateError } = await supabase
+          .from("actblue_accounts")
+          .update(insertData)
+          .eq("user_id", session.user.id)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+        actblueAccountId = existingAccount.id;
+      } else {
+        // Create new account
+        const { data: newAccount, error: insertError } = await supabase
+          .from("actblue_accounts")
+          .insert([insertData])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        if (!newAccount) throw new Error("Failed to create ActBlue account");
+        actblueAccountId = newAccount.id;
+      }
+
+      // Save the verified address
+      const addressData = {
+        actblue_account_id: actblueAccountId,
+        lob_id: 'manual_verification', // Since this is manually verified
+        address_data: verifiedAddress as unknown as Json, // Type assertion to match Supabase's Json type
+        is_verified: true,
+        last_verified_at: new Date().toISOString()
+      };
+
+      const { error: addressError } = await supabase
+        .from("addresses")
+        .insert(addressData);
+
+      if (addressError) throw addressError;
+
+      toast.success("Campaign details saved successfully");
+      onNext();
+    } catch (error) {
+      console.error('Error in campaign details submission:', error);
+      if (error instanceof Error) {
+        toast.error(`Failed to save campaign details: ${error.message}`);
+      } else {
+        toast.error("Failed to save campaign details. Please try again.");
+      }
+    }
   };
 
   return (
@@ -30,15 +115,6 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
       </div>
 
       <CampaignForm onSubmit={onSubmit} />
-
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="text-gray-500 hover:text-gray-700 text-sm mt-4 block mx-auto"
-        >
-          Back
-        </button>
-      )}
     </div>
   );
 };
