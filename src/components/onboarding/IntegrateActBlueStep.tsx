@@ -44,11 +44,7 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-semibold mb-1">Grant ActBlue Access</h2>
-        <p className="text-gray-500 text-sm">Connect your ActBlue account to start processing donations</p>
-      </div>
-
-      <div className="aspect-video w-full bg-gray-100 rounded-lg flex items-center justify-center">
-        <span className="text-gray-500">Instructional Video Placeholder</span>
+        <p className="text-gray-500 text-sm">Follow the instructions below to add us to your team on ActBlue</p>
       </div>
 
       <div className="space-y-4">
