@@ -63,7 +63,7 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
               value="integrate@thankfromus.com"
               readOnly
               disabled
-              className="bg-gray-50"
+              className="bg-gray-50 text-gray-900"
             />
             <Button
               variant="outline"
