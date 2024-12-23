@@ -36,7 +36,7 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-semibold mb-1">Integrate with ActBlue</h2>
+        <h2 className="text-2xl font-semibold mb-1">Grant ActBlue Access</h2>
         <p className="text-gray-500 text-sm">Connect your ActBlue account to start processing donations</p>
       </div>
 
@@ -47,11 +47,12 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Instructions</h3>
         <ol className="list-decimal list-inside space-y-2 text-gray-600">
-          <li>Log in to your ActBlue account</li>
-          <li>Navigate to Account Settings</li>
-          <li>Select "API & Webhooks"</li>
-          <li>Add the Thanks From Us webhook URL</li>
-          <li>Save your changes</li>
+          <li>Log into your ActBlue account</li>
+          <li>Click on the People navigation link on left sidebar</li>
+          <li>Click on the Invite Someone button</li>
+          <li>Copy and paste email below into the email Input field on the right side of page</li>
+          <li>Select the Integrations role</li>
+          <li>Click the Grant Access button</li>
         </ol>
       </div>
 
