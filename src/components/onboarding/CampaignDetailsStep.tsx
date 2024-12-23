@@ -5,7 +5,6 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import type { FormValues } from "./campaign/types";
 import type { AddressInput } from "../address/types";
 import type { Database } from "@/integrations/supabase/types";
-import type { Json } from "@/integrations/supabase/types";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
@@ -62,7 +61,7 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
         const { error: updateError } = await supabase
           .from("actblue_accounts")
           .update(insertData)
-          .eq("user_id", session.user.id)
+          .eq("id", existingAccount.id)
           .select()
           .single();
 
@@ -84,15 +83,17 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
       // Save the verified address
       const addressData = {
         actblue_account_id: actblueAccountId,
-        lob_id: 'manual_verification', // Since this is manually verified
-        address_data: verifiedAddress as unknown as Json, // Type assertion to match Supabase's Json type
+        lob_id: 'manual_verification',
+        address_data: verifiedAddress,
         is_verified: true,
         last_verified_at: new Date().toISOString()
       };
 
       const { error: addressError } = await supabase
         .from("addresses")
-        .insert(addressData);
+        .upsert([addressData], {
+          onConflict: 'actblue_account_id'
+        });
 
       if (addressError) throw addressError;
 
