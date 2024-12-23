@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { ROUTES } from "@/constants/routes";
+import { Input } from "@/components/ui/input";
+import { Copy } from "lucide-react";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
@@ -33,6 +35,11 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
     }
   };
 
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("integrate@thankfromus.com");
+    toast.success("Email copied to clipboard!");
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -50,10 +57,27 @@ export const IntegrateActBlueStep = ({ onNext }: IntegrateActBlueStepProps) => {
           <li>Log into your ActBlue account</li>
           <li>Click on the People navigation link on left sidebar</li>
           <li>Click on the Invite Someone button</li>
-          <li>Copy and paste email below into the email Input field on the right side of page</li>
+          <li>Copy and paste the email below into the field</li>
           <li>Select the Integrations role</li>
           <li>Click the Grant Access button</li>
         </ol>
+
+        <div className="mt-4 flex items-center gap-2">
+          <Input 
+            value="integrate@thankfromus.com"
+            readOnly
+            disabled
+            className="bg-gray-50"
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleCopyEmail}
+            className="flex-shrink-0"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <Button onClick={handleComplete} className="w-full">
