@@ -27,7 +27,7 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
         return;
       }
 
-      // Prepare the data for insertion
+      // Prepare the ActBlue account data
       const insertData: ActBlueAccount = {
         user_id: session.user.id,
         committee_name: values.committee_name,
@@ -45,28 +45,52 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
       };
 
       // Check if an account already exists for this user
-      const { data: existingAccount } = await supabase
+      const { data: existingAccount, error: fetchError } = await supabase
         .from("actblue_accounts")
         .select("id")
         .eq("user_id", session.user.id)
-        .single();
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      let actblueAccountId: string;
 
       if (existingAccount) {
         // Update existing account
         const { error: updateError } = await supabase
           .from("actblue_accounts")
           .update(insertData)
-          .eq("user_id", session.user.id);
+          .eq("user_id", session.user.id)
+          .select()
+          .single();
 
         if (updateError) throw updateError;
+        actblueAccountId = existingAccount.id;
       } else {
         // Create new account
-        const { error: insertError } = await supabase
+        const { data: newAccount, error: insertError } = await supabase
           .from("actblue_accounts")
-          .insert([insertData]);
+          .insert([insertData])
+          .select()
+          .single();
 
         if (insertError) throw insertError;
+        if (!newAccount) throw new Error("Failed to create ActBlue account");
+        actblueAccountId = newAccount.id;
       }
+
+      // Save the verified address
+      const { error: addressError } = await supabase
+        .from("addresses")
+        .insert({
+          actblue_account_id: actblueAccountId,
+          lob_id: 'manual_verification', // Since this is manually verified
+          address_data: verifiedAddress,
+          is_verified: true,
+          last_verified_at: new Date().toISOString()
+        });
+
+      if (addressError) throw addressError;
 
       toast.success("Campaign details saved successfully");
       onNext();
