@@ -85,14 +85,19 @@ export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps
       const addressData = {
         actblue_account_id: actblueAccountId,
         lob_id: 'manual_verification',
-        address_data: verifiedAddress as Json,
+        address_data: {
+          street: verifiedAddress.street,
+          city: verifiedAddress.city,
+          state: verifiedAddress.state,
+          zip_code: verifiedAddress.zip_code
+        } as Json,
         is_verified: true,
         last_verified_at: new Date().toISOString()
       };
 
       const { error: addressError } = await supabase
         .from("addresses")
-        .upsert([addressData], {
+        .upsert(addressData, {
           onConflict: 'actblue_account_id'
         });
 
