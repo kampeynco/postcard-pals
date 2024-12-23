@@ -80,15 +80,17 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
       }
 
       // Save the verified address
+      const addressData = {
+        actblue_account_id: actblueAccountId,
+        lob_id: 'manual_verification', // Since this is manually verified
+        address_data: verifiedAddress as unknown as Json, // Type assertion to match Supabase's Json type
+        is_verified: true,
+        last_verified_at: new Date().toISOString()
+      };
+
       const { error: addressError } = await supabase
         .from("addresses")
-        .insert({
-          actblue_account_id: actblueAccountId,
-          lob_id: 'manual_verification', // Since this is manually verified
-          address_data: verifiedAddress,
-          is_verified: true,
-          last_verified_at: new Date().toISOString()
-        });
+        .insert(addressData);
 
       if (addressError) throw addressError;
 
