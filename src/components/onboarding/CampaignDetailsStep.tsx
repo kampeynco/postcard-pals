@@ -1,7 +1,7 @@
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useCampaignForm } from "./hooks/useCampaignForm";
+import { useCampaignForm } from "./campaign/hooks/useCampaignForm";
 import { CampaignFormFields } from "./campaign/CampaignFormFields";
 
 interface CampaignDetailsStepProps {
