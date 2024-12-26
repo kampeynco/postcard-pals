@@ -1,5 +1,5 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "../types";
 
@@ -16,9 +16,8 @@ export const DisclaimerTextField = ({ form }: DisclaimerTextFieldProps) => {
         <FormItem>
           <FormLabel>Disclaimer Text</FormLabel>
           <FormControl>
-            <Textarea 
-              placeholder="Enter disclaimer text"
-              className="min-h-[100px]"
+            <Input 
+              placeholder="Paid for by..."
               {...field} 
             />
           </FormControl>

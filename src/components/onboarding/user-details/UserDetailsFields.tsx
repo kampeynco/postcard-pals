@@ -13,25 +13,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface UserDetailsFieldsProps {
   form: UseFormReturn<UserDetailsFormValues>;
+  defaultValues?: Partial<UserDetailsFormValues>;
 }
 
-const formatPhoneNumber = (value: string) => {
-  // Remove all non-numeric characters
-  const number = value.replace(/[^\d]/g, "");
-  
-  // Format the number as (XXX) XXX-XXXX
-  if (number.length <= 3) return number;
-  if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
-  return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
-};
-
-export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
+export function UserDetailsFields({ form, defaultValues }: UserDetailsFieldsProps) {
   return (
     <Form {...form}>
       <div className="space-y-6">
         <FormField
           control={form.control}
           name="first_name"
+          defaultValue={defaultValues?.first_name}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gray-700 text-sm font-medium">Campaign name</FormLabel>
@@ -50,6 +42,7 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
         <FormField
           control={form.control}
           name="last_name"
+          defaultValue={defaultValues?.last_name}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gray-700 text-sm font-medium">
@@ -73,6 +66,7 @@ export function UserDetailsFields({ form }: UserDetailsFieldsProps) {
         <FormField
           control={form.control}
           name="phone_number"
+          defaultValue={defaultValues?.phone_number}
           render={({ field: { onChange, ...field } }) => (
             <FormItem>
               <FormLabel className="text-gray-700 text-sm font-medium">

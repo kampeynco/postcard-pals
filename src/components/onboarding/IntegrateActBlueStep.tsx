@@ -44,7 +44,7 @@ export const IntegrateActBlueStep = ({ onNext, onBack }: IntegrateActBlueStepPro
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-semibold mb-1">Grant ActBlue Access</h2>
+        <h2 className="text-2xl font-semibold mb-1">Grant Access</h2>
         <p className="text-gray-500 text-sm">Follow the instructions below to add us to your team on ActBlue</p>
       </div>
 
