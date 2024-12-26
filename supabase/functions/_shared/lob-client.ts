@@ -20,6 +20,7 @@ export const getLobClient = () => {
       state?: string;
       zip_code?: string;
     }) {
+      console.log('Verifying address:', address);
       const response = await fetch(`${baseUrl}/us_verifications`, {
         method: 'POST',
         headers,
@@ -27,10 +28,14 @@ export const getLobClient = () => {
       });
 
       if (!response.ok) {
+        const error = await response.text();
+        console.error('Lob API error:', error);
         throw new Error(`Lob API error: ${response.status}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Address verification result:', result);
+      return result;
     },
 
     async createPostcard(params: {
@@ -41,6 +46,7 @@ export const getLobClient = () => {
       back: string;
       size?: string;
     }) {
+      console.log('Creating postcard:', params);
       const response = await fetch(`${baseUrl}/postcards`, {
         method: 'POST',
         headers,
@@ -51,10 +57,14 @@ export const getLobClient = () => {
       });
 
       if (!response.ok) {
+        const error = await response.text();
+        console.error('Lob API error:', error);
         throw new Error(`Lob API error: ${response.status}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Postcard creation result:', result);
+      return result;
     }
   };
 };
