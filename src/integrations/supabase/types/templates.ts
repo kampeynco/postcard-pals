@@ -1,4 +1,4 @@
-import { Json } from './database';
+import { Json } from './json';
 
 export interface Template {
   id: string;
