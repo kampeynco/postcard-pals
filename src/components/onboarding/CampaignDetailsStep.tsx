@@ -1,14 +1,15 @@
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useCampaignForm } from "./campaign/hooks/useCampaignForm";
+import { useCampaignForm } from "./hooks/useCampaignForm";
 import { CampaignFormFields } from "./campaign/CampaignFormFields";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
+  onBack: () => void;
 }
 
-export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
+export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps) => {
   const { form, onSubmit } = useCampaignForm(onNext);
 
   return (
@@ -38,6 +39,15 @@ export const CampaignDetailsStep = ({ onNext }: CampaignDetailsStepProps) => {
           </Button>
         </form>
       </Form>
+
+      <div className="text-center">
+        <button 
+          onClick={onBack}
+          className="text-gray-500 hover:text-gray-700 text-sm"
+        >
+          Back to previous step
+        </button>
+      </div>
     </div>
   );
 };
