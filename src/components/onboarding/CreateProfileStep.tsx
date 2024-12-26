@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
@@ -47,22 +48,36 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
 
   const onSubmit = async (values: FormValues) => {
     try {
+      console.log("Starting profile update with values:", values);
+      
+      if (!session?.user?.id) {
+        console.error("No user session found");
+        toast.error("Please sign in to continue");
+        return;
+      }
+
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
           first_name: values.first_name,
           last_name: values.last_name,
           phone_number: values.phone_number,
-          is_confirmed: true
+          is_confirmed: true,
+          updated_at: new Date().toISOString()
         })
-        .eq("id", session?.user.id);
+        .eq("id", session.user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Profile update error:", profileError);
+        throw profileError;
+      }
 
+      console.log("Profile updated successfully");
       toast.success("Profile updated successfully");
       onNext();
     } catch (error) {
-      toast.error("Failed to update profile");
+      console.error("Profile update failed:", error);
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
@@ -145,8 +160,16 @@ export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
           <Button 
             type="submit" 
             className="w-full bg-brand-background hover:bg-brand-background/90 text-white font-medium py-2.5"
+            disabled={form.formState.isSubmitting}
           >
-            Continue
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Continue"
+            )}
           </Button>
         </form>
       </Form>
