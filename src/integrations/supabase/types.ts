@@ -132,28 +132,46 @@ export type Database = {
         Row: {
           created_at: string | null
           donation_data: Json
+          error_message: string | null
           id: string
+          last_attempt_at: string | null
           postcard_sent: boolean | null
           processed: boolean | null
+          processing_attempts: number | null
+          queue_date: string | null
+          queue_status: Database["public"]["Enums"]["queue_status"] | null
           source: string | null
+          timezone: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
           donation_data: Json
+          error_message?: string | null
           id?: string
+          last_attempt_at?: string | null
           postcard_sent?: boolean | null
           processed?: boolean | null
+          processing_attempts?: number | null
+          queue_date?: string | null
+          queue_status?: Database["public"]["Enums"]["queue_status"] | null
           source?: string | null
+          timezone?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
           donation_data?: Json
+          error_message?: string | null
           id?: string
+          last_attempt_at?: string | null
           postcard_sent?: boolean | null
           processed?: boolean | null
+          processing_attempts?: number | null
+          queue_date?: string | null
+          queue_status?: Database["public"]["Enums"]["queue_status"] | null
           source?: string | null
+          timezone?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -271,6 +289,27 @@ export type Database = {
         }
         Relationships: []
       }
+      usps_holidays: {
+        Row: {
+          created_at: string | null
+          holiday_date: string
+          holiday_name: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          holiday_date: string
+          holiday_name: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          holiday_date?: string
+          holiday_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       webhook_logs: {
         Row: {
           created_at: string | null
@@ -313,6 +352,14 @@ export type Database = {
         | "delivered"
         | "failed"
         | "returned"
+      queue_status:
+        | "pending_verification"
+        | "verification_failed"
+        | "verification_complete"
+        | "pending_postcard"
+        | "postcard_queued"
+        | "processing_complete"
+        | "failed"
     }
     CompositeTypes: {
       [_ in never]: never

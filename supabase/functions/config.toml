@@ -11,3 +11,9 @@ verify_jwt = false
 
 [retry-postcard]
 verify_jwt = true
+
+[process-address-queue]
+verify_jwt = true
+
+[process-postcard-queue]
+verify_jwt = true
