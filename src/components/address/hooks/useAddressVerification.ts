@@ -22,9 +22,16 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
-      // Call verification endpoint directly without checking for ActBlue account
+      // Call verification endpoint with proper URL formatting
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: { address }
+        body: { 
+          address: {
+            street: address.street,
+            city: address.city,
+            state: address.state,
+            zip_code: address.zip_code
+          }
+        }
       });
 
       console.log('Verification response:', data);
