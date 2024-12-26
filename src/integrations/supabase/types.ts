@@ -9,7 +9,295 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      actblue_accounts: {
+        Row: {
+          candidate_name: string | null
+          city: string
+          committee_name: string
+          committee_type: Database["public"]["Enums"]["committee_type"]
+          created_at: string | null
+          disclaimer_text: string
+          id: string
+          is_active: boolean | null
+          is_created: boolean | null
+          is_onboarded: boolean | null
+          office_sought: string | null
+          state: string
+          street_address: string
+          user_id: string
+          zip_code: string
+        }
+        Insert: {
+          candidate_name?: string | null
+          city: string
+          committee_name: string
+          committee_type: Database["public"]["Enums"]["committee_type"]
+          created_at?: string | null
+          disclaimer_text: string
+          id?: string
+          is_active?: boolean | null
+          is_created?: boolean | null
+          is_onboarded?: boolean | null
+          office_sought?: string | null
+          state: string
+          street_address: string
+          user_id: string
+          zip_code: string
+        }
+        Update: {
+          candidate_name?: string | null
+          city?: string
+          committee_name?: string
+          committee_type?: Database["public"]["Enums"]["committee_type"]
+          created_at?: string | null
+          disclaimer_text?: string
+          id?: string
+          is_active?: boolean | null
+          is_created?: boolean | null
+          is_onboarded?: boolean | null
+          office_sought?: string | null
+          state?: string
+          street_address?: string
+          user_id?: string
+          zip_code?: string
+        }
+        Relationships: []
+      }
+      addresses: {
+        Row: {
+          actblue_account_id: string | null
+          address_data: Json
+          created_at: string | null
+          id: string
+          is_verified: boolean | null
+          last_verified_at: string | null
+          lob_id: string
+        }
+        Insert: {
+          actblue_account_id?: string | null
+          address_data: Json
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          last_verified_at?: string | null
+          lob_id: string
+        }
+        Update: {
+          actblue_account_id?: string | null
+          address_data?: Json
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          last_verified_at?: string | null
+          lob_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addresses_actblue_account_id_fkey"
+            columns: ["actblue_account_id"]
+            isOneToOne: false
+            referencedRelation: "actblue_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      default_templates: {
+        Row: {
+          back_message: string
+          created_at: string | null
+          front_image_url: string
+          id: string
+          is_active: boolean | null
+          user_id: string
+        }
+        Insert: {
+          back_message: string
+          created_at?: string | null
+          front_image_url: string
+          id?: string
+          is_active?: boolean | null
+          user_id: string
+        }
+        Update: {
+          back_message?: string
+          created_at?: string | null
+          front_image_url?: string
+          id?: string
+          is_active?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          created_at: string | null
+          donation_data: Json
+          id: string
+          postcard_sent: boolean | null
+          processed: boolean | null
+          source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          donation_data: Json
+          id?: string
+          postcard_sent?: boolean | null
+          processed?: boolean | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          donation_data?: Json
+          id?: string
+          postcard_sent?: boolean | null
+          processed?: boolean | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      postcards: {
+        Row: {
+          created_at: string | null
+          donation_id: string
+          expected_delivery_date: string | null
+          id: string
+          lob_id: string
+          lob_webhook_id: string | null
+          status: Database["public"]["Enums"]["postcard_status"] | null
+          template_id: string
+          tracking_number: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          donation_id: string
+          expected_delivery_date?: string | null
+          id?: string
+          lob_id: string
+          lob_webhook_id?: string | null
+          status?: Database["public"]["Enums"]["postcard_status"] | null
+          template_id: string
+          tracking_number?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          donation_id?: string
+          expected_delivery_date?: string | null
+          id?: string
+          lob_id?: string
+          lob_webhook_id?: string | null
+          status?: Database["public"]["Enums"]["postcard_status"] | null
+          template_id?: string
+          tracking_number?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "postcards_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          display_name: string | null
+          first_name: string | null
+          id: string
+          is_confirmed: boolean | null
+          last_name: string | null
+          phone_number: string | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name?: string | null
+          first_name?: string | null
+          id: string
+          is_confirmed?: boolean | null
+          last_name?: string | null
+          phone_number?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string | null
+          first_name?: string | null
+          id?: string
+          is_confirmed?: boolean | null
+          last_name?: string | null
+          phone_number?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      templates: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          is_active: boolean | null
+          name: string
+          template_data: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          template_data: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          template_data?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          payload: Json
+          status: string
+          webhook_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          payload: Json
+          status: string
+          webhook_type: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json
+          status?: string
+          webhook_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +306,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      committee_type: "candidate" | "political_action_committee" | "non_profit"
+      postcard_status:
+        | "pending"
+        | "in_transit"
+        | "delivered"
+        | "failed"
+        | "returned"
     }
     CompositeTypes: {
       [_ in never]: never
