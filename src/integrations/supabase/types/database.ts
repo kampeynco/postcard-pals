@@ -1,16 +1,9 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
-
+import { Json } from './json';
 import { ActBlueAccountsTable } from './actblue';
 import { AddressesTable } from './addresses';
 import { DonationsTable } from './donations';
 import { PostcardsTable } from './postcards';
-import { ProfilesTable } from './profile';
+import { ProfileRow, ProfileInsert, ProfileUpdate } from './profile';
 import { TemplatesTable, DefaultTemplatesTable } from './templates';
 import { WebhookLogsTable } from './webhooks';
 import { CommitteeType, PostcardStatus } from './enums';
@@ -22,7 +15,11 @@ export interface Database {
       addresses: AddressesTable;
       donations: DonationsTable;
       postcards: PostcardsTable;
-      profiles: ProfilesTable;
+      profiles: {
+        Row: ProfileRow;
+        Insert: ProfileInsert;
+        Update: ProfileUpdate;
+      };
       templates: TemplatesTable;
       default_templates: DefaultTemplatesTable;
       webhook_logs: WebhookLogsTable;

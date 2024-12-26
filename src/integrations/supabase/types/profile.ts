@@ -1,5 +1,3 @@
-import type { Database } from './database';
-
 export interface Profile {
   id: string;
   display_name: string | null;
@@ -12,4 +10,18 @@ export interface Profile {
   is_confirmed: boolean | null;
 }
 
-export type ProfilesTable = Database['public']['Tables']['profiles'];
+export interface ProfileRow extends Profile {}
+
+export interface ProfileInsert extends Omit<Profile, 'id' | 'created_at' | 'updated_at'> {
+  id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProfileUpdate extends Partial<ProfileInsert> {}
+
+export interface ProfilesTable {
+  Row: ProfileRow;
+  Insert: ProfileInsert;
+  Update: ProfileUpdate;
+}
