@@ -29,7 +29,7 @@ serve(async (req) => {
     if (fetchError) throw fetchError
 
     const lob = getLobClient()
-    const newPostcard = await lob.postcards.create({
+    const newPostcard = await lob.createPostcard({
       description: `Retry: Postcard for donation ${postcard.donation_id}`,
       to: postcard.donations.donation_data.address,
       from: postcard.template_data.from_address,

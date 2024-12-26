@@ -1,9 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { corsHeaders, formatVerificationRequest, isDeliverableAddress, verifyWithLobApi } from './utils.ts';
-import { AddressVerificationRequest, VerificationResponse } from './types.ts';
+import { getLobClient } from '../_shared/lob-client.ts';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -11,7 +14,6 @@ serve(async (req) => {
   try {
     console.log('🔵 [1] Verification request received');
     
-    // Get and validate request body
     const requestBody = await req.text();
     console.log('🔵 [2] Raw request body:', requestBody);
 
@@ -20,8 +22,7 @@ serve(async (req) => {
       throw new Error('Request body is empty');
     }
 
-    // Parse and validate address
-    const { address } = JSON.parse(requestBody) as AddressVerificationRequest;
+    const { address } = JSON.parse(requestBody);
     console.log('🔵 [3] Parsed address:', address);
 
     if (!address || !address.street) {
@@ -29,7 +30,6 @@ serve(async (req) => {
       throw new Error('Missing required address fields');
     }
 
-    // Validate auth header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       console.error('🔴 No authorization header');
@@ -37,28 +37,25 @@ serve(async (req) => {
     }
     console.log('🔵 [4] Authorization header present');
 
-    // Format verification request
-    const verificationRequest = formatVerificationRequest(
-      address.street,
-      address.city,
-      address.state,
-      address.zip_code
-    );
+    const verificationRequest = {
+      primary_line: address.street,
+      city: address.city,
+      state: address.state,
+      zip_code: address.zip_code
+    };
     console.log('🔵 [5] Verification request:', verificationRequest);
 
-    // Call Lob API and get verification result
-    const lobResponse = await verifyWithLobApi(verificationRequest);
-    const verificationResult = await lobResponse.json();
+    const lob = getLobClient();
+    const verificationResult = await lob.verifyAddress(verificationRequest);
     console.log('🔵 [6] Lob verification result:', verificationResult);
 
-    // Check deliverability and prepare response
-    const isDeliverable = isDeliverableAddress(verificationResult.deliverability);
+    const isDeliverable = ['deliverable', 'deliverable_unnecessary_unit', 'deliverable_incorrect_unit', 'deliverable_missing_unit'].includes(verificationResult.deliverability);
     console.log('🔵 [7] Deliverability status:', {
       status: verificationResult.deliverability,
       isDeliverable
     });
 
-    const response: VerificationResponse = {
+    const response = {
       is_verified: isDeliverable,
       street: verificationResult.primary_line,
       city: verificationResult.components.city,

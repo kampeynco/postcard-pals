@@ -31,7 +31,7 @@ serve(async (req) => {
 
     if (templateError) throw templateError
 
-    const postcard = await lob.postcards.create({
+    const postcard = await lob.createPostcard({
       description: `Postcard for donation ${donationId}`,
       to: toAddress,
       from: fromAddress,
@@ -50,7 +50,7 @@ serve(async (req) => {
         lob_id: postcard.id,
         status: 'pending',
         expected_delivery_date: postcard.expected_delivery_date,
-        user_id: (await req.json()).user_id // Get user_id from request
+        user_id: (await req.json()).user_id
       })
       .select()
       .single()
