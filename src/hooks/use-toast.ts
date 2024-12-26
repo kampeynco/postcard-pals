@@ -15,26 +15,28 @@ type State = {
   toasts: ToasterToast[];
 };
 
-let count = 0;
-const listeners: Array<(state: State) => void> = [];
-let memoryState: State = { toasts: [] };
+const toastState = {
+  count: 0,
+  listeners: [] as Array<(state: State) => void>,
+  memoryState: { toasts: [] } as State,
+};
 
 const genId = () => {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
+  toastState.count = (toastState.count + 1) % Number.MAX_SAFE_INTEGER;
+  return toastState.count.toString();
 };
 
 const addToast = (props: Omit<ToasterToast, "id">) => {
   const id = genId();
   const toast = { ...props, id, open: true };
   
-  memoryState = {
-    ...memoryState,
-    toasts: [toast, ...memoryState.toasts].slice(0, TOAST_LIMIT),
+  toastState.memoryState = {
+    ...toastState.memoryState,
+    toasts: [toast, ...toastState.memoryState.toasts].slice(0, TOAST_LIMIT),
   };
   
-  listeners.forEach((listener) => {
-    listener(memoryState);
+  toastState.listeners.forEach((listener) => {
+    listener(toastState.memoryState);
   });
 
   return {
@@ -45,50 +47,50 @@ const addToast = (props: Omit<ToasterToast, "id">) => {
 };
 
 const dismissToast = (toastId?: string) => {
-  memoryState = {
-    ...memoryState,
-    toasts: memoryState.toasts.map((t) =>
+  toastState.memoryState = {
+    ...toastState.memoryState,
+    toasts: toastState.memoryState.toasts.map((t) =>
       (t.id === toastId || toastId === undefined) ? { ...t, open: false } : t
     ),
   };
 
-  listeners.forEach((listener) => {
-    listener(memoryState);
+  toastState.listeners.forEach((listener) => {
+    listener(toastState.memoryState);
   });
 
   setTimeout(() => {
-    memoryState = {
-      ...memoryState,
-      toasts: toastId === undefined ? [] : memoryState.toasts.filter((t) => t.id !== toastId),
+    toastState.memoryState = {
+      ...toastState.memoryState,
+      toasts: toastId === undefined ? [] : toastState.memoryState.toasts.filter((t) => t.id !== toastId),
     };
-    listeners.forEach((listener) => {
-      listener(memoryState);
+    toastState.listeners.forEach((listener) => {
+      listener(toastState.memoryState);
     });
   }, TOAST_REMOVE_DELAY);
 };
 
 const updateToast = (toastId: string, props: Partial<ToasterToast>) => {
-  memoryState = {
-    ...memoryState,
-    toasts: memoryState.toasts.map((t) =>
+  toastState.memoryState = {
+    ...toastState.memoryState,
+    toasts: toastState.memoryState.toasts.map((t) =>
       t.id === toastId ? { ...t, ...props } : t
     ),
   };
 
-  listeners.forEach((listener) => {
-    listener(memoryState);
+  toastState.listeners.forEach((listener) => {
+    listener(toastState.memoryState);
   });
 };
 
 export function useToast() {
-  const [state, setState] = React.useState<State>(memoryState);
+  const [state, setState] = React.useState<State>(toastState.memoryState);
 
   React.useEffect(() => {
-    listeners.push(setState);
+    toastState.listeners.push(setState);
     return () => {
-      const index = listeners.indexOf(setState);
+      const index = toastState.listeners.indexOf(setState);
       if (index > -1) {
-        listeners.splice(index, 1);
+        toastState.listeners.splice(index, 1);
       }
     };
   }, [state]);
