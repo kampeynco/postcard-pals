@@ -1,74 +1,70 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { getLobClient } from '../_shared/lob-client.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { createClient } from '@supabase/supabase-js'
+import { corsHeaders } from '../_shared/cors.ts'
+import { createLobClient } from '../_shared/lob-client.ts'
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { templateId, donationId, toAddress, fromAddress } = await req.json()
-    const lob = getLobClient()
+    const { postcardData } = await req.json()
     
-    console.log('Sending postcard:', { templateId, donationId, toAddress })
-    
+    if (!postcardData) {
+      return new Response(
+        JSON.stringify({ error: 'Postcard data is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { data: template, error: templateError } = await supabase
-      .from('templates')
-      .select('template_data')
-      .eq('id', templateId)
-      .single()
-
-    if (templateError) throw templateError
-
-    const postcard = await lob.createPostcard({
-      description: `Postcard for donation ${donationId}`,
-      to: toAddress,
-      from: fromAddress,
-      front: template.template_data.front_html,
-      back: template.template_data.back_html,
+    const lob = createLobClient()
+    
+    const postcard = await lob.postcards.create({
+      description: `Thank you postcard for donation ${postcardData.donationId}`,
+      to: {
+        name: postcardData.recipientName,
+        address_line1: postcardData.recipientAddress.street,
+        address_city: postcardData.recipientAddress.city,
+        address_state: postcardData.recipientAddress.state,
+        address_zip: postcardData.recipientAddress.zip_code
+      },
+      front: postcardData.frontHtml,
+      back: postcardData.backHtml,
       size: '4x6'
     })
 
-    console.log('Postcard created:', postcard)
-
-    const { data: savedPostcard, error: dbError } = await supabase
+    // Update postcard status in database
+    const { error: updateError } = await supabase
       .from('postcards')
-      .insert({
-        donation_id: donationId,
-        template_id: templateId,
+      .update({
         lob_id: postcard.id,
-        status: 'pending',
+        status: 'in_transit',
         expected_delivery_date: postcard.expected_delivery_date,
-        user_id: (await req.json()).user_id
+        tracking_number: postcard.tracking_number
       })
-      .select()
-      .single()
+      .eq('id', postcardData.postcardId)
 
-    if (dbError) throw dbError
+    if (updateError) throw updateError
 
     return new Response(
-      JSON.stringify(savedPostcard),
+      JSON.stringify({ 
+        success: true,
+        postcard_id: postcard.id,
+        tracking_number: postcard.tracking_number,
+        expected_delivery_date: postcard.expected_delivery_date
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }
 })

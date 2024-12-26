@@ -1,92 +1,44 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { getLobClient } from '../_shared/lob-client.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from '@supabase/supabase-js'
+import { corsHeaders } from '../_shared/cors.ts'
+import { createLobClient } from '../_shared/lob-client.ts'
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    console.log('🔵 [1] Verification request received');
+    const { address } = await req.json()
     
-    const requestBody = await req.text();
-    console.log('🔵 [2] Raw request body:', requestBody);
-
-    if (!requestBody) {
-      console.error('🔴 Request body is empty');
-      throw new Error('Request body is empty');
+    if (!address) {
+      return new Response(
+        JSON.stringify({ error: 'Address data is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
     }
 
-    const { address } = JSON.parse(requestBody);
-    console.log('🔵 [3] Parsed address:', address);
-
-    if (!address || !address.street) {
-      console.error('🔴 Missing required address fields');
-      throw new Error('Missing required address fields');
-    }
-
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      console.error('🔴 No authorization header');
-      throw new Error('No authorization header');
-    }
-    console.log('🔵 [4] Authorization header present');
-
-    const verificationRequest = {
+    const lob = createLobClient()
+    
+    const verificationResult = await lob.usVerifications.verify({
       primary_line: address.street,
       city: address.city,
       state: address.state,
       zip_code: address.zip_code
-    };
-    console.log('🔵 [5] Verification request:', verificationRequest);
-
-    const lob = getLobClient();
-    const verificationResult = await lob.verifyAddress(verificationRequest);
-    console.log('🔵 [6] Lob verification result:', verificationResult);
-
-    const isDeliverable = ['deliverable', 'deliverable_unnecessary_unit', 'deliverable_incorrect_unit', 'deliverable_missing_unit'].includes(verificationResult.deliverability);
-    console.log('🔵 [7] Deliverability status:', {
-      status: verificationResult.deliverability,
-      isDeliverable
-    });
-
-    const response = {
-      is_verified: isDeliverable,
-      street: verificationResult.primary_line,
-      city: verificationResult.components.city,
-      state: verificationResult.components.state,
-      zip_code: verificationResult.components.zip_code,
-      deliverability: verificationResult.deliverability,
-      deliverability_analysis: verificationResult.deliverability_analysis,
-      lob_confidence: verificationResult.lob_confidence_score,
-      object: verificationResult.object
-    };
-
-    console.log('🔵 [8] Sending response:', response);
+    })
 
     return new Response(
-      JSON.stringify(response),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
-  } catch (error) {
-    console.error('🔴 Error in verify-address function:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: {
-          message: error.message || 'Address verification failed',
-          details: error.details || null
-        }
+      JSON.stringify({
+        is_verified: verificationResult.deliverability === 'deliverable',
+        deliverability: verificationResult.deliverability,
+        ...verificationResult.components
       }),
-      { 
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    )
   }
-});
+})
