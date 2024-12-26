@@ -20,7 +20,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get the failed postcard details
     const { data: postcard, error: fetchError } = await supabase
       .from('postcards')
       .select('*, templates(*), donations(*)')
@@ -29,7 +28,6 @@ serve(async (req) => {
 
     if (fetchError) throw fetchError
 
-    // Retry sending the postcard
     const lob = getLobClient()
     const newPostcard = await lob.postcards.create({
       description: `Retry: Postcard for donation ${postcard.donation_id}`,
@@ -40,7 +38,6 @@ serve(async (req) => {
       size: '4x6'
     })
 
-    // Update the postcard record
     const { error: updateError } = await supabase
       .from('postcards')
       .update({
@@ -53,7 +50,6 @@ serve(async (req) => {
 
     if (updateError) throw updateError
 
-    // Log the retry attempt
     await supabase
       .from('webhook_logs')
       .insert({

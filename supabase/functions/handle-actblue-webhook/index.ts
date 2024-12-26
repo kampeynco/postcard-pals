@@ -6,7 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Process the donation data from ActBlue payload
 const processDonationData = (payload: any) => {
   if (!payload.contribution || !payload.donor) {
     throw new Error('Missing required fields in payload')
@@ -28,43 +27,7 @@ const processDonationData = (payload: any) => {
   }
 }
 
-// Store donation in Supabase
-const storeDonation = async (supabase: any, donationData: any) => {
-  const { data, error } = await supabase
-    .from('donations')
-    .insert({
-      donation_data: donationData,
-      source: 'actblue',
-      processed: false,
-      postcard_sent: false
-    })
-
-  if (error) {
-    console.error('Error storing donation:', error)
-    throw error
-  }
-
-  return data
-}
-
-// Log webhook activity
-const logWebhookActivity = async (supabase: any, payload: any, status: string, errorMessage?: string) => {
-  const { error } = await supabase
-    .from('webhook_logs')
-    .insert({
-      webhook_type: 'actblue_donation',
-      payload: payload,
-      status: status,
-      error_message: errorMessage
-    })
-
-  if (error) {
-    console.error('Error logging webhook:', error)
-  }
-}
-
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -86,10 +49,26 @@ serve(async (req) => {
     const donationData = processDonationData(payload)
     console.log('Processed donation data:', donationData)
 
-    const donationResult = await storeDonation(supabase, donationData)
-    console.log('Successfully stored donation:', donationResult)
+    const { data: donationResult, error: donationError } = await supabase
+      .from('donations')
+      .insert({
+        donation_data: donationData,
+        source: 'actblue',
+        processed: false,
+        postcard_sent: false
+      })
+      .select()
+      .single()
 
-    await logWebhookActivity(supabase, payload, 'success')
+    if (donationError) throw donationError
+
+    await supabase
+      .from('webhook_logs')
+      .insert({
+        webhook_type: 'actblue_donation',
+        payload,
+        status: 'success'
+      })
 
     return new Response(
       JSON.stringify({ 
@@ -101,15 +80,21 @@ serve(async (req) => {
         headers: { 
           ...corsHeaders, 
           'Content-Type': 'application/json'
-        },
-        status: 200 
+        }
       }
     )
 
   } catch (error) {
     console.error('Error processing webhook:', error)
 
-    await logWebhookActivity(supabase, await req.clone().json(), 'error', error.message)
+    await supabase
+      .from('webhook_logs')
+      .insert({
+        webhook_type: 'actblue_donation',
+        payload: await req.clone().json(),
+        status: 'error',
+        error_message: error.message
+      })
 
     return new Response(
       JSON.stringify({ 

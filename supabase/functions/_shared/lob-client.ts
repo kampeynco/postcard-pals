@@ -1,13 +1,9 @@
-import Lob from 'https://esm.sh/lob';
+import { Lob } from "https://esm.sh/@lob/lob-typescript-sdk@1.5.0";
 
-export function getLobClient(isTest: boolean = true) {
-  const apiKey = isTest 
-    ? Deno.env.get('LOB_TEST_SECRET_KEY')
-    : Deno.env.get('LOB_LIVE_SECRET_KEY');
-
-  if (!apiKey) {
-    throw new Error(`Lob API key not found: ${isTest ? 'test' : 'live'}`);
+export const getLobClient = () => {
+  const lobApiKey = Deno.env.get('LOB_API_KEY');
+  if (!lobApiKey) {
+    throw new Error('LOB_API_KEY is not set');
   }
-
-  return new Lob(apiKey);
-}
+  return new Lob({ apiKey: lobApiKey });
+};
