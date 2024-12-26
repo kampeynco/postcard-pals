@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useCampaignForm } from "./campaign/hooks/useCampaignForm";
 import { CampaignFormFields } from "./campaign/CampaignFormFields";
+import { OnboardingData } from "./hooks/useOnboardingState";
 
 interface CampaignDetailsStepProps {
   onNext: () => void;
   onBack: () => void;
+  defaultValues?: OnboardingData;
 }
 
-export const CampaignDetailsStep = ({ onNext, onBack }: CampaignDetailsStepProps) => {
-  const { form, onSubmit } = useCampaignForm(onNext);
+export const CampaignDetailsStep = ({ onNext, onBack, defaultValues }: CampaignDetailsStepProps) => {
+  const { form, onSubmit } = useCampaignForm(onNext, defaultValues);
 
   return (
     <div className="space-y-6">

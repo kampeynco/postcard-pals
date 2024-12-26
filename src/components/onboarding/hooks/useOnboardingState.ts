@@ -42,7 +42,7 @@ export const useOnboardingState = () => {
       if (error) throw error;
 
       if (profile) {
-        setOnboardingData(profile.onboarding_data || {});
+        setOnboardingData(profile.onboarding_data as OnboardingData || {});
         setCurrentStep(profile.onboarding_step || 1);
       }
     } catch (error) {

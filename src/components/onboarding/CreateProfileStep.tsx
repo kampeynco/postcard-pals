@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useProfileForm } from "./hooks/useProfileForm";
 import { ProfileFormFields } from "./profile/ProfileFormFields";
+import { OnboardingData } from "./hooks/useOnboardingState";
 
 interface CreateProfileStepProps {
   onNext: () => void;
+  defaultValues?: OnboardingData;
 }
 
-export const CreateProfileStep = ({ onNext }: CreateProfileStepProps) => {
-  const { form, formatPhoneNumber, onSubmit, session } = useProfileForm(onNext);
+export const CreateProfileStep = ({ onNext, defaultValues }: CreateProfileStepProps) => {
+  const { form, formatPhoneNumber, onSubmit, session } = useProfileForm(onNext, defaultValues);
 
   return (
     <div className="space-y-6">
