@@ -1,49 +1,23 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormValues, formSchema } from "../types";
-import { supabase } from "@/integrations/supabase/client";
-import { useToastNotifications } from "@/hooks/useToastNotifications";
-import { useAuth } from "@/components/auth/AuthProvider";
+import { formSchema, FormValues } from "../types";
+import { OnboardingData } from "../../hooks/useOnboardingState";
 
-export const useCampaignForm = (onNext: () => void) => {
-  const { session } = useAuth();
-  const { showSuccess, showError } = useToastNotifications();
-
+export const useCampaignForm = (onNext: () => void, defaultValues?: OnboardingData) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      committee_name: "",
-      committee_type: "candidate",
-      candidate_name: "",
-      office_sought: undefined,
-      disclaimer_text: "",
+      committee_name: defaultValues?.committee_name || "",
+      committee_type: defaultValues?.committee_type as any || "candidate",
+      candidate_name: defaultValues?.candidate_name || "",
+      office_sought: defaultValues?.office_sought as any || undefined,
+      disclaimer_text: defaultValues?.disclaimer_text || "",
     },
   });
 
   const onSubmit = async (values: FormValues) => {
-    try {
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user found");
-      }
-
-      const { error } = await supabase
-        .from("actblue_accounts")
-        .update({
-          committee_name: values.committee_name,
-          committee_type: values.committee_type,
-          candidate_name: values.candidate_name || null,
-          office_sought: values.office_sought || null,
-          disclaimer_text: values.disclaimer_text,
-        })
-        .eq("user_id", session.user.id);
-
-      if (error) throw error;
-
-      showSuccess("Campaign details updated successfully");
-      onNext();
-    } catch (error) {
-      showError(error);
-    }
+    console.log("Form submitted with values:", values);
+    onNext();
   };
 
   return {

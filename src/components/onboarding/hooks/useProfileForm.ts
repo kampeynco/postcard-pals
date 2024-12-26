@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { OnboardingData } from "./useOnboardingState";
 
 const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
@@ -13,15 +14,15 @@ const formSchema = z.object({
 
 export type ProfileFormValues = z.infer<typeof formSchema>;
 
-export const useProfileForm = (onNext: () => void) => {
+export const useProfileForm = (onNext: () => void, defaultValues?: OnboardingData) => {
   const { session } = useAuth();
   
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      phone_number: "",
+      first_name: defaultValues?.first_name || "",
+      last_name: defaultValues?.last_name || "",
+      phone_number: defaultValues?.phone_number || "",
     },
   });
 
