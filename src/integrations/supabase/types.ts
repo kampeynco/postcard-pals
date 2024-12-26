@@ -315,7 +315,9 @@ export type Database = {
           created_at: string | null
           error_message: string | null
           id: string
+          last_retry_at: string | null
           payload: Json
+          retry_count: number | null
           status: string
           webhook_type: string
         }
@@ -323,7 +325,9 @@ export type Database = {
           created_at?: string | null
           error_message?: string | null
           id?: string
+          last_retry_at?: string | null
           payload: Json
+          retry_count?: number | null
           status: string
           webhook_type: string
         }
@@ -331,7 +335,9 @@ export type Database = {
           created_at?: string | null
           error_message?: string | null
           id?: string
+          last_retry_at?: string | null
           payload?: Json
+          retry_count?: number | null
           status?: string
           webhook_type?: string
         }
