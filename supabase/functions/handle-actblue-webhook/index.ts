@@ -1,15 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from '@supabase/supabase-js'
-import { corsHeaders } from '../_shared/cors.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
     const payload = await req.json()
-    
+    console.log('Received ActBlue webhook:', payload)
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -24,52 +29,52 @@ serve(async (req) => {
         status: 'received'
       })
 
-    if (logError) throw logError
-
-    // Extract donation data
-    const donationData = {
-      donor_name: `${payload.firstname} ${payload.lastname}`,
-      amount: parseFloat(payload.amount),
-      email: payload.email,
-      address: {
-        street: payload.addr1,
-        city: payload.city,
-        state: payload.state,
-        zip_code: payload.zip
-      }
+    if (logError) {
+      throw new Error(`Failed to log webhook: ${logError.message}`)
     }
 
-    // Find associated ActBlue account
-    const { data: actblueAccount, error: accountError } = await supabase
-      .from('actblue_accounts')
-      .select('user_id')
-      .eq('committee_name', payload.recipient)
-      .single()
-
-    if (accountError) throw accountError
-
-    // Create donation record
+    // Process donation
     const { data: donation, error: donationError } = await supabase
       .from('donations')
       .insert({
-        user_id: actblueAccount.user_id,
-        donation_data: donationData,
+        donation_data: {
+          donor_name: payload.donor.name,
+          amount: payload.amount,
+          email: payload.donor.email,
+          address: payload.donor.address
+        },
         source: 'actblue',
-        processed: false
+        processed: false,
+        postcard_sent: false
       })
       .select()
       .single()
 
-    if (donationError) throw donationError
+    if (donationError) {
+      throw new Error(`Failed to save donation: ${donationError.message}`)
+    }
 
     return new Response(
-      JSON.stringify({ success: true, donation_id: donation.id }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        success: true, 
+        data: donation 
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
     )
   } catch (error) {
+    console.error('Error processing ActBlue webhook:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      }
     )
   }
 })

@@ -1,1 +1,13 @@
 project_id = "eticfuarcjfjvyytczpm"
+
+[verify-address]
+verify_jwt = true
+
+[send-postcard]
+verify_jwt = true
+
+[handle-actblue-webhook]
+verify_jwt = false
+
+[retry-postcard]
+verify_jwt = true
