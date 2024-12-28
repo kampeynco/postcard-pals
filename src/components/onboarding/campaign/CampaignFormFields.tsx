@@ -7,6 +7,7 @@ import { OfficeSoughtField } from "./form-fields/OfficeSoughtField";
 import { DisclaimerTextField } from "./form-fields/DisclaimerTextField";
 import { AddressForm } from "@/components/address/AddressForm";
 import { FormField, FormItem } from "@/components/ui/form";
+import { AddressInput } from "@/components/address/types";
 
 interface CampaignFormFieldsProps {
   form: UseFormReturn<FormValues>;
@@ -32,8 +33,13 @@ export const CampaignFormFields = ({ form }: CampaignFormFieldsProps) => {
         render={({ field }) => (
           <FormItem>
             <AddressForm
-              address={field.value}
-              onChange={field.onChange}
+              address={{
+                street: field.value.street || "",
+                city: field.value.city || "",
+                state: field.value.state || "",
+                zip_code: field.value.zip_code || "",
+              }}
+              onChange={(address: AddressInput) => field.onChange(address)}
             />
           </FormItem>
         )}
