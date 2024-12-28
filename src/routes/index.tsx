@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import MainLayout from "@/components/layout/MainLayout";
 import LandingPage from "@/pages/LandingPage";
 import Index from "@/pages/Index";
@@ -12,7 +12,7 @@ import MonitoringPage from "@/pages/MonitoringPage";
 import PricingPage from "@/pages/PricingPage";
 import SignInPage from "@/components/auth/SignInPage";
 import SignUpPage from "@/components/auth/SignUpPage";
-import { EmailConfirmationHandler } from "@/components/auth/signin/EmailConfirmationHandler";
+import EmailConfirmationHandler from "@/components/auth/signin/EmailConfirmationHandler";
 
 const AppRoutes = () => {
   return (
@@ -25,14 +25,12 @@ const AppRoutes = () => {
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
       {/* Protected routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/actblue-settings" element={<ActBlueSettings />} />
-          <Route path="/postcards" element={<PostcardsPage />} />
-          <Route path="/monitoring" element={<MonitoringPage />} />
-        </Route>
+      <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/actblue-settings" element={<ActBlueSettings />} />
+        <Route path="/postcards" element={<PostcardsPage />} />
+        <Route path="/monitoring" element={<MonitoringPage />} />
       </Route>
 
       {/* Catch-all redirect */}
