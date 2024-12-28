@@ -24,7 +24,7 @@ const AppRoutes = () => {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
-      {/* Protected routes */}
+      {/* Protected routes wrapped in MainLayout */}
       <Route
         element={
           <ProtectedRoute>
