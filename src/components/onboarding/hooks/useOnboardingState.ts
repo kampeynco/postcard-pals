@@ -49,7 +49,8 @@ export const useOnboardingState = () => {
 
       if (profile) {
         console.log("Loading onboarding state:", profile);
-        setOnboardingData(profile.onboarding_data || {});
+        // Explicitly type the onboarding_data as OnboardingData
+        setOnboardingData((profile.onboarding_data as OnboardingData) || {});
         setCurrentStep(profile.onboarding_step || 1);
       }
     } catch (error) {
