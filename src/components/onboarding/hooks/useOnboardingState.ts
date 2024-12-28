@@ -34,7 +34,10 @@ export const useOnboardingState = () => {
   const loadOnboardingState = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        setLoading(false);
+        return;
+      }
 
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -45,7 +48,8 @@ export const useOnboardingState = () => {
       if (error) throw error;
 
       if (profile) {
-        setOnboardingData(profile.onboarding_data as OnboardingData || {});
+        console.log("Loading onboarding state:", profile);
+        setOnboardingData(profile.onboarding_data || {});
         setCurrentStep(profile.onboarding_step || 1);
       }
     } catch (error) {
@@ -61,13 +65,15 @@ export const useOnboardingState = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
+      console.log("Saving onboarding state:", { data, step });
       const updatedData = { ...onboardingData, ...data };
       
       const { error } = await supabase
         .from('profiles')
         .update({
           onboarding_data: updatedData,
-          onboarding_step: step
+          onboarding_step: step,
+          updated_at: new Date().toISOString()
         })
         .eq('id', session.user.id);
 

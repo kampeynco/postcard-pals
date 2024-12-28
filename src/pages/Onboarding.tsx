@@ -9,18 +9,26 @@ import { useOnboardingState } from "@/components/onboarding/hooks/useOnboardingS
 import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ROUTES } from "@/constants/routes";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const OnboardingTopBar = () => {
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate("/signin");
+      setIsLoggingOut(true);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      navigate(ROUTES.SIGNIN);
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Error logging out:", error);
       toast.error("Failed to log out");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -30,9 +38,10 @@ const OnboardingTopBar = () => {
         <span className="text-white font-semibold text-lg">Thanks From Us</span>
         <button
           onClick={handleLogout}
-          className="text-white hover:text-gray-200 flex items-center gap-2"
+          disabled={isLoggingOut}
+          className="text-white hover:text-gray-200 flex items-center gap-2 disabled:opacity-50"
         >
-          <span>Logout</span>
+          <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
           <LogOut className="h-4 w-4" />
         </button>
       </div>
@@ -48,7 +57,7 @@ const Onboarding = () => {
     if (location.state?.step) {
       saveOnboardingState(onboardingData, location.state.step);
     }
-  }, [location.state]);
+  }, [location.state, onboardingData, saveOnboardingState]);
 
   const handleNext = () => {
     saveOnboardingState(onboardingData, currentStep + 1);
@@ -59,7 +68,7 @@ const Onboarding = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
