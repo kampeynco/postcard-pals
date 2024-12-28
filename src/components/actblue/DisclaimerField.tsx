@@ -16,7 +16,10 @@ export const DisclaimerField = ({ form }: DisclaimerFieldProps) => {
         <FormItem>
           <FormLabel>Disclaimer Text</FormLabel>
           <FormControl>
-            <Input placeholder="Enter disclaimer text" {...field} />
+            <Input 
+              placeholder="Paid for by" 
+              {...field} 
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

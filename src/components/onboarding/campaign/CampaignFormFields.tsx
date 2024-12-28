@@ -5,6 +5,7 @@ import { CommitteeTypeField } from "./form-fields/CommitteeTypeField";
 import { CandidateNameField } from "./form-fields/CandidateNameField";
 import { OfficeSoughtField } from "./form-fields/OfficeSoughtField";
 import { DisclaimerTextField } from "./form-fields/DisclaimerTextField";
+import { AddressVerification } from "@/components/address/AddressVerification";
 
 interface CampaignFormFieldsProps {
   form: UseFormReturn<FormValues>;
@@ -24,6 +25,10 @@ export const CampaignFormFields = ({ form }: CampaignFormFieldsProps) => {
         </>
       )}
       <DisclaimerTextField form={form} />
+      <AddressVerification onVerified={(address) => {
+        // Handle verified address
+        console.log("Verified address:", address);
+      }} />
     </div>
   );
 };

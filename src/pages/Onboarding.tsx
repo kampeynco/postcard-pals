@@ -1,18 +1,44 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
+import { PostcardStep } from "@/components/onboarding/PostcardStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { useOnboardingState } from "@/components/onboarding/hooks/useOnboardingState";
+import { LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-const OnboardingTopBar = () => (
-  <div className="bg-[#4B5EE4]">
-    <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-4">
-      <span className="text-white font-semibold text-lg">Thanks From Us</span>
+const OnboardingTopBar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/signin");
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Failed to log out");
+    }
+  };
+
+  return (
+    <div className="bg-[#4B5EE4]">
+      <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <span className="text-white font-semibold text-lg">Thanks From Us</span>
+        <button
+          onClick={handleLogout}
+          className="text-white hover:text-gray-200 flex items-center gap-2"
+        >
+          <span>Logout</span>
+          <LogOut className="h-4 w-4" />
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Onboarding = () => {
   const location = useLocation();
@@ -56,6 +82,13 @@ const Onboarding = () => {
               />
             )}
             {currentStep === 3 && (
+              <PostcardStep
+                onNext={handleNext}
+                onBack={handleBack}
+                defaultValues={onboardingData}
+              />
+            )}
+            {currentStep === 4 && (
               <IntegrateActBlueStep 
                 onNext={handleNext} 
                 onBack={handleBack}
