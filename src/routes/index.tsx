@@ -25,7 +25,15 @@ const AppRoutes = () => {
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
       {/* Protected routes */}
-      <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+      <Route
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Outlet />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/actblue-settings" element={<ActBlueSettings />} />
