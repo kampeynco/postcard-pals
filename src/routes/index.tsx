@@ -14,72 +14,68 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* Public routes outside of AuthProvider */}
-      <Route index element={<LandingPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/signin" element={<SignInPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
+    <AuthProvider>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
 
-      {/* Protected routes wrapped in AuthProvider */}
-      <Route element={
-        <AuthProvider>
-          <Routes>
-            <Route
-              path="/onboarding"
-              element={
-                <ProtectedRoute>
-                  <Onboarding />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Dashboard />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings/actblue"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <ActBlueSettings />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/postcards"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <PostcardsPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/monitoring"
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <MonitoringPage />
-                  </MainLayout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </AuthProvider>
-      } />
+        {/* Protected routes */}
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/actblue"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ActBlueSettings />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/postcards"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <PostcardsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/monitoring"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MonitoringPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Catch all route - redirect to landing page */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Catch all route - redirect to landing page */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AuthProvider>
   );
 };
 
