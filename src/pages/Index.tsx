@@ -4,26 +4,31 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ROUTES } from "@/constants/routes";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  useEffect(() => {
-    // If user is authenticated, redirect to dashboard
-    if (session?.user) {
-      navigate(ROUTES.DASHBOARD, { replace: true });
-    }
-  }, [session, navigate]);
+  // Show loading spinner while auth state is being determined
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  // If user is authenticated, redirect to dashboard
+  if (session?.user) {
+    navigate(ROUTES.DASHBOARD, { replace: true });
+    return null;
+  }
 
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
       await supabase.auth.signOut();
-      navigate(ROUTES.HOME);  // Changed from ROUTES.INDEX to ROUTES.HOME
+      navigate(ROUTES.HOME);
       toast.success("Signed out successfully");
     } catch (error) {
       console.error("Error signing out:", error);
