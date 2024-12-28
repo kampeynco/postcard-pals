@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AddressInput } from "@/components/address/types";
 
 export const officeOptions = [
   // Federal Offices
@@ -34,6 +35,12 @@ export const formSchema = z.object({
   candidate_name: z.string().optional(),
   office_sought: z.enum(officeOptions).optional(),
   disclaimer_text: z.string().min(1, "Disclaimer text is required"),
+  address: z.object({
+    street: z.string().min(1, "Street address is required"),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    zip_code: z.string().min(5, "ZIP code must be 5 digits"),
+  }),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

@@ -14,6 +14,12 @@ export const useCampaignForm = (onNext: () => void, defaultValues?: OnboardingDa
       candidate_name: defaultValues?.candidate_name || "",
       office_sought: defaultValues?.office_sought as any || undefined,
       disclaimer_text: defaultValues?.disclaimer_text || "",
+      address: defaultValues?.address || {
+        street: "",
+        city: "",
+        state: "",
+        zip_code: "",
+      },
     },
   });
 
@@ -34,6 +40,10 @@ export const useCampaignForm = (onNext: () => void, defaultValues?: OnboardingDa
           candidate_name: values.candidate_name,
           office_sought: values.office_sought,
           disclaimer_text: values.disclaimer_text,
+          street_address: values.address.street,
+          city: values.address.city,
+          state: values.address.state,
+          zip_code: values.address.zip_code,
           is_created: true
         });
 

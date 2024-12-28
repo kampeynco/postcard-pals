@@ -17,6 +17,9 @@ export interface OnboardingData {
     state: string;
     zip_code: string;
   };
+  front_color?: string;
+  logo_alignment?: string;
+  back_message?: string;
 }
 
 export const useOnboardingState = () => {
