@@ -22,58 +22,60 @@ const AppRoutes = () => {
       <Route path="/signup" element={<SignUpPage />} />
 
       {/* Protected routes wrapped in AuthProvider */}
-      <Route element={<AuthProvider>{/* Wrap protected routes */}
-        <Routes>
-          <Route
-            path="/onboarding"
-            element={
-              <ProtectedRoute>
-                <Onboarding />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <Dashboard />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings/actblue"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <ActBlueSettings />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/postcards"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <PostcardsPage />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/monitoring"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <MonitoringPage />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AuthProvider>}</Route>
+      <Route element={
+        <AuthProvider>
+          <Routes>
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Dashboard />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/actblue"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ActBlueSettings />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/postcards"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <PostcardsPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/monitoring"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <MonitoringPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </AuthProvider>
+      } />
 
       {/* Catch all route - redirect to landing page */}
       <Route path="*" element={<Navigate to="/" replace />} />
