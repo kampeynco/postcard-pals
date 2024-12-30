@@ -18,31 +18,23 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/signin" element={<SignInPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
+      <Route path={ROUTES.HOME} element={<LandingPage />} />
+      <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
+      <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
+      <Route path={ROUTES.PRICING} element={<PricingPage />} />
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
-      {/* Protected routes wrapped in MainLayout */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <MainLayout>
-              <Outlet />
-            </MainLayout>
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/actblue-settings" element={<ActBlueSettings />} />
-        <Route path="/postcards" element={<PostcardsPage />} />
-        <Route path="/monitoring" element={<MonitoringPage />} />
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute><MainLayout><Outlet /></MainLayout></ProtectedRoute>}>
+        <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
+        <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
+        <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />
+        <Route path={ROUTES.MONITORING} element={<MonitoringPage />} />
       </Route>
 
       {/* Catch-all redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   );
 };

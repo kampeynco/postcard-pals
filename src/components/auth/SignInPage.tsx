@@ -14,7 +14,6 @@ const SignInPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Only check for existing session on mount
     const checkExistingSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -24,7 +23,6 @@ const SignInPage = () => {
     
     checkExistingSession();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session?.user?.email);
 
@@ -40,7 +38,6 @@ const SignInPage = () => {
 
   const handleSignedInUser = async (session: any) => {
     try {
-      // First check onboarding status
       const onboardingStatus = await checkOnboardingStatus(session);
       
       if (!onboardingStatus.completed) {
@@ -53,8 +50,7 @@ const SignInPage = () => {
         return;
       }
 
-      // If onboarding is complete, proceed with normal sign in
-      const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
+      const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
       console.log("Onboarding complete. Redirecting to:", from);
       toast.success("Welcome back!");
       navigate(from, { replace: true });

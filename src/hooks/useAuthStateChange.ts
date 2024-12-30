@@ -18,12 +18,14 @@ export const useAuthStateChange = () => {
           const onboardingStatus = await checkOnboardingStatus(session);
           
           if (!onboardingStatus.completed) {
-            navigate(ROUTES.ONBOARDING);
+            navigate(ROUTES.ONBOARDING, { 
+              state: { step: onboardingStatus.step }
+            });
             return;
           }
 
-          const redirectTo = location.state?.from || ROUTES.DASHBOARD;
-          navigate(redirectTo);
+          const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
+          navigate(from, { replace: true });
         } catch (error) {
           console.error("Error checking onboarding status:", error);
           toast.error("Something went wrong. Please try again.");
