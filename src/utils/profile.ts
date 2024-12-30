@@ -6,6 +6,17 @@ export interface OnboardingStatus {
   step: number;
 }
 
+interface OnboardingData {
+  committee_name?: string;
+  committee_type?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+  };
+}
+
 // Profile utility functions
 export const checkOnboardingStatus = async (session: Session): Promise<OnboardingStatus> => {
   try {
@@ -32,7 +43,7 @@ export const checkOnboardingStatus = async (session: Session): Promise<Onboardin
     }
 
     // Check onboarding data
-    const onboardingData = profile.onboarding_data || {};
+    const onboardingData = profile.onboarding_data as OnboardingData || {};
     const hasCommitteeInfo = onboardingData.committee_name && onboardingData.committee_type;
     const hasAddress = onboardingData.address?.street && 
                       onboardingData.address?.city && 
