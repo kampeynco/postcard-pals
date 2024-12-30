@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import ActBlueAccountForm from "@/components/actblue/ActBlueAccountForm";
 
-interface ActBlueStepProps {
+interface IntegrateActBlueStepProps {
   onNext: () => void;
   onBack: () => void;
+  data?: any;
 }
 
-export function ActBlueStep({ onNext, onBack }: ActBlueStepProps) {
+export const IntegrateActBlueStep = ({ onNext, onBack, data }: IntegrateActBlueStepProps) => {
   return (
     <div className="space-y-6">
       <div>
@@ -26,4 +27,4 @@ export function ActBlueStep({ onNext, onBack }: ActBlueStepProps) {
       </div>
     </div>
   );
-}
+};

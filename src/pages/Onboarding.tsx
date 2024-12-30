@@ -34,7 +34,7 @@ const Onboarding = () => {
       case 1:
         return (
           <CreateProfileStep
-            onNext={handleNext}
+            onNext={() => handleNext({})}
             onBack={handleBack}
             data={onboardingData}
           />
@@ -42,7 +42,7 @@ const Onboarding = () => {
       case 2:
         return (
           <CampaignDetailsStep
-            onNext={handleNext}
+            onNext={() => handleNext({})}
             onBack={handleBack}
             data={onboardingData}
           />
@@ -50,7 +50,7 @@ const Onboarding = () => {
       case 3:
         return (
           <IntegrateActBlueStep
-            onNext={handleNext}
+            onNext={() => handleNext({})}
             onBack={handleBack}
             data={onboardingData}
           />

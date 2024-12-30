@@ -28,17 +28,17 @@ export const useCampaignForm = () => {
 
   const onSubmit = async (data: any, verifiedAddress: AddressInput | null) => {
     try {
-      const { error } = await supabase.from("campaigns").insert({
+      const { error } = await supabase.from("actblue_accounts").insert({
         ...data,
         address: verifiedAddress,
       });
 
       if (error) throw error;
 
-      toast.success("Campaign created successfully!");
+      toast.success("Campaign details saved successfully!");
     } catch (error) {
-      console.error("Error creating campaign:", error);
-      toast.error("Failed to create campaign. Please try again.");
+      console.error("Error saving campaign details:", error);
+      toast.error("Failed to save campaign details. Please try again.");
     }
   };
 

@@ -1,49 +1,42 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { ROUTES } from "@/constants/routes";
+import { toast } from "sonner";
 import { checkOnboardingStatus } from "@/utils/profile";
 
 export const useAuthStateChange = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.email);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        try {
+          const onboardingStatus = await checkOnboardingStatus(session);
+          
+          if (!onboardingStatus.completed) {
+            navigate(ROUTES.ONBOARDING);
+            return;
+          }
 
-      if (event === 'SIGNED_IN' && session) {
-        await handleSignedInUser(session);
+          const redirectTo = location.state?.from || ROUTES.DASHBOARD;
+          navigate(redirectTo);
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+          toast.error("Something went wrong. Please try again.");
+        }
+      }
+
+      if (event === "SIGNED_OUT") {
+        navigate(ROUTES.HOME);
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
-
-  const handleSignedInUser = async (session: any) => {
-    try {
-      const onboardingStatus = await checkOnboardingStatus(session);
-      
-      if (!onboardingStatus.completed) {
-        console.log("Redirecting to onboarding step:", onboardingStatus.step);
-        toast.success("Welcome! Let's complete your account setup.");
-        navigate(ROUTES.ONBOARDING, { 
-          replace: true,
-          state: { step: onboardingStatus.step }
-        });
-        return;
-      }
-
-      const from = (location.state as any)?.from?.pathname || ROUTES.DASHBOARD;
-      console.log("Onboarding complete. Redirecting to:", from);
-      toast.success("Welcome back!");
-      navigate(from, { replace: true });
-    } catch (error) {
-      console.error('Error in sign in process:', error);
-      toast.error("An unexpected error occurred. Please try again.");
-      await supabase.auth.signOut();
-    }
-  };
+  }, [navigate, location]);
 };

@@ -1,9 +1,10 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useOnboarding } from "../hooks/useOnboarding";
+import { UseFormReturn } from "react-hook-form";
+import { OnboardingData } from "../hooks/useOnboarding";
 
 interface ProfileFormFieldsProps {
-  form: UseFormReturn<FormValues>;
+  form: UseFormReturn<OnboardingData>;
 }
 
 export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
