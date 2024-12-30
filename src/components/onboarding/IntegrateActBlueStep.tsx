@@ -4,10 +4,9 @@ import ActBlueAccountForm from "@/components/actblue/ActBlueAccountForm";
 interface IntegrateActBlueStepProps {
   onNext: () => void;
   onBack: () => void;
-  data?: any;
 }
 
-export const IntegrateActBlueStep = ({ onNext, onBack, data }: IntegrateActBlueStepProps) => {
+export function IntegrateActBlueStep({ onNext, onBack }: IntegrateActBlueStepProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -27,4 +26,4 @@ export const IntegrateActBlueStep = ({ onNext, onBack, data }: IntegrateActBlueS
       </div>
     </div>
   );
-};
+}

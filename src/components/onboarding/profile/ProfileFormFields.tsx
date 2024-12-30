@@ -1,15 +1,20 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { OnboardingData } from "../hooks/useOnboarding";
+import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-interface ProfileFormFieldsProps {
-  form: UseFormReturn<OnboardingData>;
+interface FormValues {
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
 }
 
-export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
+interface ProfileFormFieldsProps {
+  form: UseFormReturn<FormValues>;
+}
+
+export function ProfileFormFields({ form }: ProfileFormFieldsProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <FormField
         control={form.control}
         name="first_name"
@@ -17,9 +22,8 @@ export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
           <FormItem>
             <FormLabel>First Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your first name" {...field} />
+              <Input {...field} placeholder="Enter your first name" />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -31,9 +35,8 @@ export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
           <FormItem>
             <FormLabel>Last Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your last name" {...field} />
+              <Input {...field} placeholder="Enter your last name" />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
@@ -45,12 +48,11 @@ export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
           <FormItem>
             <FormLabel>Phone Number</FormLabel>
             <FormControl>
-              <Input placeholder="(123) 456-7890" {...field} />
+              <Input {...field} placeholder="(XXX) XXX-XXXX" />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
     </div>
   );
-};
+}

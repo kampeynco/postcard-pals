@@ -15,9 +15,9 @@ const Onboarding = () => {
     return <div>Loading...</div>;
   }
 
-  const handleNext = async (stepData: any) => {
+  const handleNext = async () => {
     const nextStep = currentStep + 1;
-    await saveOnboardingState(stepData, nextStep);
+    await saveOnboardingState({}, nextStep);
 
     if (nextStep > 3) {
       navigate(ROUTES.DASHBOARD);
@@ -34,25 +34,22 @@ const Onboarding = () => {
       case 1:
         return (
           <CreateProfileStep
-            onNext={() => handleNext({})}
+            onNext={handleNext}
             onBack={handleBack}
-            data={onboardingData}
           />
         );
       case 2:
         return (
           <CampaignDetailsStep
-            onNext={() => handleNext({})}
+            onNext={handleNext}
             onBack={handleBack}
-            data={onboardingData}
           />
         );
       case 3:
         return (
           <IntegrateActBlueStep
-            onNext={() => handleNext({})}
+            onNext={handleNext}
             onBack={handleBack}
-            data={onboardingData}
           />
         );
       default:
