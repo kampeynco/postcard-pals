@@ -4,6 +4,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ROUTES } from "@/constants/routes";
+import { checkOnboardingStatus } from "@/utils/profile";
 
 interface AuthContextType {
   session: Session | null;
@@ -30,12 +31,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      if (currentSession) {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
+      } catch (error) {
+        console.error("Error checking session:", error);
+      } finally {
+        setLoading(false);
+        setInitialized(true);
       }
-      setLoading(false);
-      setInitialized(true);
     };
 
     checkSession();
@@ -64,13 +68,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuth();
   const location = useLocation();
+  const [onboardingRequired, setOnboardingRequired] = useState<boolean | null>(null);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
-  if (loading) {
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (session) {
+        try {
+          const status = await checkOnboardingStatus(session);
+          setOnboardingRequired(!status.completed);
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+          setOnboardingRequired(false);
+        } finally {
+          setCheckingOnboarding(false);
+        }
+      }
+    };
+
+    checkOnboarding();
+  }, [session]);
+
+  if (loading || checkingOnboarding) {
     return <LoadingSpinner />;
   }
 
   if (!session) {
     return <Navigate to={ROUTES.SIGNIN} state={{ from: location }} replace />;
+  }
+
+  if (onboardingRequired && location.pathname !== ROUTES.ONBOARDING) {
+    return <Navigate to={ROUTES.ONBOARDING} replace />;
   }
 
   return <>{children}</>;

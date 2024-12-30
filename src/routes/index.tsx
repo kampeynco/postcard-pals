@@ -3,7 +3,6 @@ import { ROUTES } from "@/constants/routes";
 import { ProtectedRoute } from "@/components/auth/Auth";
 import MainLayout from "@/components/layout/MainLayout";
 import LandingPage from "@/pages/LandingPage";
-import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Onboarding from "@/pages/Onboarding";
 import ActBlueSettings from "@/pages/ActBlueSettings";
@@ -18,13 +17,13 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<LandingPage />} />
+      <Route path={ROUTES.HOME} element={<LandingPage />} />
       <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
       <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
       <Route path={ROUTES.PRICING} element={<PricingPage />} />
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
-      {/* Protected routes */}
+      {/* Protected routes wrapped in MainLayout */}
       <Route 
         element={
           <ProtectedRoute>
@@ -42,7 +41,7 @@ const AppRoutes = () => {
       </Route>
 
       {/* Catch-all redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   );
 };
