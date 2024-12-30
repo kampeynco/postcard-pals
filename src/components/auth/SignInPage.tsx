@@ -14,7 +14,7 @@ const SignInPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check for existing session on mount
+    // Only check for existing session on mount
     const checkExistingSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -24,6 +24,7 @@ const SignInPage = () => {
     
     checkExistingSession();
 
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session?.user?.email);
 
