@@ -18,14 +18,22 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path={ROUTES.HOME} element={<LandingPage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
       <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
       <Route path={ROUTES.PRICING} element={<PricingPage />} />
       <Route path="/auth/callback" element={<EmailConfirmationHandler />} />
 
       {/* Protected routes */}
-      <Route element={<ProtectedRoute><MainLayout><Outlet /></MainLayout></ProtectedRoute>}>
+      <Route 
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Outlet />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      >
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
         <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
         <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
@@ -34,7 +42,7 @@ const AppRoutes = () => {
       </Route>
 
       {/* Catch-all redirect */}
-      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

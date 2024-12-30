@@ -18,10 +18,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
         <BrowserRouter>
           <AppContent />
+          <Toaster />
+          <Sonner />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
