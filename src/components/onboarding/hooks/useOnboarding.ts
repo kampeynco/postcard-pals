@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/components/auth/Auth";
 
+// Types
 export interface OnboardingData {
   first_name?: string;
   last_name?: string;
@@ -22,10 +27,30 @@ export interface OnboardingData {
   back_message?: string;
 }
 
-export const useOnboardingState = () => {
+// Form schema
+const formSchema = z.object({
+  first_name: z.string().min(2, "First name must be at least 2 characters"),
+  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  phone_number: z.string().regex(/^\(\d{3}\) \d{3}-\d{4}$/, "Invalid phone number format"),
+});
+
+export type ProfileFormValues = z.infer<typeof formSchema>;
+
+// Combined hook
+export const useOnboarding = () => {
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(true);
+  const { session } = useAuth();
+
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      first_name: onboardingData?.first_name || "",
+      last_name: onboardingData?.last_name || "",
+      phone_number: onboardingData?.phone_number || "",
+    },
+  });
 
   useEffect(() => {
     loadOnboardingState();
@@ -33,7 +58,6 @@ export const useOnboardingState = () => {
 
   const loadOnboardingState = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setLoading(false);
         return;
@@ -49,7 +73,6 @@ export const useOnboardingState = () => {
 
       if (profile) {
         console.log("Loading onboarding state:", profile);
-        // Explicitly type the onboarding_data as OnboardingData
         setOnboardingData((profile.onboarding_data as OnboardingData) || {});
         setCurrentStep(profile.onboarding_step || 1);
       }
@@ -63,7 +86,6 @@ export const useOnboardingState = () => {
 
   const saveOnboardingState = async (data: Partial<OnboardingData>, step: number) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
       console.log("Saving onboarding state:", { data, step });
@@ -88,10 +110,19 @@ export const useOnboardingState = () => {
     }
   };
 
+  const formatPhoneNumber = (value: string) => {
+    const number = value.replace(/[^\d]/g, "");
+    if (number.length <= 3) return number;
+    if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
+    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
+  };
+
   return {
+    form,
     onboardingData,
     currentStep,
     loading,
     saveOnboardingState,
+    formatPhoneNumber,
   };
 };
