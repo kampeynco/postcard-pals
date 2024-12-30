@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
 import { AuthError } from "@supabase/supabase-js";
 import { ROUTES } from "@/constants/routes";
-import { checkOnboardingStatus } from "@/utils/onboarding";
+import { checkOnboardingStatus } from "@/utils/profile";
 
 const SignInPage = () => {
   const navigate = useNavigate();

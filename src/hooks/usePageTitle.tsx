@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/Auth';
 
 const publicRoutes = ['/', '/pricing', '/signin', '/signup'];
 
@@ -14,7 +14,6 @@ const getPageTitle = (pathname: string, isAuthenticated: boolean): string => {
     '/dashboard': 'Dashboard',
     '/settings/actblue': 'ActBlue Settings',
     '/onboarding': 'New User Onboarding',
-    // Add more routes as needed
   };
 
   const pageName = pageNames[pathname] || 'Page Not Found';

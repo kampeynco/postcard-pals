@@ -1,49 +1,34 @@
-import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { useProfileForm } from "./hooks/useProfileForm";
 import { ProfileFormFields } from "./profile/ProfileFormFields";
-import { OnboardingData } from "./hooks/useOnboardingState";
+import { useOnboarding } from "./hooks/useOnboarding";
 
 interface CreateProfileStepProps {
   onNext: () => void;
-  defaultValues?: OnboardingData;
+  onBack: () => void;
 }
 
-export const CreateProfileStep = ({ onNext, defaultValues }: CreateProfileStepProps) => {
-  const { form, formatPhoneNumber, onSubmit, session } = useProfileForm(onNext, defaultValues);
+export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
+  const { form } = useOnboarding();
+
+  const handleSubmit = async (data: any) => {
+    await form.trigger();
+    if (form.formState.isValid) {
+      await onNext();
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-1">Create Your Profile</h2>
-        <p className="text-gray-500 text-sm">Tell us about yourself</p>
+      <h2 className="text-lg font-semibold">Create Your Profile</h2>
+      <ProfileFormFields form={form} />
+      <div className="flex justify-between pt-4">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleSubmit}>
+          Continue
+        </Button>
       </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <ProfileFormFields 
-            form={form} 
-            formatPhoneNumber={formatPhoneNumber}
-            userEmail={session?.user.email}
-          />
-
-          <Button 
-            type="submit" 
-            className="w-full bg-brand-background hover:bg-brand-background/90 text-white font-medium py-2.5"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        </form>
-      </Form>
     </div>
   );
-};
+}

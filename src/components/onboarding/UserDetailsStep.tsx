@@ -1,28 +1,26 @@
-import { UserDetailsForm } from "./user-details/UserDetailsForm";
+import { UserDetails } from "./UserDetails";
+import { Button } from "@/components/ui/button";
+import { useOnboarding } from "./hooks/useOnboarding";
 
 interface UserDetailsStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-export function UserDetailsStep({ onNext }: UserDetailsStepProps) {
-  return (
-    <div className="space-y-8 max-w-[640px] mx-auto">
-      <div>
-        <div className="flex items-center justify-center space-x-2 mb-12">
-          <div className="w-3 h-3 rounded-full bg-brand-background"></div>
-          <div className="w-32 h-[2px] bg-gray-200"></div>
-          <div className="w-3 h-3 rounded-full bg-gray-200"></div>
-          <div className="w-32 h-[2px] bg-gray-200"></div>
-          <div className="w-3 h-3 rounded-full bg-gray-200"></div>
-        </div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-1">About your campaign</h2>
-        <p className="text-gray-500 text-sm">
-          Tell us about your campaign so we can personalize your experience
-        </p>
-      </div>
+export const UserDetailsStep = ({ onNext, onBack }: UserDetailsStepProps) => {
+  const { form } = useOnboarding();
 
-      <UserDetailsForm onSuccess={onNext} />
+  return (
+    <div className="space-y-6">
+      <h2 className="text-lg font-semibold">User Details</h2>
+      <p className="text-sm text-gray-600">Please provide your details to proceed.</p>
+      <UserDetails form={form} />
+      <div className="flex justify-between pt-4">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={onNext}>Continue</Button>
+      </div>
     </div>
   );
-}
+};

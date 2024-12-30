@@ -1,113 +1,72 @@
-import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
-import { PostcardStep } from "@/components/onboarding/PostcardStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
-import { useOnboardingState } from "@/components/onboarding/hooks/useOnboardingState";
-import { LogOut } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { ROUTES } from "@/constants/routes";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-
-const OnboardingTopBar = () => {
-  const navigate = useNavigate();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
-      navigate(ROUTES.SIGNIN);
-      toast.success("Logged out successfully");
-    } catch (error) {
-      console.error("Error logging out:", error);
-      toast.error("Failed to log out");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
-  return (
-    <div className="bg-[#4B5EE4]">
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-        <span className="text-white font-semibold text-lg">Thanks From Us</span>
-        <button
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="text-white hover:text-gray-200 flex items-center gap-2 disabled:opacity-50"
-        >
-          <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
-          <LogOut className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-};
+import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 
 const Onboarding = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { onboardingData, currentStep, loading, saveOnboardingState } = useOnboardingState();
+  const { onboardingData, currentStep, loading, saveOnboardingState } = useOnboarding();
 
-  useEffect(() => {
-    if (location.state?.step) {
-      saveOnboardingState(onboardingData, location.state.step);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const handleNext = async (stepData: any) => {
+    const nextStep = currentStep + 1;
+    await saveOnboardingState(stepData, nextStep);
+
+    if (nextStep > 3) {
+      navigate(ROUTES.DASHBOARD);
     }
-  }, [location.state, onboardingData, saveOnboardingState]);
-
-  const handleNext = () => {
-    saveOnboardingState(onboardingData, currentStep + 1);
   };
 
   const handleBack = () => {
-    saveOnboardingState(onboardingData, Math.max(1, currentStep - 1));
+    const prevStep = Math.max(1, currentStep - 1);
+    saveOnboardingState({}, prevStep);
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <CreateProfileStep
+            onNext={handleNext}
+            onBack={handleBack}
+            data={onboardingData}
+          />
+        );
+      case 2:
+        return (
+          <CampaignDetailsStep
+            onNext={handleNext}
+            onBack={handleBack}
+            data={onboardingData}
+          />
+        );
+      case 3:
+        return (
+          <IntegrateActBlueStep
+            onNext={handleNext}
+            onBack={handleBack}
+            data={onboardingData}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE]">
-      <OnboardingTopBar />
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6 py-12">
-        <div className="flex gap-12">
-          <div className="flex-1 bg-white rounded-xl shadow-sm p-8">
-            {currentStep === 1 && (
-              <CreateProfileStep 
-                onNext={handleNext} 
-                defaultValues={onboardingData}
-              />
-            )}
-            {currentStep === 2 && (
-              <CampaignDetailsStep 
-                onNext={handleNext} 
-                onBack={handleBack}
-                defaultValues={onboardingData}
-              />
-            )}
-            {currentStep === 3 && (
-              <PostcardStep
-                onNext={handleNext}
-                onBack={handleBack}
-                defaultValues={onboardingData}
-              />
-            )}
-            {currentStep === 4 && (
-              <IntegrateActBlueStep 
-                onNext={handleNext} 
-                onBack={handleBack}
-              />
-            )}
-          </div>
-          <div className="w-80">
-            <OnboardingProgress currentStep={currentStep} />
-          </div>
-        </div>
+    <div className="max-w-2xl mx-auto py-8 px-4">
+      <div className="mb-8">
+        <OnboardingProgress currentStep={currentStep} />
+      </div>
+      <div className="bg-white rounded-lg shadow p-6">
+        {renderStep()}
       </div>
     </div>
   );

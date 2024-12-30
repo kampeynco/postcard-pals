@@ -1,29 +1,22 @@
-import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { UseFormReturn } from "react-hook-form";
-import { ProfileFormValues } from "../hooks/useProfileForm";
+import { Input } from "@/components/ui/input";
+import { useOnboarding } from "../hooks/useOnboarding";
 
 interface ProfileFormFieldsProps {
-  form: UseFormReturn<ProfileFormValues>;
-  formatPhoneNumber: (value: string) => string;
-  userEmail?: string;
+  form: UseFormReturn<FormValues>;
 }
 
-export const ProfileFormFields = ({ form, formatPhoneNumber, userEmail }: ProfileFormFieldsProps) => {
+export const ProfileFormFields = ({ form }: ProfileFormFieldsProps) => {
   return (
-    <>
+    <div className="space-y-6">
       <FormField
         control={form.control}
         name="first_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-700">First Name</FormLabel>
+            <FormLabel>First Name</FormLabel>
             <FormControl>
-              <Input 
-                placeholder="Enter your first name" 
-                className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
-                {...field} 
-              />
+              <Input placeholder="Enter your first name" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -35,49 +28,28 @@ export const ProfileFormFields = ({ form, formatPhoneNumber, userEmail }: Profil
         name="last_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-700">Last Name</FormLabel>
+            <FormLabel>Last Name</FormLabel>
             <FormControl>
-              <Input 
-                placeholder="Enter your last name" 
-                className="border-gray-200 focus:border-brand-background focus:ring-brand-background" 
-                {...field} 
-              />
+              <Input placeholder="Enter your last name" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-
-      <div className="space-y-2">
-        <FormLabel className="text-gray-700">Email</FormLabel>
-        <Input 
-          value={userEmail} 
-          disabled 
-          className="bg-gray-50 border-gray-200"
-        />
-      </div>
 
       <FormField
         control={form.control}
         name="phone_number"
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-gray-700">Mobile Phone</FormLabel>
+            <FormLabel>Phone Number</FormLabel>
             <FormControl>
-              <Input
-                placeholder="(555) 555-5555"
-                className="border-gray-200 focus:border-brand-background focus:ring-brand-background"
-                {...field}
-                onChange={(e) => {
-                  const formatted = formatPhoneNumber(e.target.value);
-                  onChange(formatted);
-                }}
-              />
+              <Input placeholder="(123) 456-7890" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-    </>
+    </div>
   );
 };
