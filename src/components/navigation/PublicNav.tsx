@@ -1,9 +1,21 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/Auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const PublicNav = () => {
   const { session } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Failed to log out");
+    }
+  };
 
   return (
     <nav className="bg-[#4B5EE4] border-b border-white/10">
@@ -61,15 +73,24 @@ const PublicNav = () => {
                 </div>
               </>
             ) : (
-              /* Dashboard button for logged-in users */
-              <Button 
-                asChild
-                className="bg-[#F97316] hover:bg-[#F97316]/90 text-white ml-auto"
-              >
-                <Link to="/dashboard">
-                  Dashboard →
-                </Link>
-              </Button>
+              /* Dashboard and Logout buttons for logged-in users */
+              <div className="flex items-center space-x-4">
+                <Button 
+                  asChild
+                  className="bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+                >
+                  <Link to="/dashboard">
+                    Dashboard →
+                  </Link>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="text-white hover:bg-white/10"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </div>
             )}
           </div>
 

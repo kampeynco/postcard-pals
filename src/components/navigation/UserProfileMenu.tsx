@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { User, Settings, CreditCard, LogOut, Plus } from "lucide-react";
+import { User, Settings, LogOut, ChevronRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,9 +52,9 @@ export const UserProfileMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <CreditCard className="mr-2 h-4 w-4" />
-            ActBlue Accounts
+          <DropdownMenuSubTrigger className="flex justify-between items-center">
+            Accounts
+            <ChevronRight className="h-4 w-4" />
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {actblueAccounts?.map((account) => (
@@ -67,23 +67,19 @@ export const UserProfileMenu = () => {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate("/settings/actblue/new")}>
-              <Plus className="mr-2 h-4 w-4" />
               Create New Account
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         
         <DropdownMenuItem onClick={() => navigate("/settings/profile")}>
-          <User className="mr-2 h-4 w-4" />
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate("/settings/account")}>
-          <Settings className="mr-2 h-4 w-4" />
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-          <LogOut className="mr-2 h-4 w-4" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

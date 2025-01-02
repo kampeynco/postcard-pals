@@ -29,19 +29,21 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="space-y-8">
-        <div className="relative">
+        <div className={`relative ${isMobile ? 'flex space-x-4' : ''}`}>
           {steps.map((step, index) => (
             <div 
               key={step.number} 
-              className={`relative ${isMobile ? 'pb-6 last:pb-0' : 'pb-12 last:pb-0'} ${
-                isMobile ? 'flex items-center space-x-4' : ''
+              className={`relative ${
+                isMobile 
+                  ? 'flex-1' 
+                  : 'pb-12 last:pb-0'
               }`}
             >
               {index !== steps.length - 1 && (
                 <div
                   className={`absolute ${
                     isMobile 
-                      ? 'top-4 left-4 h-full w-0.5' 
+                      ? 'top-4 left-full h-0.5 w-full -ml-2' 
                       : 'left-4 top-8 -ml-px h-full w-0.5'
                   } ${
                     currentStep > step.number ? 'bg-brand-background' : 'bg-gray-200'
@@ -49,7 +51,7 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
                   aria-hidden="true"
                 />
               )}
-              <div className={`relative flex ${isMobile ? 'flex-shrink-0' : 'items-start'} group`}>
+              <div className={`relative flex ${isMobile ? 'flex-col items-center' : 'items-start'}`}>
                 <div className="flex-shrink-0">
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full ${
@@ -71,7 +73,7 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
                     )}
                   </div>
                 </div>
-                <div className="ml-4">
+                <div className={`${isMobile ? 'mt-3 text-center' : 'ml-4'}`}>
                   <h3 className={`text-sm font-medium ${
                     currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
                   }`}>
