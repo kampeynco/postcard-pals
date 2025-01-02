@@ -7,8 +7,14 @@ import { AddressFields } from "./AddressFields";
 import { DisclaimerField } from "./DisclaimerField";
 import { useActBlueForm } from "./useActBlueForm";
 
-export default function ActBlueAccountForm() {
-  const { form, committeeType, onSubmit } = useActBlueForm();
+interface ActBlueAccountFormProps {
+  onSuccess?: () => void;
+}
+
+export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProps) {
+  const { form, committeeType, onSubmit } = useActBlueForm({
+    onSuccess,
+  });
 
   return (
     <Form {...form}>

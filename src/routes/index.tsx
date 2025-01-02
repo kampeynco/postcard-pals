@@ -6,6 +6,7 @@ import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import Onboarding from "@/pages/Onboarding";
 import ActBlueSettings from "@/pages/ActBlueSettings";
+import CreateActBlueAccount from "@/pages/CreateActBlueAccount";
 import PostcardsPage from "@/pages/PostcardsPage";
 import MonitoringPage from "@/pages/MonitoringPage";
 import PricingPage from "@/pages/PricingPage";
@@ -36,6 +37,7 @@ const AppRoutes = () => {
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
         <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
         <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
+        <Route path="/settings/actblue/new" element={<CreateActBlueAccount />} />
         <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />
         <Route path={ROUTES.MONITORING} element={<MonitoringPage />} />
       </Route>

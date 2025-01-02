@@ -7,14 +7,18 @@ import type { Database } from "@/integrations/supabase/types";
 
 type ActBlueAccount = Database["public"]["Tables"]["actblue_accounts"]["Insert"];
 
-export const useActBlueForm = () => {
+interface UseActBlueFormProps {
+  onSuccess?: () => void;
+}
+
+export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
   const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       committee_type: "candidate",
       candidate_name: "",
-      office_sought: "U.S. Representative", // Changed from empty string to a valid enum value
+      office_sought: "U.S. Representative",
       committee_name: "",
       street_address: "",
       city: "",
@@ -57,6 +61,10 @@ export const useActBlueForm = () => {
         title: "Success",
         description: "ActBlue account settings saved successfully.",
       });
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       toast({
         variant: "destructive",
