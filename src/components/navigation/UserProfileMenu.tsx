@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { User, Settings, LogOut, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,13 +47,13 @@ export const UserProfileMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="bg-emerald-50">
-          <User className="h-5 w-5 text-emerald-600" />
+          <span className="h-5 w-5 text-emerald-600">U</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="flex justify-between items-center">
-            Accounts
+            <span>Accounts</span>
             <ChevronRight className="h-4 w-4" />
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
