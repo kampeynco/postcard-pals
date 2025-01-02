@@ -29,14 +29,12 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="space-y-8">
-        <div className={`relative ${isMobile ? 'flex space-x-4' : ''}`}>
+        <div className={`relative flex ${isMobile ? 'flex-row space-x-4' : 'flex-col space-y-8'}`}>
           {steps.map((step, index) => (
             <div 
               key={step.number} 
-              className={`relative ${
-                isMobile 
-                  ? 'flex-1' 
-                  : 'pb-12 last:pb-0'
+              className={`relative flex-1 ${
+                isMobile ? 'flex flex-col items-center' : 'flex items-start'
               }`}
             >
               {index !== steps.length - 1 && (
@@ -51,38 +49,36 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
                   aria-hidden="true"
                 />
               )}
-              <div className={`relative flex ${isMobile ? 'flex-col items-center' : 'items-start'}`}>
-                <div className="flex-shrink-0">
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                      currentStep > step.number
-                        ? 'bg-brand-background'
-                        : currentStep === step.number
-                        ? 'bg-brand-background'
-                        : 'bg-gray-200'
-                    }`}
-                  >
-                    {currentStep > step.number ? (
-                      <Check className="h-4 w-4 text-white" />
-                    ) : (
-                      <span className={`text-sm font-medium ${
-                        currentStep >= step.number ? 'text-white' : 'text-gray-500'
-                      }`}>
-                        {step.number}
-                      </span>
-                    )}
-                  </div>
+              <div className="flex-shrink-0">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                    currentStep > step.number
+                      ? 'bg-brand-background'
+                      : currentStep === step.number
+                      ? 'bg-brand-background'
+                      : 'bg-gray-200'
+                  }`}
+                >
+                  {currentStep > step.number ? (
+                    <Check className="h-4 w-4 text-white" />
+                  ) : (
+                    <span className={`text-sm font-medium ${
+                      currentStep >= step.number ? 'text-white' : 'text-gray-500'
+                    }`}>
+                      {step.number}
+                    </span>
+                  )}
                 </div>
-                <div className={`${isMobile ? 'mt-3 text-center' : 'ml-4'}`}>
-                  <h3 className={`text-sm font-medium ${
-                    currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
-                  }`}>
-                    {step.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {step.description}
-                  </p>
-                </div>
+              </div>
+              <div className={`${isMobile ? 'mt-3 text-center' : 'ml-4'}`}>
+                <h3 className={`text-sm font-medium ${
+                  currentStep >= step.number ? 'text-gray-900' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 max-w-[200px]">
+                  {step.description}
+                </p>
               </div>
             </div>
           ))}

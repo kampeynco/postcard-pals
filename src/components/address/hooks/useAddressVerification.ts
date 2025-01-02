@@ -22,16 +22,8 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
-      // Call verification endpoint with proper URL formatting
       const { data, error } = await supabase.functions.invoke('verify-address', {
-        body: { 
-          address: {
-            street: address.street,
-            city: address.city,
-            state: address.state,
-            zip_code: address.zip_code
-          }
-        }
+        body: { address }
       });
 
       console.log('Verification response:', data);
@@ -54,16 +46,18 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
 
       if (data.is_verified) {
         const verifiedAddress = {
-          street: data.street,
-          city: data.city,
-          state: data.state,
-          zip_code: data.zip_code
+          street: data.street || address.street,
+          city: data.city || address.city,
+          state: data.state || address.state,
+          zip_code: data.zip_code || address.zip_code
         };
 
         onVerified(verifiedAddress);
         toast.success("Address verified successfully!");
       } else {
-        toast.error(`Address verification failed: ${data.deliverability}`);
+        toast.error(data.deliverability 
+          ? `Address verification failed: ${data.deliverability}` 
+          : "Address verification failed");
       }
     } catch (error) {
       console.error('Error in address verification:', error);
