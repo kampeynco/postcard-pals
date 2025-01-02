@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import { ProfileFormFields } from "./profile/ProfileFormFields";
 import { useOnboarding } from "./hooks/useOnboarding";
 
@@ -20,15 +21,19 @@ export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">Create Your Profile</h2>
-      <ProfileFormFields form={form} />
-      <div className="flex justify-between pt-4">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button onClick={handleSubmit}>
-          Continue
-        </Button>
-      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <ProfileFormFields />
+          <div className="flex justify-between pt-4">
+            <Button variant="outline" onClick={onBack}>
+              Back
+            </Button>
+            <Button type="submit">
+              Continue
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

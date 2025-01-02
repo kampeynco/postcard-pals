@@ -1,20 +1,10 @@
-import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-interface UserDetailsProps {
-  form: UseFormReturn<{
-    first_name?: string;
-    last_name?: string;
-    phone_number?: string;
-  }>;
-}
-
-export function UserDetails({ form }: UserDetailsProps) {
+export function UserDetails() {
   return (
     <div className="space-y-4">
       <FormField
-        control={form.control}
         name="first_name"
         render={({ field }) => (
           <FormItem>
@@ -27,7 +17,6 @@ export function UserDetails({ form }: UserDetailsProps) {
       />
 
       <FormField
-        control={form.control}
         name="last_name"
         render={({ field }) => (
           <FormItem>
@@ -40,7 +29,6 @@ export function UserDetails({ form }: UserDetailsProps) {
       />
 
       <FormField
-        control={form.control}
         name="phone_number"
         render={({ field }) => (
           <FormItem>
