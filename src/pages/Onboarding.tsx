@@ -62,11 +62,9 @@ const Onboarding = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <div className={`flex flex-col ${isMobile ? 'space-y-8' : 'lg:flex-row lg:space-x-8'}`}>
-          <div className={`${isMobile ? 'order-first' : 'lg:w-80'} ${
-            isMobile ? 'mb-8' : ''
-          }`}>
+          <div className={`${isMobile ? 'order-first' : 'lg:w-80'}`}>
             <OnboardingProgress currentStep={currentStep} />
           </div>
           
