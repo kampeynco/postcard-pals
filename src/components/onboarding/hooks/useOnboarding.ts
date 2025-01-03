@@ -49,12 +49,16 @@ export const useOnboarding = () => {
   });
 
   useEffect(() => {
-    loadOnboardingState();
-  }, []);
+    if (session?.user?.id) {
+      loadOnboardingState();
+    } else {
+      setLoading(false);
+    }
+  }, [session?.user?.id]);
 
   const loadOnboardingState = async () => {
     try {
-      if (!session) {
+      if (!session?.user?.id) {
         setLoading(false);
         return;
       }
@@ -63,9 +67,13 @@ export const useOnboarding = () => {
         .from('profiles')
         .select('onboarding_data, onboarding_step')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading onboarding state:', error);
+        toast.error('Failed to load your progress. Please try refreshing the page.');
+        return;
+      }
 
       if (profile) {
         const savedData = profile.onboarding_data as OnboardingData;
@@ -83,7 +91,7 @@ export const useOnboarding = () => {
       }
     } catch (error) {
       console.error('Error loading onboarding state:', error);
-      toast.error('Failed to load your progress');
+      toast.error('Failed to load your progress. Please try refreshing the page.');
     } finally {
       setLoading(false);
     }
@@ -91,7 +99,10 @@ export const useOnboarding = () => {
 
   const saveOnboardingState = async (data: Partial<OnboardingData>, step: number) => {
     try {
-      if (!session) return;
+      if (!session?.user?.id) {
+        toast.error('Please sign in to save your progress');
+        return;
+      }
 
       const updatedData = { ...onboardingData, ...data };
       
@@ -104,7 +115,11 @@ export const useOnboarding = () => {
         })
         .eq('id', session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error saving onboarding state:', error);
+        toast.error('Failed to save your progress');
+        return;
+      }
 
       setOnboardingData(updatedData);
       setCurrentStep(step);
