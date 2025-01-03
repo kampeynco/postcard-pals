@@ -20,9 +20,6 @@ const AuthForm = () => {
       theme="light"
       providers={[] as Provider[]}
       redirectTo={`${window.location.origin}/auth/callback`}
-      onError={(error) => {
-        console.error("Auth error:", error);
-      }}
       magicLink={false}
       view="sign_in"
       showLinks={true}

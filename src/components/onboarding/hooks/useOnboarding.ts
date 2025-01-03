@@ -74,9 +74,9 @@ export const useOnboarding = () => {
         
         // Update form with saved data
         if (savedData) {
-          Object.keys(savedData).forEach((key) => {
-            if (form.getValues(key as keyof ProfileFormValues) !== undefined) {
-              form.setValue(key as keyof ProfileFormValues, savedData[key as keyof OnboardingData]);
+          Object.entries(savedData).forEach(([key, value]) => {
+            if (typeof value === 'string' && form.getValues(key as keyof ProfileFormValues) !== undefined) {
+              form.setValue(key as keyof ProfileFormValues, value);
             }
           });
         }
