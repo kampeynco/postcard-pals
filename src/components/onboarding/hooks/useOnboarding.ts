@@ -22,9 +22,6 @@ export interface OnboardingData {
     state: string;
     zip_code: string;
   };
-  front_color?: string;
-  logo_alignment?: string;
-  back_message?: string;
 }
 
 // Form schema
@@ -36,7 +33,6 @@ const formSchema = z.object({
 
 export type ProfileFormValues = z.infer<typeof formSchema>;
 
-// Combined hook
 export const useOnboarding = () => {
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
   const [currentStep, setCurrentStep] = useState(1);
@@ -52,11 +48,7 @@ export const useOnboarding = () => {
     },
   });
 
-  useEffect(() => {
-    loadOnboardingState();
-  }, []);
-
-  const loadOnboardingState = async () => {
+  const loadSavedData = async () => {
     try {
       if (!session) {
         setLoading(false);
@@ -65,15 +57,22 @@ export const useOnboarding = () => {
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('onboarding_data, onboarding_step')
+        .select('onboarding_data, onboarding_step, first_name, last_name, phone_number')
         .eq('id', session.user.id)
         .single();
 
       if (error) throw error;
 
       if (profile) {
-        console.log("Loading onboarding state:", profile);
-        setOnboardingData((profile.onboarding_data as OnboardingData) || {});
+        const savedData = {
+          ...profile.onboarding_data,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          phone_number: profile.phone_number,
+        };
+
+        setOnboardingData(savedData);
+        form.reset(savedData);
         setCurrentStep(profile.onboarding_step || 1);
       }
     } catch (error) {
@@ -88,7 +87,6 @@ export const useOnboarding = () => {
     try {
       if (!session) return;
 
-      console.log("Saving onboarding state:", { data, step });
       const updatedData = { ...onboardingData, ...data };
       
       const { error } = await supabase
@@ -96,6 +94,9 @@ export const useOnboarding = () => {
         .update({
           onboarding_data: updatedData,
           onboarding_step: step,
+          first_name: updatedData.first_name,
+          last_name: updatedData.last_name,
+          phone_number: updatedData.phone_number,
           updated_at: new Date().toISOString()
         })
         .eq('id', session.user.id);
@@ -117,12 +118,17 @@ export const useOnboarding = () => {
     return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
   };
 
+  useEffect(() => {
+    loadSavedData();
+  }, [session]);
+
   return {
     form,
     onboardingData,
     currentStep,
     loading,
     saveOnboardingState,
+    loadSavedData,
     formatPhoneNumber,
   };
 };
