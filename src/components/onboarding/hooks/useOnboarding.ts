@@ -64,11 +64,12 @@ export const useOnboarding = () => {
       if (error) throw error;
 
       if (profile) {
-        const savedData = {
-          ...profile.onboarding_data,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          phone_number: profile.phone_number,
+        // Ensure we're working with objects when spreading
+        const savedData: OnboardingData = {
+          ...(profile.onboarding_data as object || {}),
+          first_name: profile.first_name || "",
+          last_name: profile.last_name || "",
+          phone_number: profile.phone_number || "",
         };
 
         setOnboardingData(savedData);
