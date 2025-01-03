@@ -20,33 +20,23 @@ const AuthForm = () => {
       theme="light"
       providers={[] as Provider[]}
       redirectTo={`${window.location.origin}/auth/callback`}
-      magicLink={false}
       view="sign_in"
       showLinks={true}
       localization={{
         variables: {
           sign_in: {
+            button_label: "Sign in",
+            loading_button_label: "Signing in...",
             email_label: "Email address",
             password_label: "Password",
             email_input_placeholder: "Enter your email",
             password_input_placeholder: "Enter your password",
-            button_label: "Sign in",
-            loading_button_label: "Signing in...",
-          },
-          sign_up: {
-            email_label: "Email address",
-            password_label: "Password",
-            email_input_placeholder: "Enter your email",
-            password_input_placeholder: "Create a password",
-            button_label: "Sign up",
-            loading_button_label: "Signing up...",
           },
           forgotten_password: {
-            email_label: "Email address",
-            password_label: "Password",
-            email_input_placeholder: "Enter your email",
-            button_label: "Send reset instructions",
+            button_label: "Reset password",
             loading_button_label: "Sending reset instructions...",
+            email_label: "Email address",
+            email_input_placeholder: "Enter your email",
           },
         },
       }}

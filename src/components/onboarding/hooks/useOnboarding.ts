@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/Auth";
 
+// Types
 export interface OnboardingData {
   first_name?: string;
   last_name?: string;
@@ -23,11 +24,11 @@ export interface OnboardingData {
   };
 }
 
+// Form schema
 const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone_number: z.string().regex(/^\(\d{3}\) \d{3}-\d{4}$/, "Invalid phone number format"),
-  email: z.string().email().optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof formSchema>;
@@ -41,57 +42,42 @@ export const useOnboarding = () => {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      phone_number: "",
-      email: session?.user?.email,
+      first_name: onboardingData?.first_name || "",
+      last_name: onboardingData?.last_name || "",
+      phone_number: onboardingData?.phone_number || "",
     },
   });
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      loadOnboardingState();
-    } else {
-      setLoading(false);
-    }
-  }, [session?.user?.id]);
-
-  const loadOnboardingState = async () => {
+  const loadSavedData = async () => {
     try {
-      if (!session?.user?.id) {
+      if (!session) {
         setLoading(false);
         return;
       }
 
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('onboarding_data, onboarding_step')
+        .select('onboarding_data, onboarding_step, first_name, last_name, phone_number')
         .eq('id', session.user.id)
-        .maybeSingle();
+        .single();
 
-      if (error) {
-        console.error('Error loading onboarding state:', error);
-        toast.error('Failed to load your progress. Please try refreshing the page.');
-        return;
-      }
+      if (error) throw error;
 
       if (profile) {
-        const savedData = profile.onboarding_data as OnboardingData;
-        setOnboardingData(savedData || {});
+        const savedData = {
+          ...profile.onboarding_data,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          phone_number: profile.phone_number,
+        };
+
+        setOnboardingData(savedData);
+        form.reset(savedData);
         setCurrentStep(profile.onboarding_step || 1);
-        
-        // Update form with saved data
-        if (savedData) {
-          Object.entries(savedData).forEach(([key, value]) => {
-            if (typeof value === 'string' && form.getValues(key as keyof ProfileFormValues) !== undefined) {
-              form.setValue(key as keyof ProfileFormValues, value);
-            }
-          });
-        }
       }
     } catch (error) {
       console.error('Error loading onboarding state:', error);
-      toast.error('Failed to load your progress. Please try refreshing the page.');
+      toast.error('Failed to load your progress');
     } finally {
       setLoading(false);
     }
@@ -99,10 +85,7 @@ export const useOnboarding = () => {
 
   const saveOnboardingState = async (data: Partial<OnboardingData>, step: number) => {
     try {
-      if (!session?.user?.id) {
-        toast.error('Please sign in to save your progress');
-        return;
-      }
+      if (!session) return;
 
       const updatedData = { ...onboardingData, ...data };
       
@@ -111,15 +94,14 @@ export const useOnboarding = () => {
         .update({
           onboarding_data: updatedData,
           onboarding_step: step,
+          first_name: updatedData.first_name,
+          last_name: updatedData.last_name,
+          phone_number: updatedData.phone_number,
           updated_at: new Date().toISOString()
         })
         .eq('id', session.user.id);
 
-      if (error) {
-        console.error('Error saving onboarding state:', error);
-        toast.error('Failed to save your progress');
-        return;
-      }
+      if (error) throw error;
 
       setOnboardingData(updatedData);
       setCurrentStep(step);
@@ -136,12 +118,17 @@ export const useOnboarding = () => {
     return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
   };
 
+  useEffect(() => {
+    loadSavedData();
+  }, [session]);
+
   return {
     form,
     onboardingData,
     currentStep,
     loading,
     saveOnboardingState,
+    loadSavedData,
     formatPhoneNumber,
   };
 };
