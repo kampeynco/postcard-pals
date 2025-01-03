@@ -30,6 +30,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
+    // Clear any existing session data when the component mounts
+    const clearSessionData = () => {
+      localStorage.removeItem('supabase.auth.token');
+      sessionStorage.removeItem('supabase.auth.token');
+    };
+
+    // Add event listener for when the window is about to unload
+    window.addEventListener('beforeunload', clearSessionData);
+
     const checkSession = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -51,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       subscription.unsubscribe();
+      window.removeEventListener('beforeunload', clearSessionData);
     };
   }, []);
 
