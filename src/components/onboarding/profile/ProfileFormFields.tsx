@@ -1,10 +1,7 @@
 import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useOnboarding } from "../hooks/useOnboarding";
 
 export function ProfileFormFields() {
-  const { formatPhoneNumber } = useOnboarding();
-
   return (
     <div className="space-y-4">
       <FormField
@@ -37,14 +34,7 @@ export function ProfileFormFields() {
           <FormItem>
             <FormLabel>Phone Number</FormLabel>
             <FormControl>
-              <Input 
-                {...field}
-                placeholder="(XXX) XXX-XXXX"
-                onChange={(e) => {
-                  const formatted = formatPhoneNumber(e.target.value);
-                  field.onChange(formatted);
-                }}
-              />
+              <Input {...field} placeholder="(XXX) XXX-XXXX" />
             </FormControl>
           </FormItem>
         )}

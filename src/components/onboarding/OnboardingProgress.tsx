@@ -29,19 +29,19 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="space-y-8">
-        <div className={`relative flex ${isMobile ? 'flex-row justify-between' : 'flex-col space-y-8'}`}>
+        <div className={`relative flex ${isMobile ? 'flex-row space-x-4' : 'flex-col space-y-8'}`}>
           {steps.map((step, index) => (
             <div 
               key={step.number} 
               className={`relative flex-1 ${
-                isMobile ? 'flex flex-col items-center max-w-[110px]' : 'flex items-start'
+                isMobile ? 'flex flex-col items-center' : 'flex items-start'
               }`}
             >
               {index !== steps.length - 1 && (
                 <div
                   className={`absolute ${
                     isMobile 
-                      ? 'top-4 left-[calc(100%+8px)] h-0.5 w-[calc(100%-24px)]' 
+                      ? 'top-4 left-full h-0.5 w-full -ml-2' 
                       : 'left-4 top-8 -ml-px h-full w-0.5'
                   } ${
                     currentStep > step.number ? 'bg-brand-background' : 'bg-gray-200'
@@ -76,9 +76,7 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
                 }`}>
                   {step.title}
                 </h3>
-                <p className={`mt-1 text-sm text-gray-500 ${
-                  isMobile ? 'hidden' : 'block'
-                }`}>
+                <p className="mt-1 text-sm text-gray-500 max-w-[200px]">
                   {step.description}
                 </p>
               </div>
