@@ -3,8 +3,8 @@ import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
-import { TopNav } from "@/components/navigation/TopNav";
 import { useIsMobile } from "@/hooks/use-mobile";
+import MainLayout from "@/components/layout/MainLayout";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -32,10 +32,8 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <TopNav hideNavigation showLogout />
-      
-      <div className="max-w-3xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <MainLayout>
+      <div className="max-w-3xl mx-auto">
         <div className="space-y-8">
           {isMobile && (
             <div className="mb-8">
@@ -56,7 +54,7 @@ const Onboarding = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

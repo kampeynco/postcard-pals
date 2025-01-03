@@ -24,7 +24,7 @@ export const TopNav = ({ hideNavigation = false, showLogout = false }: TopNavPro
   };
 
   return (
-    <div className="bg-[#4B5EE4] border-b border-gray-200">
+    <div className="bg-brand-background border-b border-gray-200">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-16">
           <span className="text-white font-semibold text-lg">Thanks From Us</span>
