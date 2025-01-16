@@ -9,6 +9,7 @@ import { AddressVerification } from "@/components/address/AddressVerification";
 import { useState } from "react";
 import { FormValues, formSchema } from "./types";
 import type { AddressInput } from "@/components/address/types";
+import { useOnboarding } from '@/components/onboarding/hooks/useOnboarding';
 
 const formatPhoneNumber = (value: string) => {
     const number = value.replace(/[^\d]/g, "");
@@ -26,9 +27,15 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
   const [verifiedAddress, setVerifiedAddress] = useState<AddressInput | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const { saveOnboardingState, currentStep } = useOnboarding();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues ?? {},
+    defaultValues: {
+      first_name: defaultValues?.first_name || '',
+      last_name: defaultValues?.last_name || '',
+      phone_number: defaultValues?.phone_number || '',
+    },
   });
 
   const committeeType = form.watch("committee_type");
