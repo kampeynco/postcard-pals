@@ -76,16 +76,14 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
     form.setValue('phone_number', formattedPhone);
   };
 
-  const handleSubmit: SubmitHandler<FormValues> = async (values) => {
+  const handleSubmit: SubmitHandler<FormValues> = async (values: FormValues) => {
     console.log('Submitting form with values:', values);
     if (isSubmitting) return;
     setIsSubmitting(true); // Set loading state
     try {
       await onSubmit(values, verifiedAddress);
-      // Optionally reset form or show success message
     } catch (error) {
       console.error('Submission error:', error);
-      // Handle error (e.g., show error message)
     } finally {
       setIsSubmitting(false); // Reset loading state
     }
