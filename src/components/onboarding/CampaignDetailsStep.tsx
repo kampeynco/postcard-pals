@@ -3,7 +3,7 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import { useOnboarding } from "./hooks/useOnboarding";
 
 interface CampaignDetailsStepProps {
-  onNext: () => void;
+  onNext: (values: any) => void;
   onBack: () => void;
 }
 
@@ -11,7 +11,7 @@ export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps
   const { form } = useOnboarding();
 
   const handleSubmit = async (values: any) => {
-    await onNext();
+    await onNext({ ...values });
   };
 
   return (
