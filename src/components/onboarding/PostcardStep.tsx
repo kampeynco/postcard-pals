@@ -25,6 +25,8 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
   const [logoAlignment, setLogoAlignment] = useState(defaultValues?.logo_alignment || "center");
   const [backMessage, setBackMessage] = useState(defaultValues?.back_message || "");
   
+  const { submitPostcard, isSubmitting } = usePostcardSubmit();
+  
   const handleSubmit = async () => {
     const data = { 
       frontColor, 
@@ -32,7 +34,13 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
       logoAlignment, 
       backMessage 
     };
-    await onNext(data);
+    
+    try {
+      await submitPostcard(data);
+      await onNext(data);
+    } catch (error) {
+      console.error('Error submitting postcard:', error);
+    }
   };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,9 +75,10 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
           Back
         </Button>
         <Button 
-          onClick={handleSubmit} 
+          onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          Continue
+          {isSubmitting ? 'Saving...' : 'Continue'}
         </Button>
       </div>
     </div>
