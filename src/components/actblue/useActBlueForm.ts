@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { formSchema, FormValues } from "./types";
+import { formSchema, FormValues, OfficeType } from "./types";
 import type { Database } from "@/integrations/supabase/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -20,7 +20,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
     defaultValues: {
       committee_type: "candidate",
       candidate_name: "",
-      office_sought: "U.S. Representative",
+      office_sought: "U.S. Representative" as OfficeType,
       committee_name: "",
       street_address: "",
       city: "",
@@ -60,7 +60,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
             committee_type: data.committee_type,
             committee_name: data.committee_name,
             candidate_name: data.candidate_name || "",
-            office_sought: data.office_sought || "U.S. Representative",
+            office_sought: (data.office_sought as OfficeType) || "U.S. Representative",
             street_address: data.street_address,
             city: data.city,
             state: data.state,
