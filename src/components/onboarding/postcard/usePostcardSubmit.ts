@@ -2,26 +2,28 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export const usePostcardSubmit = (onNext: () => void) => {
+interface PostcardData {
+  frontColor: string;
+  logoFile: File | null;
+  logoAlignment: string;
+  backMessage: string;
+}
+
+export const usePostcardSubmit = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (
-    logoFile: File | null,
-    frontColor: string,
-    logoAlignment: string,
-    backMessage: string
-  ) => {
+  const submitPostcard = async (data: PostcardData) => {
     try {
       setIsSubmitting(true);
       
       let logoUrl = "";
-      if (logoFile) {
-        const fileExt = logoFile.name.split('.').pop();
+      if (data.logoFile) {
+        const fileExt = data.logoFile.name.split('.').pop();
         const filePath = `${crypto.randomUUID()}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
           .from('postcard-images')
-          .upload(filePath, logoFile);
+          .upload(filePath, data.logoFile);
 
         if (uploadError) throw uploadError;
 
@@ -40,24 +42,24 @@ export const usePostcardSubmit = (onNext: () => void) => {
         .upsert({
           user_id: session.user.id,
           front_image_url: logoUrl,
-          back_message: backMessage,
+          back_message: data.backMessage,
           template_data: {
-            front_color: frontColor,
-            logo_alignment: logoAlignment
+            front_color: data.frontColor,
+            logo_alignment: data.logoAlignment
           }
         });
 
       if (templateError) throw templateError;
 
       toast.success("Template saved successfully");
-      onNext();
     } catch (error) {
       console.error('Error saving template:', error);
       toast.error("Failed to save template");
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return { handleSubmit, isSubmitting };
+  return { submitPostcard, isSubmitting };
 };
