@@ -32,11 +32,11 @@ export const CampaignFormFields = ({ form }: CampaignFormFieldsProps) => {
         render={({ field }) => (
           <FormItem>
             <AddressForm
-              address={field.value || {
-                street: "",
-                city: "",
-                state: "",
-                zip_code: ""
+              address={{
+                street: field.value?.street || "",
+                city: field.value?.city || "",
+                state: field.value?.state || "",
+                zip_code: field.value?.zip_code || ""
               }}
               onChange={field.onChange}
             />
