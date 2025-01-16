@@ -9,6 +9,7 @@ import { DisclaimerField } from "./form-fields/DisclaimerField";
 import { AddressVerification } from "@/components/address/AddressVerification";
 import { useState } from "react";
 import { useOnboarding } from '@/components/onboarding/hooks/useOnboarding';
+import { toast } from 'react-toastify'; // Import toastify
 
 interface FormValues {
   first_name: string;
@@ -82,8 +83,10 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
     setIsSubmitting(true); // Set loading state
     try {
       await onSubmit(values, verifiedAddress);
+      toast.success('Form submitted successfully!'); // User feedback on success
     } catch (error) {
       console.error('Submission error:', error);
+      toast.error('Failed to submit the form. Please try again.'); // User feedback on error
     } finally {
       setIsSubmitting(false); // Reset loading state
     }

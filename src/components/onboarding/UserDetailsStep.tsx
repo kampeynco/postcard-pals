@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { Form, FormValues } from "@/components/ui/form";
 import { UserDetails } from "./UserDetails";
 import { useOnboarding } from "./hooks/useOnboarding";
 
@@ -11,7 +11,7 @@ interface UserDetailsStepProps {
 export const UserDetailsStep = ({ onNext, onBack }: UserDetailsStepProps) => {
   const { form } = useOnboarding();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: FormValues) => {
     await form.trigger();
     if (form.formState.isValid) {
       await onNext();
