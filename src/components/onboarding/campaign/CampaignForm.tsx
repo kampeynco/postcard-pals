@@ -12,21 +12,16 @@ import type { AddressInput } from "@/components/address/types";
 
 interface CampaignFormProps {
   onSubmit: (values: FormValues, verifiedAddress: AddressInput | null) => Promise<void>;
+  defaultValues?: FormValues;
 }
 
-export const CampaignForm = ({ onSubmit }: CampaignFormProps) => {
+export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => {
   const [verifiedAddress, setVerifiedAddress] = useState<AddressInput | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      committee_name: "",
-      committee_type: "candidate",
-      candidate_name: "",
-      office_sought: "U.S. Representative",
-      disclaimer_text: "",
-    },
+    defaultValues: defaultValues ?? {},
   });
 
   const committeeType = form.watch("committee_type");
