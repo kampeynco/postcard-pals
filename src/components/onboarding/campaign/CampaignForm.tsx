@@ -15,9 +15,9 @@ interface FormValues {
   last_name: string;
   phone_number: string;
   committee_name?: string;
-  committee_type?: string;
+  committee_type?: "candidate" | "political_action_committee" | "non_profit";
   candidate_name?: string;
-  office_sought?: string;
+  office_sought?: "U.S. President" | "U.S. Senator" | "U.S. Representative" | "Governor" | "Lieutenant Governor" | "State Senator" | "State Representative" | "Attorney General" | "Secretary of State" | "School Board Member";
   disclaimer_text?: string;
   address?: {
     street: string;
@@ -31,6 +31,9 @@ const formSchema = z.object({
   first_name: z.string().min(2, "First name must be at least 2 characters"),
   last_name: z.string().min(2, "Last name must be at least 2 characters"),
   phone_number: z.string().regex(/^[\(]\d{3}[\)] \d{3}-\d{4}$/, "Invalid phone number format"),
+  committee_name: z.string().optional(),
+  committee_type: z.enum(["candidate", "political_action_committee", "non_profit"]),
+  office_sought: z.enum(["U.S. President", "U.S. Senator", "U.S. Representative", "Governor", "Lieutenant Governor", "State Senator", "State Representative", "Attorney General", "Secretary of State", "School Board Member"]),
 });
 
 const formatPhoneNumber = (value: string) => {
@@ -57,6 +60,8 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
       first_name: defaultValues?.first_name || '',
       last_name: defaultValues?.last_name || '',
       phone_number: defaultValues?.phone_number || '',
+      committee_name: defaultValues?.committee_name || '',
+      committee_type: defaultValues?.committee_type || '',
     },
   });
 
@@ -91,11 +96,9 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
   };
 
   return (
-    <Form {...form} onSubmit={form.handleSubmit(handleSubmit)}>
-      {console.log('Rendering CampaignForm with committeeType:', committeeType)}
-      {console.log('Form values:', form.getValues())}
+    <form onSubmit={form.handleSubmit(handleSubmit)}>
       <CommitteeFields form={form} />
-      {committeeType === "candidate" && <CandidateFields form={form} />}
+      {committeeType === 'candidate' && <CandidateFields form={form} />}
       <DisclaimerField form={form} />
       <AddressVerification onVerified={setVerifiedAddress} />
       <Form.Input
@@ -109,8 +112,8 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
         className="w-full"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Saving..." : "Continue"}
+        {isSubmitting ? 'Saving...' : 'Continue'}
       </Button>
-    </Form>
+    </form>
   );
 };
