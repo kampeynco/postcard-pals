@@ -5,7 +5,12 @@ import { BackPostcardSection } from "./postcard/BackPostcardSection";
 import { usePostcardSubmit } from "./postcard/usePostcardSubmit";
 
 interface PostcardStepProps {
-  onNext: () => void;
+  onNext: (data: {
+    frontColor: string;
+    logoFile: File | null;
+    logoAlignment: string;
+    backMessage: string;
+  }) => void;
   onBack: () => void;
   defaultValues?: {
     front_color?: string;
@@ -20,7 +25,15 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
   const [logoAlignment, setLogoAlignment] = useState(defaultValues?.logo_alignment || "center");
   const [backMessage, setBackMessage] = useState(defaultValues?.back_message || "");
   
-  const { handleSubmit, isSubmitting } = usePostcardSubmit(onNext);
+  const handleSubmit = async () => {
+    const data = { 
+      frontColor: frontColor, 
+      logoFile: logoFile, 
+      logoAlignment: logoAlignment, 
+      backMessage: backMessage 
+    };
+    await onNext(data);
+  };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -54,10 +67,9 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
           Back
         </Button>
         <Button 
-          onClick={() => handleSubmit(logoFile, frontColor, logoAlignment, backMessage)} 
-          disabled={isSubmitting}
+          onClick={handleSubmit} 
         >
-          {isSubmitting ? "Saving..." : "Continue"}
+          Continue
         </Button>
       </div>
     </div>

@@ -43,12 +43,19 @@ export const useOnboarding = () => {
   const [loading, setLoading] = useState(true);
   const { session } = useAuth();
 
+  const formatPhoneNumber = (value: string) => {
+    const number = value.replace(/[\D]/g, "");
+    if (number.length <= 3) return `(${number}`;
+    if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
+    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
+  };
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       first_name: onboardingData?.first_name || "",
       last_name: onboardingData?.last_name || "",
-      phone_number: onboardingData?.phone_number || "",
+      phone_number: formatPhoneNumber(onboardingData?.phone_number || ""),
     },
   });
 
@@ -108,13 +115,6 @@ export const useOnboarding = () => {
       console.error('Error saving onboarding state:', error);
       toast.error('Failed to save your progress');
     }
-  };
-
-  const formatPhoneNumber = (value: string) => {
-    const number = value.replace(/[^\d]/g, "");
-    if (number.length <= 3) return number;
-    if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
-    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
   };
 
   return {

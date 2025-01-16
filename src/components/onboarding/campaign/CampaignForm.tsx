@@ -42,9 +42,9 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
 
   const handleSubmit = async (values: FormValues) => {
     if (isSubmitting) return;
-    
     try {
       setIsSubmitting(true);
+      await saveOnboardingState(values, currentStep);
       await onSubmit(values, verifiedAddress);
     } catch (error) {
       console.error('Form submission error:', error);
