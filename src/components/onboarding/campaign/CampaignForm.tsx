@@ -1,16 +1,4 @@
-const formatPhoneNumber = (value: string) => {
-    const number = value.replace(/[\\D]/g, "");
-    if (number.length <= 3) return [(${number}](cci:1://file:///Users/admin/Library/Mobile%20Documents/com~apple~CloudDocs/Projects/Thanks%20From%20Us/postcard-pals/src/components/onboarding/campaign/CampaignForm.tsx:17:0-58:2);
-    if (number.length <= 6) return [(${number.slice(0, 3)}) ${number.slice(3)}](cci:1://file:///Users/admin/Library/Mobile%20Documents/com~apple~CloudDocs/Projects/Thanks%20From%20Us/postcard-pals/src/components/onboarding/campaign/CampaignForm.tsx:17:0-58:2);
-    return [(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}](cci:1://file:///Users/admin/Library/Mobile%20Documents/com~apple~CloudDocs/Projects/Thanks%20From%20Us/postcard-pals/src/components/onboarding/campaign/CampaignForm.tsx:17:0-58:2);
-};const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedPhone = formatPhoneNumber(e.target.value);
-    form.setValue('phone_number', formattedPhone);
-};<Form.Input
-    type="tel"
-    label="Phone Number"
-    {...form.register('phone_number', { onChange: handlePhoneChange })}
-/>import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -21,6 +9,20 @@ import { AddressVerification } from "@/components/address/AddressVerification";
 import { useState } from "react";
 import { FormValues, formSchema } from "./types";
 import type { AddressInput } from "@/components/address/types";
+
+// Phone number formatting function
+const formatPhoneNumber = (value: string) => {
+    const number = value.replace(/[\D]/g, "");
+    if (number.length <= 3) return `(${number}`;
+    if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
+    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
+};
+
+// Handle phone input changes
+const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedPhone = formatPhoneNumber(e.target.value);
+    form.setValue('phone_number', formattedPhone);
+};
 
 interface CampaignFormProps {
   onSubmit: (values: FormValues, verifiedAddress: AddressInput | null) => Promise<void>;
@@ -49,18 +51,6 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formatPhoneNumber = (value: string) => {
-    const number = value.replace(/[\D]/g, "");
-    if (number.length <= 3) return `(${number}`;
-    if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
-    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedPhone = formatPhoneNumber(e.target.value);
-    form.setValue('phone_number', formattedPhone);
   };
 
   return (
