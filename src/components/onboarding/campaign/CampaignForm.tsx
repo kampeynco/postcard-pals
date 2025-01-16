@@ -11,7 +11,7 @@ import { FormValues, formSchema } from "./types";
 import type { AddressInput } from "@/components/address/types";
 
 const formatPhoneNumber = (value: string) => {
-    const number = value.replace(/[\\D]/g, "");
+    const number = value.replace(/[^\d]/g, "");
     if (number.length <= 3) return `(${number}`;
     if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
     return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
