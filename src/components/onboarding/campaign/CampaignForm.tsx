@@ -79,21 +79,15 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
   const handleSubmit: SubmitHandler<FormValues> = async (values) => {
     console.log('Submitting form with values:', values);
     if (isSubmitting) return;
+    setIsSubmitting(true); // Set loading state
     try {
-      setIsSubmitting(true);
-      if (!verifiedAddress) {
-        throw new Error('Please verify your address before submitting');
-      }
-      await saveOnboardingState(values, currentStep);
       await onSubmit(values, verifiedAddress);
+      // Optionally reset form or show success message
     } catch (error) {
-      console.error('Form submission error:', error);
-      form.setError('root', {
-        type: 'submit',
-        message: error instanceof Error ? error.message : 'An error occurred while submitting the form',
-      });
+      console.error('Submission error:', error);
+      // Handle error (e.g., show error message)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Reset loading state
     }
   };
 

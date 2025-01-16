@@ -79,20 +79,17 @@ export const useOnboarding = () => {
         .eq('id', session.user.id)
         .single();
 
-      if (error) throw error;
-
-      console.log('Fetched profile data:', profile); // Debugging statement
+      if (error) throw error; // Handle error
 
       if (profile) {
-        console.log('Loading onboarding state:', profile);
-        setOnboardingData((profile.onboarding_data as OnboardingData) || {});
-        setCurrentStep(profile.onboarding_step || 1);
+        setOnboardingData(profile.onboarding_data);
+        setCurrentStep(profile.onboarding_step);
       }
     } catch (error) {
       console.error('Error loading onboarding state:', error);
-      toast.error('Failed to load your progress');
+      toast.error('Failed to load onboarding data.'); // User feedback for error
     } finally {
-      setLoading(false);
+      setLoading(false); // Ensure loading state is reset
     }
   };
 

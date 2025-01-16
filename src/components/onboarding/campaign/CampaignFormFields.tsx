@@ -39,7 +39,9 @@ export const CampaignFormFields = ({ form }: CampaignFormFieldsProps) => {
                 state: field.value.state || "",
                 zip_code: field.value.zip_code || "",
               }}
-              onChange={(address: AddressInput) => field.onChange(address)}
+              onChange={(address: AddressInput) => {
+                field.onChange(address);
+              }}
             />
           </FormItem>
         )}

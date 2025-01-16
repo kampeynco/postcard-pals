@@ -10,7 +10,7 @@ interface CampaignDetailsStepProps {
 export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps) {
   const { form } = useOnboarding();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FormValues) => {
     await onNext({ ...values });
   };
 
