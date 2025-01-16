@@ -26,13 +26,13 @@ export function PostcardStep({ onNext, onBack, defaultValues }: PostcardStepProp
   const [backMessage, setBackMessage] = useState(defaultValues?.back_message || "");
   
   const handleSubmit = async () => {
-    const data = { 
-      frontColor: frontColor, 
-      logoFile: logoFile, 
-      logoAlignment: logoAlignment, 
-      backMessage: backMessage 
-    };
-    await onNext(data);
+      const data = { 
+          frontColor, 
+          logoFile, 
+          logoAlignment, 
+          backMessage 
+      };
+      await onNext(data);
   };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

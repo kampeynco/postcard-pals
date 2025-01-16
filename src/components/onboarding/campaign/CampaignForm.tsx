@@ -10,9 +10,8 @@ import { useState } from "react";
 import { FormValues, formSchema } from "./types";
 import type { AddressInput } from "@/components/address/types";
 
-// Phone number formatting function
 const formatPhoneNumber = (value: string) => {
-    const number = value.replace(/[\D]/g, "");
+    const number = value.replace(/[\\D]/g, "");
     if (number.length <= 3) return `(${number}`;
     if (number.length <= 6) return `(${number.slice(0, 3)}) ${number.slice(3)}`;
     return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`;
