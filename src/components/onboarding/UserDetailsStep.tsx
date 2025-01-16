@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormValues } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { UserDetails } from "./UserDetails";
 import { useOnboarding } from "./hooks/useOnboarding";
+import { FormValues } from "./campaign/types";
 
 interface UserDetailsStepProps {
   onNext: () => void;

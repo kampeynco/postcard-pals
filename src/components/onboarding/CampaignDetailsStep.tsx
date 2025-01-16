@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { CampaignForm } from "./campaign/CampaignForm";
 import { useOnboarding } from "./hooks/useOnboarding";
+import { FormValues } from "./campaign/types";
 
 interface CampaignDetailsStepProps {
-  onNext: (values: any) => void;
+  onNext: (values: FormValues) => void;
   onBack: () => void;
 }
 
@@ -11,7 +12,7 @@ export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps
   const { form } = useOnboarding();
 
   const handleSubmit = async (values: FormValues) => {
-    await onNext({ ...values });
+    await onNext(values);
   };
 
   return (
