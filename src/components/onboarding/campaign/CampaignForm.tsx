@@ -56,6 +56,7 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        {console.log('Rendering CampaignForm with committeeType:', committeeType)}
         <CommitteeFields form={form} />
         {committeeType === "candidate" && <CandidateFields form={form} />}
         <DisclaimerField form={form} />
