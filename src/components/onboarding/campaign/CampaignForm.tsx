@@ -61,7 +61,7 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
       last_name: defaultValues?.last_name || '',
       phone_number: defaultValues?.phone_number || '',
       committee_name: defaultValues?.committee_name || '',
-      committee_type: defaultValues?.committee_type || '',
+      committee_type: defaultValues?.committee_type || undefined,
     },
   });
 
