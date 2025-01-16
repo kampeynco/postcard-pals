@@ -4,6 +4,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { formSchema, FormValues } from "./types";
 import type { Database } from "@/integrations/supabase/types";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type ActBlueAccount = Database["public"]["Tables"]["actblue_accounts"]["Insert"];
 
@@ -12,7 +14,7 @@ interface UseActBlueFormProps {
 }
 
 export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,11 +32,58 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
 
   const committeeType = form.watch("committee_type");
 
+  useEffect(() => {
+    const loadExistingData = async () => {
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        
+        if (!session?.session?.user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("actblue_accounts")
+          .select("*")
+          .eq("user_id", session.session.user.id)
+          .order("created_at", { ascending: false })
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error fetching ActBlue account:", error);
+          toast.error("Failed to load ActBlue account data");
+          return;
+        }
+
+        if (data) {
+          form.reset({
+            committee_type: data.committee_type,
+            committee_name: data.committee_name,
+            candidate_name: data.candidate_name || "",
+            office_sought: data.office_sought || "U.S. Representative",
+            street_address: data.street_address,
+            city: data.city,
+            state: data.state,
+            zip_code: data.zip_code,
+            disclaimer_text: data.disclaimer_text,
+          });
+        }
+      } catch (error) {
+        console.error("Error in loadExistingData:", error);
+        toast.error("Failed to load existing data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadExistingData();
+  }, [form]);
+
   const onSubmit = async (values: FormValues) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (!user) {
+      if (!session?.user) {
         throw new Error("No authenticated user found");
       }
 
@@ -48,29 +97,25 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
         state: values.state,
         zip_code: values.zip_code,
         disclaimer_text: values.disclaimer_text,
-        user_id: user.id,
+        user_id: session.user.id,
       };
 
       const { error } = await supabase
         .from("actblue_accounts")
-        .insert(insertData);
+        .upsert(insertData)
+        .select()
+        .single();
       
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "ActBlue account settings saved successfully.",
-      });
+      toast.success("ActBlue account settings saved successfully");
 
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save ActBlue account settings. Please try again.",
-      });
+      console.error("Error saving ActBlue account:", error);
+      toast.error("Failed to save ActBlue account settings. Please try again.");
     }
   };
 
@@ -78,5 +123,6 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
     form,
     committeeType,
     onSubmit,
+    isLoading,
   };
 };

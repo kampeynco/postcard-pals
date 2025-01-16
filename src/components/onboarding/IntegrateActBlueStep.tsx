@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import ActBlueAccountForm from "@/components/actblue/ActBlueAccountForm";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
@@ -16,13 +17,12 @@ export function IntegrateActBlueStep({ onNext, onBack }: IntegrateActBlueStepPro
         </p>
       </div>
 
-      <ActBlueAccountForm />
+      <ActBlueAccountForm onSuccess={onNext} />
 
       <div className="flex justify-between pt-4">
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={onNext}>Continue</Button>
       </div>
     </div>
   );
