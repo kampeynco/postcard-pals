@@ -31,7 +31,9 @@ export const formSchema = z.object({
     city: z.string(),
     state: z.string(),
     zip_code: z.string()
-  }).optional()
+  })
 });
 
 export type FormValues = z.infer<typeof formSchema>;
+export type CommitteeType = typeof committeeTypes[number];
+export type OfficeType = typeof officeOptions[number];
