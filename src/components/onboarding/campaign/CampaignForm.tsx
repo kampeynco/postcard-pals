@@ -62,7 +62,8 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
         <Form.Input
           type="tel"
           label="Phone Number"
-          {...form.register('phone_number', { onChange: handlePhoneChange })}
+          onChange={(e) => handlePhoneChange(e)}
+          {...form.register('phone_number')}
         />
         <Button 
           type="submit" 
