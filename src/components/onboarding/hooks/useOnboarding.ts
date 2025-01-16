@@ -67,8 +67,11 @@ export const useOnboarding = () => {
     try {
       if (!session) {
         setLoading(false);
+        console.log('No session found, skipping data load.'); // Debugging statement
         return;
       }
+
+      console.log('Session state:', session); // Debugging statement
 
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -78,8 +81,10 @@ export const useOnboarding = () => {
 
       if (error) throw error;
 
+      console.log('Fetched profile data:', profile); // Debugging statement
+
       if (profile) {
-        console.log("Loading onboarding state:", profile);
+        console.log('Loading onboarding state:', profile);
         setOnboardingData((profile.onboarding_data as OnboardingData) || {});
         setCurrentStep(profile.onboarding_step || 1);
       }
