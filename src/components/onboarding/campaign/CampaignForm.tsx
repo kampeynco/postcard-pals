@@ -34,6 +34,7 @@ const formSchema = z.object({
   committee_name: z.string().optional(),
   committee_type: z.enum(["candidate", "political_action_committee", "non_profit"]),
   office_sought: z.enum(["U.S. President", "U.S. Senator", "U.S. Representative", "Governor", "Lieutenant Governor", "State Senator", "State Representative", "Attorney General", "Secretary of State", "School Board Member"]),
+  disclaimer_text: z.string().optional(),
 });
 
 const formatPhoneNumber = (value: string) => {
@@ -62,6 +63,7 @@ export const CampaignForm = ({ onSubmit, defaultValues }: CampaignFormProps) => 
       phone_number: defaultValues?.phone_number || '',
       committee_name: defaultValues?.committee_name || '',
       committee_type: defaultValues?.committee_type || undefined,
+      disclaimer_text: defaultValues?.disclaimer_text || '',
     },
   });
 
