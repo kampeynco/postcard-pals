@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
-import { toast } from "sonner";
 import SignUpForm from "./signup/SignUpForm";
+import { ROUTES } from "@/constants/routes";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const SignUpPage = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user && event === 'SIGNED_IN') {
         console.log("New signup detected, session:", session.user.email);
-        navigate("/onboarding", { replace: true });
+        navigate(ROUTES.DASHBOARD, { replace: true });
       }
     });
 

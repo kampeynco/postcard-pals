@@ -231,8 +231,6 @@ export type Database = {
           id: string
           is_confirmed: boolean | null
           last_name: string | null
-          onboarding_data: Json | null
-          onboarding_step: number | null
           phone_number: string | null
           role: string | null
           updated_at: string | null
@@ -244,8 +242,6 @@ export type Database = {
           id: string
           is_confirmed?: boolean | null
           last_name?: string | null
-          onboarding_data?: Json | null
-          onboarding_step?: number | null
           phone_number?: string | null
           role?: string | null
           updated_at?: string | null
@@ -257,8 +253,6 @@ export type Database = {
           id?: string
           is_confirmed?: boolean | null
           last_name?: string | null
-          onboarding_data?: Json | null
-          onboarding_step?: number | null
           phone_number?: string | null
           role?: string | null
           updated_at?: string | null
