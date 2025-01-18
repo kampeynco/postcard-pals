@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { DonationActivity, Stats } from "@/types/donations";
 import { toast } from "sonner";
 
@@ -16,6 +17,8 @@ const Dashboard = () => {
     lastMonthTemplates: 0,
     lastMonthFailures: 0,
   });
+
+  const [isOnboarded, setIsOnboarded] = useState(false);
 
   const { data: recentActivity, isLoading: isLoadingActivity } = useQuery({
     queryKey: ["recent-activity"],
@@ -36,6 +39,25 @@ const Dashboard = () => {
       }
     },
   });
+
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const { data: actBlueAccount, error } = await supabase
+          .from("actblue_accounts")
+          .select("is_onboarded")
+          .single();
+
+        if (!error && actBlueAccount?.is_onboarded) {
+          setIsOnboarded(true);
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -107,6 +129,10 @@ const Dashboard = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  if (!isOnboarded) {
+    return <DashboardEmptyState />;
+  }
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
