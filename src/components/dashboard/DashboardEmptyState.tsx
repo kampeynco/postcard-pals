@@ -1,13 +1,13 @@
 import { Check, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 
 interface OnboardingStep {
   id: number;
   title: string;
   description: string;
   completed: boolean;
-  path: string;
   formStep: number;
 }
 
@@ -20,7 +20,6 @@ export const DashboardEmptyState = () => {
       title: "Create Profile",
       description: "Set up your account details",
       completed: false,
-      path: "/onboarding",
       formStep: 1
     },
     {
@@ -28,7 +27,6 @@ export const DashboardEmptyState = () => {
       title: "Campaign Details",
       description: "Tell us about your campaign",
       completed: false,
-      path: "/onboarding",
       formStep: 2
     },
     {
@@ -36,13 +34,12 @@ export const DashboardEmptyState = () => {
       title: "Connect ActBlue",
       description: "Link your ActBlue account",
       completed: false,
-      path: "/onboarding",
       formStep: 3
     }
   ];
 
   const handleStepClick = (step: OnboardingStep) => {
-    navigate(step.path, { 
+    navigate(ROUTES.ONBOARDING, { 
       state: { 
         initialStep: step.formStep 
       }
@@ -58,7 +55,7 @@ export const DashboardEmptyState = () => {
 
       <div className="w-full max-w-3xl">
         <div className="grid gap-4">
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <div
               key={step.id}
               className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors cursor-pointer"
