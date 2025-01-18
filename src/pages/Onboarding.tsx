@@ -42,7 +42,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 const Onboarding = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { onboardingData, currentStep, loading, saveOnboardingState, form } = useOnboarding();
+  const { currentStep, loading, saveOnboardingState, form } = useOnboarding();
   const isMobile = useIsMobile();
 
   if (loading) {
