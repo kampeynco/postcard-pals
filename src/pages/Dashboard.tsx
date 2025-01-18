@@ -43,10 +43,17 @@ const Dashboard = () => {
   useEffect(() => {
     const checkOnboardingStatus = async () => {
       try {
+        const { data: session } = await supabase.auth.getSession();
+        
+        if (!session?.session?.user) {
+          return;
+        }
+
         const { data: actBlueAccount, error } = await supabase
           .from("actblue_accounts")
           .select("is_onboarded")
-          .single();
+          .eq("user_id", session.session.user.id)
+          .maybeSingle();
 
         if (!error && actBlueAccount?.is_onboarded) {
           setIsOnboarded(true);
