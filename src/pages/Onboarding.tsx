@@ -7,7 +7,7 @@ import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { FormProvider } from 'react-hook-form';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
