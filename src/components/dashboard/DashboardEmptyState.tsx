@@ -1,9 +1,8 @@
-import { Check, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
+import { OnboardingStep } from "./empty-state/OnboardingStep";
 
-interface OnboardingStep {
+interface OnboardingStepData {
   id: number;
   title: string;
   description: string;
@@ -14,7 +13,7 @@ interface OnboardingStep {
 export const DashboardEmptyState = () => {
   const navigate = useNavigate();
 
-  const steps: OnboardingStep[] = [
+  const steps: OnboardingStepData[] = [
     {
       id: 1,
       title: "Create Profile",
@@ -38,7 +37,7 @@ export const DashboardEmptyState = () => {
     }
   ];
 
-  const handleStepClick = (step: OnboardingStep) => {
+  const handleStepClick = (step: OnboardingStepData) => {
     navigate(ROUTES.ONBOARDING, { 
       state: { 
         initialStep: step.formStep 
@@ -56,43 +55,14 @@ export const DashboardEmptyState = () => {
       <div className="w-full max-w-3xl">
         <div className="grid gap-4">
           {steps.map((step) => (
-            <div
+            <OnboardingStep
               key={step.id}
-              className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors cursor-pointer"
+              id={step.id}
+              title={step.title}
+              description={step.description}
+              completed={step.completed}
               onClick={() => handleStepClick(step)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleStepClick(step);
-                }
-              }}
-            >
-              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-brand-background text-white">
-                {step.completed ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <span className="text-sm">{step.id}</span>
-                )}
-              </div>
-
-              <div className="ml-4 flex-grow">
-                <h3 className="text-lg font-medium">{step.title}</h3>
-                <p className="text-gray-600 text-sm">{step.description}</p>
-              </div>
-
-              <Button
-                variant="ghost"
-                className="flex items-center text-brand-background hover:text-brand-background/80"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleStepClick(step);
-                }}
-              >
-                Get Started
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+            />
           ))}
         </div>
       </div>

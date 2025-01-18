@@ -1,24 +1,17 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
-import { DonationActivity, Stats } from "@/types/donations";
+import { DonationActivity } from "@/types/donations";
 import { toast } from "sonner";
+import { useOnboardingStatus } from "@/hooks/dashboard/useOnboardingStatus";
+import { useDashboardStats } from "@/hooks/dashboard/useDashboardStats";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState<Stats>({
-    totalDonations: 0,
-    activeTemplates: 0,
-    failedPostcards: 0,
-    lastMonthDonations: 0,
-    lastMonthTemplates: 0,
-    lastMonthFailures: 0,
-  });
-
-  const [isOnboarded, setIsOnboarded] = useState(false);
+  const { isOnboarded, loading: isLoadingOnboarding } = useOnboardingStatus();
+  const { stats } = useDashboardStats();
 
   const { data: recentActivity, isLoading: isLoadingActivity } = useQuery({
     queryKey: ["recent-activity"],
@@ -40,102 +33,9 @@ const Dashboard = () => {
     },
   });
 
-  useEffect(() => {
-    const checkOnboardingStatus = async () => {
-      try {
-        const { data: session } = await supabase.auth.getSession();
-        
-        if (!session?.session?.user) {
-          return;
-        }
-
-        const { data: actBlueAccount, error } = await supabase
-          .from("actblue_accounts")
-          .select("is_onboarded")
-          .eq("user_id", session.session.user.id)
-          .maybeSingle();
-
-        if (!error && actBlueAccount?.is_onboarded) {
-          setIsOnboarded(true);
-        }
-      } catch (error) {
-        console.error("Error checking onboarding status:", error);
-      }
-    };
-
-    checkOnboardingStatus();
-  }, []);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const now = new Date();
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        
-        const [donationsResult, templatesResult, postcardsResult] = await Promise.all([
-          supabase.from("donations").select("created_at"),
-          supabase.from("templates").select("*").eq("is_active", true),
-          supabase.from("postcards").select("*"),
-        ]);
-
-        if (donationsResult.error) throw donationsResult.error;
-        if (templatesResult.error) throw templatesResult.error;
-        if (postcardsResult.error) throw postcardsResult.error;
-
-        const currentDonations = donationsResult.data?.length || 0;
-        const lastMonthDonations = donationsResult.data?.filter(
-          d => d.created_at && new Date(d.created_at) >= lastMonth
-        ).length || 0;
-
-        const activeTemplates = templatesResult.data?.length || 0;
-        const lastMonthTemplates = templatesResult.data?.filter(
-          t => t.created_at && new Date(t.created_at) >= lastMonth
-        ).length || 0;
-
-        const failedCount = postcardsResult.data?.filter(p => p.status === "failed").length || 0;
-        const lastMonthFailures = postcardsResult.data?.filter(
-          p => p.created_at && p.status === "failed" && new Date(p.created_at) >= lastMonth
-        ).length || 0;
-
-        setStats({
-          totalDonations: currentDonations,
-          activeTemplates,
-          failedPostcards: failedCount,
-          lastMonthDonations,
-          lastMonthTemplates,
-          lastMonthFailures,
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
-        toast.error("Failed to load dashboard statistics");
-      }
-    };
-
-    fetchStats();
-
-    const channel = supabase
-      .channel("dashboard-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "donations" },
-        () => fetchStats()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "postcards" },
-        () => fetchStats()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "templates" },
-        () => fetchStats()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  if (isLoadingOnboarding) {
+    return <div>Loading...</div>;
+  }
 
   if (!isOnboarded) {
     return <DashboardEmptyState />;
