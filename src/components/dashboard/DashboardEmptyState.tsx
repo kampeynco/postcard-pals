@@ -8,6 +8,7 @@ interface OnboardingStep {
   description: string;
   completed: boolean;
   path: string;
+  formStep: number;
 }
 
 export const DashboardEmptyState = () => {
@@ -19,23 +20,34 @@ export const DashboardEmptyState = () => {
       title: "Create Profile",
       description: "Set up your account details",
       completed: false,
-      path: "/onboarding"
+      path: "/onboarding",
+      formStep: 1
     },
     {
       id: 2,
       title: "Campaign Details",
       description: "Tell us about your campaign",
       completed: false,
-      path: "/onboarding"
+      path: "/onboarding",
+      formStep: 2
     },
     {
       id: 3,
       title: "Connect ActBlue",
       description: "Link your ActBlue account",
       completed: false,
-      path: "/onboarding"
+      path: "/onboarding",
+      formStep: 3
     }
   ];
+
+  const handleStepClick = (step: OnboardingStep) => {
+    navigate(step.path, { 
+      state: { 
+        initialStep: step.formStep 
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-8 space-y-8">
@@ -49,7 +61,15 @@ export const DashboardEmptyState = () => {
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors"
+              className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors cursor-pointer"
+              onClick={() => handleStepClick(step)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleStepClick(step);
+                }
+              }}
             >
               <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-brand-background text-white">
                 {step.completed ? (
@@ -67,7 +87,10 @@ export const DashboardEmptyState = () => {
               <Button
                 variant="ghost"
                 className="flex items-center text-brand-background hover:text-brand-background/80"
-                onClick={() => navigate(step.path)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStepClick(step);
+                }}
               >
                 Get Started
                 <ChevronRight className="ml-2 h-4 w-4" />

@@ -7,7 +7,7 @@ import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { FormProvider } from 'react-hook-form';
-import React from 'react';
+import { useEffect } from 'react';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -44,6 +44,14 @@ const Onboarding = () => {
   const location = useLocation();
   const { currentStep, loading, saveOnboardingState, form } = useOnboarding();
   const isMobile = useIsMobile();
+
+  // Handle initial step from navigation
+  useEffect(() => {
+    const state = location.state as { initialStep?: number };
+    if (state?.initialStep && state.initialStep !== currentStep) {
+      saveOnboardingState({}, state.initialStep);
+    }
+  }, [location.state, currentStep, saveOnboardingState]);
 
   if (loading) {
     return <div>Loading...</div>;
