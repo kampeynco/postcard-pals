@@ -6,17 +6,6 @@ export interface OnboardingStatus {
   step: number;
 }
 
-interface OnboardingData {
-  committee_name?: string;
-  committee_type?: string;
-  address?: {
-    street?: string;
-    city?: string;
-    state?: string;
-    zip_code?: string;
-  };
-}
-
 // Profile utility functions
 export const checkOnboardingStatus = async (session: Session): Promise<OnboardingStatus> => {
   try {
@@ -38,27 +27,7 @@ export const checkOnboardingStatus = async (session: Session): Promise<Onboardin
                             profile.phone_number &&
                             profile.is_confirmed;
 
-    if (!isProfileComplete) {
-      return { completed: false, step: 1 };
-    }
-
-    // Check onboarding data
-    const onboardingData = profile.onboarding_data as OnboardingData || {};
-    const hasCommitteeInfo = onboardingData.committee_name && onboardingData.committee_type;
-    const hasAddress = onboardingData.address?.street && 
-                      onboardingData.address?.city && 
-                      onboardingData.address?.state && 
-                      onboardingData.address?.zip_code;
-
-    if (!hasCommitteeInfo) {
-      return { completed: false, step: 2 };
-    }
-
-    if (!hasAddress) {
-      return { completed: false, step: 3 };
-    }
-
-    return { completed: true, step: 4 };
+    return { completed: isProfileComplete, step: isProfileComplete ? 4 : 1 };
   } catch (error) {
     console.error('Error checking onboarding status:', error);
     throw error;
