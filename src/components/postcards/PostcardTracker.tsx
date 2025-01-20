@@ -6,8 +6,18 @@ import { toast } from "sonner";
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import ErrorMessage from "@/components/ui/ErrorMessage"; // Correct import for ErrorMessage
 
+// Adding type definitions for postcards
+interface Postcard {
+  id: string;
+  donation_id: string;
+  created_at: string;
+  tracking_number?: string;
+  status: 'pending' | 'in_transit' | 'delivered' | 'failed' | 'returned';
+  expected_delivery_date?: string;
+}
+
 export const PostcardTracker = () => {
-  const { data: postcards, isLoading, isError } = useQuery({
+  const { data: postcards, isLoading, isError } = useQuery<Postcard[]>({
     queryKey: ['postcards'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -24,10 +34,10 @@ export const PostcardTracker = () => {
 
       if (error) {
         console.error('Error fetching postcards:', error);
-        toast.error("Failed to load postcards");
+        toast.error(`Failed to load postcards: ${error.message}`);
         throw error;
       }
-      return data;
+      return data as Postcard[];
     },
     onSuccess: () => {
       toast.success("Postcards loaded successfully!");
@@ -40,6 +50,7 @@ export const PostcardTracker = () => {
       in_transit: "bg-blue-100 text-blue-800",
       delivered: "bg-green-100 text-green-800",
       failed: "bg-red-100 text-red-800",
+      returned: "bg-orange-100 text-orange-800",
     };
 
     return (
@@ -49,8 +60,8 @@ export const PostcardTracker = () => {
     );
   };
 
-  if (isLoading) return <LoadingSpinner />; // Show loading spinner
-  if (isError) return <ErrorMessage message="Error loading postcards." />; // Use ErrorMessage component
+  if (isLoading) return <LoadingSpinner />; 
+  if (isError) return <ErrorMessage message="Error loading postcards." />; 
 
   return (
     <Card className="p-6">
