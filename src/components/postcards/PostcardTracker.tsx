@@ -49,37 +49,26 @@ export const PostcardTracker = () => {
     );
   };
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorMessage message="Error loading postcards." />;
+  if (isLoading) return <LoadingSpinner />; // Show loading spinner
+  if (isError) return <ErrorMessage message="Error loading postcards." />; // Use ErrorMessage component
 
   return (
     <Card className="p-6">
       <h2 className="text-xl font-semibold mb-6">Postcard Tracking</h2>
       <div className="space-y-4">
         {postcards?.map((postcard) => (
-          <div
-            key={postcard.id}
-            className="flex items-center justify-between p-4 border rounded-lg"
-          >
+          <div key={postcard.id} className="flex items-center justify-between p-4 border rounded-lg">
             <div>
-              <p className="font-medium">
-                Donation ID: {postcard.donation_id}
-              </p>
-              <p className="text-sm text-gray-500">
-                Sent: {new Date(postcard.created_at).toLocaleDateString()}
-              </p>
+              <p className="font-medium">Donation ID: {postcard.donation_id}</p>
+              <p className="text-sm text-gray-500">Sent: {new Date(postcard.created_at).toLocaleDateString()}</p>
               {postcard.tracking_number && (
-                <p className="text-sm text-gray-500">
-                  Tracking: {postcard.tracking_number}
-                </p>
+                <p className="text-sm text-gray-500">Tracking: {postcard.tracking_number}</p>
               )}
             </div>
             <div className="flex items-center gap-4">
               {getStatusBadge(postcard.status)}
               {postcard.expected_delivery_date && (
-                <span className="text-sm text-gray-500">
-                  Expected: {new Date(postcard.expected_delivery_date).toLocaleDateString()}
-                </span>
+                <span className="text-sm text-gray-500">Expected: {new Date(postcard.expected_delivery_date).toLocaleDateString()}</span>
               )}
             </div>
           </div>
