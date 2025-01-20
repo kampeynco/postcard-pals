@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import ErrorMessage from "@/components/ui/ErrorMessage"; // Correct import for ErrorMessage
 
 export const PostcardTracker = () => {
   const { data: postcards, isLoading, isError } = useQuery({
@@ -31,7 +31,7 @@ export const PostcardTracker = () => {
     },
     onSuccess: () => {
       toast.success("Postcards loaded successfully!");
-    },
+    }
   });
 
   const getStatusBadge = (status: string) => {
