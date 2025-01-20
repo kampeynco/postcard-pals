@@ -2,13 +2,16 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from 'react';
+import { validateSignUpForm } from './validation'; // Importing the validation function
 
 const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const isValid = validateSignUpForm(); // Assume this function validates the form
+    const email = (event.target as any).email.value;
+    const password = (event.target as any).password.value;
+    const isValid = validateSignUpForm(email, password); // Pass email and password for validation
     if (!isValid) {
       setErrorMessage('Please fix the errors in the form.');
       return;
