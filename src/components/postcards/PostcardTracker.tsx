@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,12 +12,12 @@ interface Postcard {
   donation_id: string;
   created_at: string;
   tracking_number?: string;
-  status: 'pending' | 'in_transit' | 'delivered' | 'failed' | 'returned';
+  status: 'pending' | 'in_transit' | 'delivered' | 'failed' | 'returned'; 
   expected_delivery_date?: string;
 }
 
 export const PostcardTracker = () => {
-  const { data: postcards, isLoading, isError } = useQuery<Postcard[]>({
+  const { data: postcards, isLoading, isError }: UseQueryResult<Postcard[]> = useQuery<Postcard[]>({
     queryKey: ['postcards'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -37,7 +37,7 @@ export const PostcardTracker = () => {
         toast.error(`Failed to load postcards: ${error.message}`);
         throw error;
       }
-      return data as Postcard[];
+      return data as Postcard[]; 
     },
     onSuccess: () => {
       toast.success("Postcards loaded successfully!");
