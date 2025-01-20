@@ -29,6 +29,9 @@ export const PostcardTracker = () => {
       }
       return data;
     },
+    onSuccess: () => {
+      toast.success("Postcards loaded successfully!");
+    },
   });
 
   const getStatusBadge = (status: string) => {
