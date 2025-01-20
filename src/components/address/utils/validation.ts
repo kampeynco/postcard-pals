@@ -1,26 +1,31 @@
 import { AddressInput } from "../types";
 import { toast } from "sonner";
 
+// Enhancing validation logic for address inputs
 export const validateAddress = (address: AddressInput): boolean => {
-  if (!address.street.trim()) {
-    toast.error("Please enter a street address");
-    return false;
-  }
+    const { street, city, state, zip_code: zip } = address;
+    let isValid = true;
+    const errors: string[] = [];
 
-  if (!address.city.trim()) {
-    toast.error("Please enter a city");
-    return false;
-  }
+    if (!street || street.trim() === '') {
+        isValid = false;
+        errors.push('Street address is required.');
+    }
+    if (!city || city.trim() === '') {
+        isValid = false;
+        errors.push('City is required.');
+    }
+    if (!state || state.trim() === '') {
+        isValid = false;
+        errors.push('State is required.');
+    }
+    if (!zip || !/^[0-9]{5}(-[0-9]{4})?$/.test(zip)) {
+        isValid = false;
+        errors.push('Valid ZIP code is required.');
+    }
 
-  if (!address.state) {
-    toast.error("Please select a state");
-    return false;
-  }
-
-  if (!/^\d{5}$/.test(address.zip_code)) {
-    toast.error("Please enter a valid 5-digit ZIP code");
-    return false;
-  }
-
-  return true;
+    if (!isValid) {
+        toast.error(errors.join(' ')); // Display error messages
+    }
+    return isValid;
 };
