@@ -7,37 +7,8 @@ import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { FormProvider } from 'react-hook-form';
-import React, { useEffect } from 'react';
-
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
-
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
-
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
-    }
-    return this.props.children;
-  }
-}
+import { ErrorBoundary } from "@/components/onboarding/ErrorBoundary";
+import { useEffect } from 'react';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -45,7 +16,6 @@ const Onboarding = () => {
   const { currentStep, loading, saveOnboardingState, form } = useOnboarding();
   const isMobile = useIsMobile();
 
-  // Handle initial step from navigation
   useEffect(() => {
     const state = location.state as { initialStep?: number };
     if (state?.initialStep && state.initialStep !== currentStep) {
