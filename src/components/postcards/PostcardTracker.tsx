@@ -38,9 +38,6 @@ export const PostcardTracker = () => {
         throw error;
       }
       return data as Postcard[]; 
-    },
-    onSuccess: () => {
-      toast.success("Postcards loaded successfully!");
     }
   });
 
