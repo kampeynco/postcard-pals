@@ -3,9 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 export const PostcardTracker = () => {
-  const { data: postcards, isLoading } = useQuery({
+  const { data: postcards, isLoading, isError } = useQuery({
     queryKey: ['postcards'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -44,9 +45,8 @@ export const PostcardTracker = () => {
     );
   };
 
-  if (isLoading) {
-    return <div>Loading postcard status...</div>;
-  }
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <div>Error loading postcards.</div>;
 
   return (
     <Card className="p-6">
