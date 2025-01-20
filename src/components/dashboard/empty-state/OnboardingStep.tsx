@@ -48,6 +48,7 @@ export const OnboardingStep = ({
           e.stopPropagation();
           onClick();
         }}
+        aria-label={`Get started with ${title}`}
       >
         Get Started
         <ChevronRight className="ml-2 h-4 w-4" />
