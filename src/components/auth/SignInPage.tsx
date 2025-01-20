@@ -8,16 +8,25 @@ import AuthForm from "./signin/AuthForm";
 import { AuthError } from "@supabase/supabase-js";
 import { ROUTES } from "@/constants/routes";
 import { checkOnboardingStatus } from "@/utils/profile";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useAuth } from "./context/AuthContext";
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { loading } = useAuth();
 
   useEffect(() => {
     const checkExistingSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        handleSignedInUser(session);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          console.log("Existing session found:", session.user.email);
+          await handleSignedInUser(session);
+        }
+      } catch (error) {
+        console.error("Error checking existing session:", error);
+        toast.error("Failed to check existing session");
       }
     };
     
@@ -64,6 +73,10 @@ const SignInPage = () => {
       await supabase.auth.signOut();
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
