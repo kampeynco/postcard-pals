@@ -13,39 +13,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    const clearSessionData = () => {
-      try {
-        localStorage.removeItem('supabase.auth.token');
-        sessionStorage.removeItem('supabase.auth.token');
-      } catch (error) {
-        console.error("Error clearing session data:", error);
-      }
-    };
-
-    window.addEventListener('beforeunload', clearSessionData);
-
     const checkSession = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error checking session:", error);
+          return;
+        }
         setSession(currentSession);
       } catch (error) {
-        console.error("Error checking session:", error);
+        console.error("Error in session check:", error);
       } finally {
         setLoading(false);
         setInitialized(true);
       }
     };
 
+    // Initial session check
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session?.user?.email);
       setSession(session);
       setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
-      window.removeEventListener('beforeunload', clearSessionData);
     };
   }, []);
 
