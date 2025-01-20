@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
 
 export const PostcardTracker = () => {
   const { data: postcards, isLoading, isError } = useQuery({
@@ -46,7 +47,7 @@ export const PostcardTracker = () => {
   };
 
   if (isLoading) return <LoadingSpinner />;
-  if (isError) return <div>Error loading postcards.</div>;
+  if (isError) return <ErrorMessage message="Error loading postcards." />;
 
   return (
     <Card className="p-6">
