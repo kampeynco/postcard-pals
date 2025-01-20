@@ -2,17 +2,29 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const PostcardTracker = () => {
   const { data: postcards, isLoading } = useQuery({
     queryKey: ['postcards'],
     queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Authentication required");
+        throw new Error("No authenticated session");
+      }
+
       const { data, error } = await supabase
         .from('postcards')
         .select('*, donations(*)')
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching postcards:', error);
+        toast.error("Failed to load postcards");
+        throw error;
+      }
       return data;
     },
   });
