@@ -22,6 +22,29 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
+      // First, fetch the ActBlue account
+      const { data: actblueAccount, error: actblueError } = await supabase
+        .from('actblue_accounts')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (actblueError) {
+        console.error('Error fetching ActBlue account:', actblueError);
+        if (actblueError.code === 'PGRST116') {
+          toast.error("Please complete your ActBlue account setup first");
+        } else {
+          toast.error("Unable to verify address. Please try again later.");
+        }
+        return;
+      }
+
+      if (!actblueAccount) {
+        toast.error("Please set up your ActBlue account first");
+        return;
+      }
+
+      // Proceed with address verification
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address }
       });
@@ -30,7 +53,7 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
 
       if (error) {
         console.error('Verification error:', error);
-        toast.error(error.message || "Failed to verify address");
+        toast.error("Unable to verify address. Please try again later.");
         return;
       }
 
@@ -65,23 +88,11 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         };
 
         try {
-          // Get the user's ActBlue account ID
-          const { data: actblueAccounts, error: actblueError } = await supabase
-            .from('actblue_accounts')
-            .select('id')
-            .eq('user_id', session.user.id)
-            .single();
-
-          if (actblueError) {
-            console.error('Error fetching ActBlue account:', actblueError);
-            throw new Error('Failed to fetch ActBlue account');
-          }
-
           // Save verified address to Supabase
           const { error: saveError } = await supabase
             .from('addresses')
             .upsert({
-              actblue_account_id: actblueAccounts.id,
+              actblue_account_id: actblueAccount.id,
               address_data: verifiedAddress,
               is_verified: true,
               last_verified_at: new Date().toISOString(),
@@ -90,14 +101,15 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
 
           if (saveError) {
             console.error('Error saving verified address:', saveError);
-            throw new Error('Failed to save verified address');
+            toast.error("Unable to save verified address. Please try again later.");
+            return;
           }
 
           onVerified(verifiedAddress);
-          toast.success("Address verified successfully!");
+          toast.success("Address verified and saved successfully!");
         } catch (error) {
-          console.error('Error in address verification:', error);
-          toast.error("Failed to save verified address. Please try again later.");
+          console.error('Error saving verified address:', error);
+          toast.error("Unable to save verified address. Please try again later.");
         }
       } else {
         const message = data.deliverability 
@@ -107,7 +119,7 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
       }
     } catch (error) {
       console.error('Error in address verification:', error);
-      toast.error("Failed to verify address. Please try again later.");
+      toast.error("Unable to verify address. Please try again later.");
     } finally {
       setLoading(false);
     }
