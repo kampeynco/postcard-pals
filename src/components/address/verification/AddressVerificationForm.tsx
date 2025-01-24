@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { AddressForm } from "../AddressForm";
 import { AddressInput } from "../types";
 import { useAddressVerification } from "../hooks/useAddressVerification";
+import { validateAddress } from "../utils/validation";
+import { toast } from "sonner";
 
 interface AddressVerificationFormProps {
   onVerified: (address: AddressInput) => void;
@@ -19,7 +21,16 @@ export const AddressVerificationForm = ({ onVerified }: AddressVerificationFormP
   const { loading, verifyAddress } = useAddressVerification(onVerified);
 
   const handleVerify = async () => {
-    await verifyAddress(address);
+    if (!validateAddress(address)) {
+      return;
+    }
+
+    try {
+      await verifyAddress(address);
+    } catch (error) {
+      console.error('Error verifying address:', error);
+      toast.error("Failed to verify address. Please try again.");
+    }
   };
 
   return (

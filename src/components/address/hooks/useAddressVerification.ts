@@ -52,6 +52,23 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
           zip_code: data.zip_code || address.zip_code
         };
 
+        // Save verified address to Supabase
+        const { error: saveError } = await supabase
+          .from('addresses')
+          .insert({
+            actblue_account_id: data.actblue_account_id,
+            lob_id: data.lob_id,
+            address_data: verifiedAddress,
+            is_verified: true,
+            last_verified_at: new Date().toISOString()
+          });
+
+        if (saveError) {
+          console.error('Error saving verified address:', saveError);
+          toast.error("Failed to save verified address");
+          return;
+        }
+
         onVerified(verifiedAddress);
         toast.success("Address verified successfully!");
       } else {

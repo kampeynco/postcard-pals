@@ -1,7 +1,6 @@
 import { AddressInput } from "../types";
 import { toast } from "sonner";
 
-// Enhancing validation logic for address inputs
 export const validateAddress = (address: AddressInput): boolean => {
     const { street, city, state, zip_code: zip } = address;
     let isValid = true;

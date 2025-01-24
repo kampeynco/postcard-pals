@@ -5,8 +5,6 @@ import { CommitteeTypeField } from "./form-fields/CommitteeTypeField";
 import { CandidateNameField } from "./form-fields/CandidateNameField";
 import { OfficeSoughtField } from "./form-fields/OfficeSoughtField";
 import { DisclaimerTextField } from "./form-fields/DisclaimerTextField";
-import { AddressForm } from "@/components/address/AddressForm";
-import { FormField, FormItem } from "@/components/ui/form";
 
 interface CampaignFormFieldsProps {
   form: UseFormReturn<FormValues>;
@@ -26,23 +24,6 @@ export const CampaignFormFields = ({ form }: CampaignFormFieldsProps) => {
         </>
       )}
       <DisclaimerTextField form={form} />
-      <FormField
-        control={form.control}
-        name="address"
-        render={({ field }) => (
-          <FormItem>
-            <AddressForm
-              address={{
-                street: field.value?.street || "",
-                city: field.value?.city || "",
-                state: field.value?.state || "",
-                zip_code: field.value?.zip_code || ""
-              }}
-              onChange={field.onChange}
-            />
-          </FormItem>
-        )}
-      />
     </div>
   );
 };
