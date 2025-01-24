@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { AddressInput } from "../types";
 import { VerifiedAddressDisplay } from "./VerifiedAddressDisplay";
 import { AddressVerificationForm } from "./AddressVerificationForm";
@@ -13,10 +12,5 @@ export const AddressVerificationCard = ({ verifiedAddress, onVerified }: Address
     return <VerifiedAddressDisplay address={verifiedAddress} />;
   }
 
-  return (
-    <Card className="p-6 bg-white shadow-sm border border-gray-100">
-      <h3 className="text-lg font-semibold mb-4 text-gray-900">Verify Office Address</h3>
-      <AddressVerificationForm onVerified={onVerified} />
-    </Card>
-  );
+  return <AddressVerificationForm onVerified={onVerified} />;
 };

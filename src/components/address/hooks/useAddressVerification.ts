@@ -64,24 +64,41 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
           zip_code: data.zip_code || address.zip_code
         };
 
-        // Save verified address to Supabase
-        const { error: saveError } = await supabase
-          .from('addresses')
-          .upsert({
-            address_data: verifiedAddress,
-            is_verified: true,
-            last_verified_at: new Date().toISOString(),
-            lob_id: data.lob_id
-          });
+        try {
+          // Get the user's ActBlue account ID
+          const { data: actblueAccounts, error: actblueError } = await supabase
+            .from('actblue_accounts')
+            .select('id')
+            .eq('user_id', session.user.id)
+            .single();
 
-        if (saveError) {
-          console.error('Error saving verified address:', saveError);
+          if (actblueError) {
+            console.error('Error fetching ActBlue account:', actblueError);
+            throw new Error('Failed to fetch ActBlue account');
+          }
+
+          // Save verified address to Supabase
+          const { error: saveError } = await supabase
+            .from('addresses')
+            .upsert({
+              actblue_account_id: actblueAccounts.id,
+              address_data: verifiedAddress,
+              is_verified: true,
+              last_verified_at: new Date().toISOString(),
+              lob_id: data.lob_id
+            });
+
+          if (saveError) {
+            console.error('Error saving verified address:', saveError);
+            throw new Error('Failed to save verified address');
+          }
+
+          onVerified(verifiedAddress);
+          toast.success("Address verified successfully!");
+        } catch (error) {
+          console.error('Error in address verification:', error);
           toast.error("Failed to save verified address. Please try again later.");
-          return;
         }
-
-        onVerified(verifiedAddress);
-        toast.success("Address verified successfully!");
       } else {
         const message = data.deliverability 
           ? `Address verification failed: ${data.deliverability}` 

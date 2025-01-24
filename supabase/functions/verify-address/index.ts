@@ -7,7 +7,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -21,7 +20,6 @@ serve(async (req) => {
       throw new Error('LOB_API_KEY is not set')
     }
 
-    // Use test addresses as per Lob documentation
     const verificationRequest = {
       primary_line: address.street,
       city: address.city,
@@ -59,7 +57,6 @@ serve(async (req) => {
       )
     }
 
-    // Process successful verification
     const isDeliverable = ['deliverable', 'deliverable_unnecessary_unit', 'deliverable_incorrect_unit', 'deliverable_missing_unit'].includes(verificationData.deliverability)
 
     return new Response(
@@ -70,7 +67,7 @@ serve(async (req) => {
         deliverability_analysis: verificationData.deliverability_analysis,
         street: verificationData.primary_line,
         city: verificationData.components.city,
-        state: verificationData.components.state,
+        state: verificationData.components.state_abbreviation, // Using state abbreviation instead of full name
         zip_code: verificationData.components.zip_code,
         lob_id: verificationData.id,
         confidence: verificationData.lob_confidence_score,
