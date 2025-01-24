@@ -46,7 +46,7 @@ const AuthForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="space-y-4">
       <Auth
         supabaseClient={supabase}
         appearance={{ 
@@ -83,7 +83,7 @@ const AuthForm = () => {
           },
         }}
       />
-    </form>
+    </div>
   );
 };
 
