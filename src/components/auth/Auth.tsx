@@ -14,43 +14,33 @@ export { ProtectedRoute } from "./ProtectedRoute";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error("Error checking session:", error);
-          toast.error("Authentication error: " + error.message);
-          return;
-        }
-        
-        if (currentSession) {
-          console.log("Session found for user:", currentSession.user.email);
-          setSession(currentSession);
-          
-          // Check onboarding status when session is found
-          const onboardingStatus = await checkOnboardingStatus(currentSession);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: currentSession }, error }) => {
+      console.log("Initial session check:", currentSession?.user?.email || "No session");
+      if (error) {
+        console.error("Error checking session:", error);
+        toast.error("Authentication error: " + error.message);
+        setLoading(false);
+        return;
+      }
+
+      setSession(currentSession);
+      setLoading(false);
+
+      if (currentSession) {
+        checkOnboardingStatus(currentSession).then((onboardingStatus) => {
           if (!onboardingStatus.completed) {
             navigate(ROUTES.ONBOARDING, { 
               state: { step: onboardingStatus.step }
             });
           }
-        }
-      } catch (error) {
-        console.error("Error in session check:", error);
-        toast.error("Failed to check authentication status");
-      } finally {
-        setLoading(false);
-        setInitialized(true);
+        });
       }
-    };
-
-    // Initial session check
-    checkSession();
+    });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -78,18 +68,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else if (event === 'USER_UPDATED' && session) {
         setSession(session);
       }
-
-      setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
   }, [navigate, location]);
-
-  if (!initialized) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <AuthContext.Provider value={{ session, loading }}>

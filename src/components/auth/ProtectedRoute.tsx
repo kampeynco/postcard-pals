@@ -16,11 +16,10 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, [loading, session]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner fullPage />;
   }
 
   if (!session) {
-    // Save the attempted URL for redirect after login
     return <Navigate to={ROUTES.SIGNIN} state={{ from: location }} replace />;
   }
 
