@@ -3,21 +3,26 @@ import { useOnboarding } from "./hooks/useOnboarding";
 import { StepWrapper } from "./steps/StepWrapper";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 interface CreateProfileStepProps {
   onNext: () => void;
-  onBack: () => void;
 }
 
-export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
+export function CreateProfileStep({ onNext }: CreateProfileStepProps) {
   const { form } = useOnboarding();
   const [isCompleted, setIsCompleted] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
       await form.trigger();
       if (!form.formState.isValid) {
-        toast.error("Please fill in all required fields correctly");
+        const errors = Object.keys(form.formState.errors);
+        if (errors.length > 0) {
+          toast.error(`Please fill in all required fields: ${errors.join(", ")}`);
+        }
         return;
       }
       setIsCompleted(true);
@@ -28,12 +33,16 @@ export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
     }
   };
 
+  const handleBack = () => {
+    navigate(ROUTES.DASHBOARD);
+  };
+
   return (
     <StepWrapper
       title="Create Your Profile"
       description="Set up your account details to get started"
       onNext={handleSubmit}
-      onBack={onBack}
+      onBack={handleBack}
       isSubmitting={form.formState.isSubmitting}
       isValid={form.formState.isValid}
       isCompleted={isCompleted}

@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
-import { toast } from "sonner";
 
 interface StepWrapperProps {
   title: string;
@@ -24,14 +23,6 @@ export const StepWrapper = ({
   isValid = false,
   isCompleted = false,
 }: StepWrapperProps) => {
-  const handleNext = () => {
-    if (!isValid) {
-      toast.error("Please fill in all required fields correctly");
-      return;
-    }
-    onNext();
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -42,7 +33,9 @@ export const StepWrapper = ({
           )}
         </div>
         {isCompleted && (
-          <CheckCircle className="h-8 w-8 text-green-500 bg-white rounded-full" />
+          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-500">
+            <CheckCircle className="h-5 w-5 text-white" />
+          </div>
         )}
       </div>
 
@@ -57,7 +50,7 @@ export const StepWrapper = ({
           Back
         </Button>
         <Button 
-          onClick={handleNext} 
+          onClick={onNext}
           disabled={isSubmitting || !isValid}
         >
           {isSubmitting ? "Saving..." : "Continue"}
