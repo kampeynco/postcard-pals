@@ -16,7 +16,7 @@ export type ProfileFormValues = z.infer<typeof formSchema>;
 
 export const useOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { session } = useAuth();
 
   const form = useForm<ProfileFormValues>({
@@ -28,16 +28,50 @@ export const useOnboarding = () => {
     },
   });
 
+  useEffect(() => {
+    const loadOnboardingState = async () => {
+      try {
+        if (!session?.user) {
+          setLoading(false);
+          return;
+        }
+
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error) throw error;
+
+        if (profile) {
+          form.reset({
+            first_name: profile.first_name || "",
+            last_name: profile.last_name || "",
+            phone_number: profile.phone_number || "",
+          });
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading onboarding state:', error);
+        toast.error("Failed to load your profile");
+        setLoading(false);
+      }
+    };
+
+    loadOnboardingState();
+  }, [session, form]);
+
   const saveOnboardingState = async (data: Partial<ProfileFormValues>, step: number) => {
     try {
-      setLoading(true);
-      if (!session) return;
-      
+      if (!session?.user) return;
+
       const { error } = await supabase
         .from('profiles')
         .update({
           ...data,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', session.user.id);
 
@@ -47,19 +81,19 @@ export const useOnboarding = () => {
     } catch (error) {
       console.error('Error saving onboarding state:', error);
       toast.error('Failed to save your progress');
-    } finally {
-      setLoading(false);
+      throw error;
     }
   };
 
-  useEffect(() => {
-    setLoading(false);
-  }, []);
+  const resetForm = () => {
+    form.reset();
+  };
 
   return {
     form,
     currentStep,
     loading,
     saveOnboardingState,
+    resetForm,
   };
 };
