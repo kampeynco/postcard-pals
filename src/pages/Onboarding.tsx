@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { FormProvider } from 'react-hook-form';
 import { ErrorBoundary } from "@/components/onboarding/ErrorBoundary";
 import { useEffect } from 'react';
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -17,14 +18,19 @@ const Onboarding = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const state = location.state as { initialStep?: number };
-    if (state?.initialStep && state.initialStep !== currentStep) {
-      saveOnboardingState({}, state.initialStep);
+    const state = location.state as { step?: number };
+    if (state?.step && state.step !== currentStep) {
+      console.log(`Setting onboarding step to: ${state.step}`);
+      saveOnboardingState({}, state.step);
     }
   }, [location.state, currentStep, saveOnboardingState]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   const handleNext = async () => {
