@@ -1,8 +1,5 @@
 import { Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/constants/routes";
-import { useAuth } from "@/components/auth/Auth";
 
 interface OnboardingStepProps {
   id: number;
@@ -19,25 +16,6 @@ export const OnboardingStep = ({
   completed, 
   onClick 
 }: OnboardingStepProps) => {
-  const navigate = useNavigate();
-  const { session } = useAuth();
-
-  const handleGetStarted = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (!session) {
-      // If not authenticated, redirect to sign up
-      navigate(ROUTES.SIGNUP);
-      return;
-    }
-
-    // If authenticated, proceed with the onboarding step
-    navigate(ROUTES.ONBOARDING, {
-      state: { step: id }
-    });
-    onClick();
-  };
-
   return (
     <div
       className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors cursor-pointer"
@@ -66,7 +44,10 @@ export const OnboardingStep = ({
       <Button
         variant="ghost"
         className="flex items-center text-brand-background hover:text-brand-background/80"
-        onClick={handleGetStarted}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
         aria-label={`Get started with ${title}`}
       >
         Get Started
