@@ -22,6 +22,24 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
+      // First, get the user's ActBlue account ID
+      const { data: actBlueAccount, error: accountError } = await supabase
+        .from('actblue_accounts')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (accountError) {
+        console.error('Error fetching ActBlue account:', accountError);
+        toast.error("Unable to find your ActBlue account. Please complete your campaign setup first.");
+        return;
+      }
+
+      if (!actBlueAccount?.id) {
+        toast.error("ActBlue account not found. Please complete your campaign setup first.");
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address }
       });
@@ -64,25 +82,28 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
           zip_code: data.zip_code || address.zip_code
         };
 
-        // Save verified address to Supabase
+        // Save verified address to Supabase with the correct ActBlue account ID
         const { error: saveError } = await supabase
           .from('addresses')
-          .insert({
-            actblue_account_id: session.user.id,
+          .upsert({
+            actblue_account_id: actBlueAccount.id,
             lob_id: data.lob_id,
             address_data: verifiedAddress,
             is_verified: true,
             last_verified_at: new Date().toISOString()
+          }, {
+            onConflict: 'actblue_account_id'
           });
 
         if (saveError) {
           console.error('Error saving verified address:', saveError);
-          toast.error("Failed to save verified address");
+          const errorMessage = saveError.message || "Unable to save address";
+          toast.error(`Failed to save verified address: ${errorMessage}. Please try again later.`);
           return;
         }
 
         onVerified(verifiedAddress);
-        toast.success("Address verified successfully!");
+        toast.success("Address verified and saved successfully!");
       } else {
         const message = data.deliverability 
           ? `Address verification failed: ${data.deliverability}` 
@@ -91,7 +112,7 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
       }
     } catch (error) {
       console.error('Error in address verification:', error);
-      toast.error("Failed to verify address. Please try again.");
+      toast.error("Failed to verify address. Please try again later.");
     } finally {
       setLoading(false);
     }
