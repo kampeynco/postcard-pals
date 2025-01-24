@@ -2,38 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import type { PricingPlan } from "@/config/pricingPlans";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/components/auth/Auth";
-import { ROUTES } from "@/constants/routes";
-import { toast } from "sonner";
 
 interface PricingCardProps {
   plan: PricingPlan;
+  onGetStarted: () => void;
 }
 
-const PricingCard = ({ plan }: PricingCardProps) => {
-  const navigate = useNavigate();
-  const { session } = useAuth();
-
-  const handleGetStarted = async () => {
-    try {
-      if (session) {
-        // If user is logged in, check onboarding status and redirect accordingly
-        navigate(ROUTES.ONBOARDING, {
-          state: { plan: plan.name }
-        });
-      } else {
-        // If user is not logged in, redirect to signup with plan info
-        navigate(ROUTES.SIGNUP, {
-          state: { plan: plan.name }
-        });
-      }
-    } catch (error) {
-      console.error("Navigation error:", error);
-      toast.error("Something went wrong. Please try again.");
-    }
-  };
-
+const PricingCard = ({ plan, onGetStarted }: PricingCardProps) => {
   return (
     <Card 
       className={`relative flex flex-col ${
@@ -74,7 +49,7 @@ const PricingCard = ({ plan }: PricingCardProps) => {
               ? 'bg-[#4B5EE4] hover:bg-[#4B5EE4]/90 text-white' 
               : 'bg-orange-500 hover:bg-orange-600 text-white'
           }`}
-          onClick={handleGetStarted}
+          onClick={onGetStarted}
         >
           Get Started
         </Button>
