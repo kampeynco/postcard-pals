@@ -17,28 +17,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const checkAndRedirect = async (currentSession: Session) => {
-    try {
-      const onboardingStatus = await checkOnboardingStatus(currentSession);
-      
-      if (!onboardingStatus.completed) {
-        console.log("Redirecting to onboarding, step:", onboardingStatus.step);
-        navigate(ROUTES.ONBOARDING, { 
-          state: { step: onboardingStatus.step },
-          replace: true 
-        });
-      } else {
-        // If onboarding is complete, redirect to the originally requested page or dashboard
-        const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
-        navigate(from, { replace: true });
-      }
-    } catch (error) {
-      console.error("Error checking onboarding status:", error);
-      toast.error("Error checking your account status");
-      navigate(ROUTES.DASHBOARD);
-    }
-  };
-
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: currentSession }, error }) => {
@@ -51,10 +29,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setSession(currentSession);
-      if (currentSession) {
-        checkAndRedirect(currentSession);
-      }
       setLoading(false);
+
+      if (currentSession) {
+        checkOnboardingStatus(currentSession).then((onboardingStatus) => {
+          if (!onboardingStatus.completed) {
+            navigate(ROUTES.ONBOARDING, { 
+              state: { step: onboardingStatus.step }
+            });
+          }
+        });
+      }
     });
 
     // Listen for auth changes
@@ -67,8 +52,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate(ROUTES.SIGNIN);
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session);
-        await checkAndRedirect(session);
-        toast.success("Successfully signed in");
+        const onboardingStatus = await checkOnboardingStatus(session);
+        
+        if (!onboardingStatus.completed) {
+          toast.success("Welcome! Let's complete your account setup.");
+          navigate(ROUTES.ONBOARDING, { 
+            state: { step: onboardingStatus.step }
+          });
+        } else {
+          toast.success("Successfully signed in");
+          // Redirect to the originally requested page or dashboard
+          const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
+          navigate(from, { replace: true });
+        }
       } else if (event === 'USER_UPDATED' && session) {
         setSession(session);
       }

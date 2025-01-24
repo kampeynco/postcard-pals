@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 interface StepWrapperProps {
   title: string;
@@ -11,7 +11,6 @@ interface StepWrapperProps {
   isSubmitting?: boolean;
   isValid?: boolean;
   isCompleted?: boolean;
-  showCompletionIcon?: boolean;
 }
 
 export const StepWrapper = ({
@@ -23,7 +22,6 @@ export const StepWrapper = ({
   isSubmitting = false,
   isValid = false,
   isCompleted = false,
-  showCompletionIcon = true,
 }: StepWrapperProps) => {
   return (
     <div className="space-y-6">
@@ -34,9 +32,9 @@ export const StepWrapper = ({
             <p className="text-sm text-gray-600">{description}</p>
           )}
         </div>
-        {showCompletionIcon && isCompleted && (
+        {isCompleted && (
           <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-500">
-            <Check className="h-5 w-5 text-white" />
+            <CheckCircle className="h-5 w-5 text-white" />
           </div>
         )}
       </div>
@@ -48,28 +46,14 @@ export const StepWrapper = ({
           variant="outline" 
           onClick={onBack}
           disabled={isSubmitting}
-          className="min-w-[100px]"
         >
           Back
         </Button>
         <Button 
           onClick={onNext}
           disabled={isSubmitting || !isValid}
-          className="min-w-[100px]"
         >
-          {isSubmitting ? (
-            <div className="flex items-center">
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
-              Saving...
-            </div>
-          ) : isCompleted ? (
-            <div className="flex items-center">
-              <Check className="h-4 w-4 mr-2" />
-              Done
-            </div>
-          ) : (
-            "Continue"
-          )}
+          {isSubmitting ? "Saving..." : "Continue"}
         </Button>
       </div>
     </div>

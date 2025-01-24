@@ -6,43 +6,28 @@ export interface OnboardingStatus {
   step: number;
 }
 
+// Profile utility functions
 export const checkOnboardingStatus = async (session: Session): Promise<OnboardingStatus> => {
   try {
-    // Check profile completion
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single();
 
-    if (profileError) throw profileError;
+    if (error) throw error;
 
-    const isProfileComplete = profile?.first_name && 
-                            profile?.last_name && 
-                            profile?.phone_number;
-
-    if (!isProfileComplete) {
+    if (!profile) {
       return { completed: false, step: 1 };
     }
 
-    // Check ActBlue account
-    const { data: actblueAccount, error: actblueError } = await supabase
-      .from('actblue_accounts')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .single();
+    // Check if profile is complete
+    const isProfileComplete = profile.first_name && 
+                            profile.last_name && 
+                            profile.phone_number &&
+                            profile.is_confirmed;
 
-    if (actblueError && actblueError.code !== 'PGRST116') { // Not found error
-      throw actblueError;
-    }
-
-    const isActBlueComplete = actblueAccount?.is_onboarded;
-
-    if (!actblueAccount || !isActBlueComplete) {
-      return { completed: false, step: 2 };
-    }
-
-    return { completed: true, step: 4 };
+    return { completed: isProfileComplete, step: isProfileComplete ? 4 : 1 };
   } catch (error) {
     console.error('Error checking onboarding status:', error);
     throw error;

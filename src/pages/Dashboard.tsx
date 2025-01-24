@@ -32,7 +32,6 @@ const Dashboard = () => {
         return [];
       }
     },
-    enabled: isOnboarded, // Only fetch if onboarding is complete
   });
 
   if (isLoadingOnboarding) {
