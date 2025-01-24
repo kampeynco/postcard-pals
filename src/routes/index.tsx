@@ -18,6 +18,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
+      <Route index element={<LandingPage />} />
       <Route path={ROUTES.HOME} element={<LandingPage />} />
       <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
       <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />

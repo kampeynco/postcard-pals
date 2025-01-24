@@ -18,12 +18,7 @@ const queryClient = new QueryClient({
 
 const AppContent = () => {
   usePageTitle();
-  return (
-    <Routes>
-      <Route path="/*" element={<AppRoutes />} />
-      <Route path="/" element={<Navigate to={ROUTES.HOME} replace />} />
-    </Routes>
-  );
+  return <AppRoutes />;
 };
 
 const App = () => (
