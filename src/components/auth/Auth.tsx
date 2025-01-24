@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { AuthContext } from "./context/AuthContext";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { checkOnboardingStatus } from "@/utils/profile";
 
 export { useAuth } from "./context/AuthContext";
 export { ProtectedRoute } from "./ProtectedRoute";
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -29,6 +31,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (currentSession) {
           console.log("Session found for user:", currentSession.user.email);
           setSession(currentSession);
+          
+          // Check onboarding status when session is found
+          const onboardingStatus = await checkOnboardingStatus(currentSession);
+          if (!onboardingStatus.completed) {
+            navigate(ROUTES.ONBOARDING, { 
+              state: { step: onboardingStatus.step }
+            });
+          }
         }
       } catch (error) {
         console.error("Error in session check:", error);
@@ -52,8 +62,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate(ROUTES.SIGNIN);
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session);
-        toast.success("Successfully signed in");
-        navigate(ROUTES.DASHBOARD);
+        const onboardingStatus = await checkOnboardingStatus(session);
+        
+        if (!onboardingStatus.completed) {
+          toast.success("Welcome! Let's complete your account setup.");
+          navigate(ROUTES.ONBOARDING, { 
+            state: { step: onboardingStatus.step }
+          });
+        } else {
+          toast.success("Successfully signed in");
+          // Redirect to the originally requested page or dashboard
+          const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
+          navigate(from, { replace: true });
+        }
       } else if (event === 'USER_UPDATED' && session) {
         setSession(session);
       }
@@ -64,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, location]);
 
   if (!initialized) {
     return <LoadingSpinner />;

@@ -1,81 +1,26 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
-import { toast } from "sonner";
 import AuthForm from "./signin/AuthForm";
-import { AuthError } from "@supabase/supabase-js";
 import { ROUTES } from "@/constants/routes";
-import { checkOnboardingStatus } from "@/utils/profile";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./Auth";
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading } = useAuth();
+  const { session, loading } = useAuth();
 
   useEffect(() => {
-    const checkExistingSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log("Existing session found:", session.user.email);
-          await handleSignedInUser(session);
-        }
-      } catch (error) {
-        console.error("Error checking existing session:", error);
-        toast.error("Failed to check existing session");
-      }
-    };
-    
-    checkExistingSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.email);
-
-      if (event === 'SIGNED_IN' && session) {
-        await handleSignedInUser(session);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate, location]);
-
-  const handleSignedInUser = async (session: any) => {
-    try {
-      const onboardingStatus = await checkOnboardingStatus(session);
-      
-      if (!onboardingStatus.completed) {
-        console.log("Redirecting to onboarding step:", onboardingStatus.step);
-        toast.success("Welcome! Let's complete your account setup.");
-        navigate(ROUTES.ONBOARDING, { 
-          replace: true,
-          state: { step: onboardingStatus.step }
-        });
-        return;
-      }
-
+    // If user is already authenticated, redirect to dashboard or requested page
+    if (session) {
       const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
-      console.log("Onboarding complete. Redirecting to:", from);
-      toast.success("Welcome back!");
       navigate(from, { replace: true });
-    } catch (error) {
-      console.error('Error in sign in process:', error);
-      if (error instanceof AuthError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred. Please try again.");
-      }
-      await supabase.auth.signOut();
     }
-  };
+  }, [session, navigate, location]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return null; // AuthProvider will show the loading spinner
   }
 
   return (

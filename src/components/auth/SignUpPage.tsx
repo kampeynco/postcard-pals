@@ -5,20 +5,27 @@ import PublicNav from "@/components/navigation/PublicNav";
 import { Footer } from "@/components/layout/Footer";
 import SignUpForm from "./signup/SignUpForm";
 import { ROUTES } from "@/constants/routes";
+import { useAuth } from "./Auth";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   useEffect(() => {
+    // If user is already authenticated, redirect to dashboard
+    if (session) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user && event === 'SIGNED_IN') {
         console.log("New signup detected, session:", session.user.email);
-        navigate(ROUTES.DASHBOARD, { replace: true });
+        // AuthProvider will handle the redirection based on onboarding status
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, session]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
