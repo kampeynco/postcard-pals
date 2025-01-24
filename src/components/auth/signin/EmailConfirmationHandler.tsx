@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 const isValidEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,7 +49,7 @@ const EmailConfirmationHandler = () => {
         console.log("User signed out");
 
         // Check profile confirmation status
-        const { data: profile, error: profileError } = await supabase
+        const { data, error: profileError } = await supabase
           .from('profiles')
           .select('is_confirmed')
           .eq('email', email)
@@ -58,6 +61,8 @@ const EmailConfirmationHandler = () => {
           navigate('/signin', { replace: true });
           return;
         }
+
+        const profile = data as Profile | null;
 
         if (!profile?.is_confirmed) {
           console.log("Profile not yet confirmed, waiting for confirmation...");
