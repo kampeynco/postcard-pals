@@ -41,11 +41,11 @@ const EmailConfirmationHandler = () => {
       }
 
       try {
-        // Always sign out the user first
+        // Sign out the user first
         await supabase.auth.signOut();
         console.log("User signed out");
 
-        // Check if the profile is confirmed
+        // Check profile confirmation status
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('is_confirmed')
@@ -59,9 +59,9 @@ const EmailConfirmationHandler = () => {
           return;
         }
 
-        if (!profile.is_confirmed) {
+        if (!profile?.is_confirmed) {
           console.log("Profile not yet confirmed, waiting for confirmation...");
-          // Wait briefly for the trigger to complete
+          // Brief delay for trigger completion
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
