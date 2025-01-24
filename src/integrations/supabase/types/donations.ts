@@ -1,4 +1,5 @@
 import { Json } from './json';
+import { QueueStatus } from './enums';
 
 export interface Donation {
   id: string;
@@ -8,6 +9,12 @@ export interface Donation {
   processed: boolean | null;
   postcard_sent: boolean | null;
   created_at: string | null;
+  queue_status: QueueStatus | null;
+  queue_date: string | null;
+  processing_attempts: number | null;
+  last_attempt_at: string | null;
+  error_message: string | null;
+  timezone: string | null;
 }
 
 export interface DonationsTable {

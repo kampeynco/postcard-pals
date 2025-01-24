@@ -7,6 +7,8 @@ export interface WebhookLog {
   status: string;
   error_message: string | null;
   created_at: string | null;
+  retry_count: number | null;
+  last_retry_at: string | null;
 }
 
 export interface WebhookLogsTable {
