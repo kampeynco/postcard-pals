@@ -4,12 +4,16 @@ interface LoadingSpinnerProps {
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
   fullPage?: boolean;
+  color?: "default" | "primary" | "secondary";
+  ariaLabel?: string;
 }
 
 export function LoadingSpinner({ 
   className,
   size = "md",
-  fullPage = false 
+  fullPage = false,
+  color = "default",
+  ariaLabel = "Loading..."
 }: LoadingSpinnerProps) {
   const sizeClasses = {
     sm: "h-4 w-4",
@@ -18,16 +22,26 @@ export function LoadingSpinner({
     xl: "h-16 w-16"
   };
 
+  const colorClasses = {
+    default: "text-gray-600",
+    primary: "text-primary",
+    secondary: "text-secondary"
+  };
+
   const spinner = (
     <svg
       className={cn(
         "animate-spin",
         sizeClasses[size],
+        colorClasses[color],
         className
       )}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      role="status"
+      aria-label={ariaLabel}
+      data-testid="loading-spinner"
     >
       <circle
         className="opacity-25"
@@ -47,7 +61,11 @@ export function LoadingSpinner({
 
   if (fullPage) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        role="status"
+        aria-label={ariaLabel}
+      >
         {spinner}
       </div>
     );
