@@ -9,7 +9,7 @@ interface AddressFieldsProps {
 
 export const AddressFields = ({ form }: AddressFieldsProps) => {
   return (
-    <>
+    <div className="space-y-4">
       <FormField
         control={form.control}
         name="street_address"
@@ -17,7 +17,11 @@ export const AddressFields = ({ form }: AddressFieldsProps) => {
           <FormItem>
             <FormLabel>Street Address</FormLabel>
             <FormControl>
-              <Input placeholder="Enter street address" {...field} />
+              <Input 
+                placeholder="Enter street address" 
+                {...field} 
+                autoComplete="street-address"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -32,7 +36,11 @@ export const AddressFields = ({ form }: AddressFieldsProps) => {
             <FormItem>
               <FormLabel>City</FormLabel>
               <FormControl>
-                <Input placeholder="Enter city" {...field} />
+                <Input 
+                  placeholder="Enter city" 
+                  {...field} 
+                  autoComplete="address-level2"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -46,7 +54,14 @@ export const AddressFields = ({ form }: AddressFieldsProps) => {
             <FormItem>
               <FormLabel>State</FormLabel>
               <FormControl>
-                <Input placeholder="CA" maxLength={2} {...field} />
+                <Input 
+                  placeholder="CA" 
+                  maxLength={2} 
+                  {...field} 
+                  autoComplete="address-level1"
+                  className="uppercase"
+                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -60,13 +75,19 @@ export const AddressFields = ({ form }: AddressFieldsProps) => {
             <FormItem>
               <FormLabel>ZIP Code</FormLabel>
               <FormControl>
-                <Input placeholder="12345" {...field} />
+                <Input 
+                  placeholder="12345" 
+                  {...field} 
+                  autoComplete="postal-code"
+                  maxLength={10}
+                  pattern="\d{5}(-\d{4})?"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
       </div>
-    </>
+    </div>
   );
 };

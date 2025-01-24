@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFormContext } from "react-hook-form";
 import { FormValues, OfficeType } from "./types";
+import { memo } from "react";
 
 const officeOptions: OfficeType[] = [
   // Federal Offices
@@ -26,7 +27,7 @@ const officeOptions: OfficeType[] = [
   "School Board Member"
 ];
 
-export const CandidateFields = () => {
+export const CandidateFields = memo(() => {
   const form = useFormContext<FormValues>();
   const showFields = form.watch("committee_type") === "candidate";
 
@@ -41,7 +42,11 @@ export const CandidateFields = () => {
           <FormItem>
             <FormLabel>Candidate Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter candidate name" {...field} />
+              <Input 
+                placeholder="Enter candidate name" 
+                {...field} 
+                autoComplete="name"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -74,4 +79,6 @@ export const CandidateFields = () => {
       />
     </div>
   );
-};
+});
+
+CandidateFields.displayName = 'CandidateFields';
