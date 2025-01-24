@@ -14,7 +14,6 @@ export { ProtectedRoute } from "./ProtectedRoute";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,6 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) {
           console.error("Error checking session:", error);
           toast.error("Authentication error: " + error.message);
+          setLoading(false);
           return;
         }
         
@@ -40,12 +40,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
           }
         }
+        setLoading(false);
       } catch (error) {
         console.error("Error in session check:", error);
         toast.error("Failed to check authentication status");
-      } finally {
         setLoading(false);
-        setInitialized(true);
       }
     };
 
@@ -78,18 +77,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else if (event === 'USER_UPDATED' && session) {
         setSession(session);
       }
-
-      setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
   }, [navigate, location]);
-
-  if (!initialized) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <AuthContext.Provider value={{ session, loading }}>
