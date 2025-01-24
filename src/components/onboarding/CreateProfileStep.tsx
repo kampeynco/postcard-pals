@@ -2,6 +2,7 @@ import { ProfileFormFields } from "./profile/ProfileFormFields";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { StepWrapper } from "./steps/StepWrapper";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface CreateProfileStepProps {
   onNext: () => void;
@@ -13,10 +14,17 @@ export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const handleSubmit = async () => {
-    await form.trigger();
-    if (form.formState.isValid) {
+    try {
+      await form.trigger();
+      if (!form.formState.isValid) {
+        toast.error("Please fill in all required fields correctly");
+        return;
+      }
       setIsCompleted(true);
       await onNext();
+    } catch (error) {
+      console.error('Error submitting profile:', error);
+      toast.error("Failed to save profile details");
     }
   };
 

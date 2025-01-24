@@ -52,7 +52,6 @@ export const useOnboarding = () => {
     }
   };
 
-  // Reset loading state when component mounts
   useEffect(() => {
     setLoading(false);
   }, []);
