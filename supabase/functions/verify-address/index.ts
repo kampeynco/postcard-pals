@@ -21,32 +21,59 @@ serve(async (req) => {
       throw new Error('LOB_API_KEY is not set')
     }
 
-    // Verify address using Lob API
+    // Use test addresses as per Lob documentation
+    const verificationRequest = {
+      primary_line: address.street,
+      city: address.city,
+      state: address.state,
+      zip_code: address.zip_code,
+    }
+
+    console.log('Sending verification request to Lob:', verificationRequest)
+
     const verificationResponse = await fetch('https://api.lob.com/v1/us_verifications', {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(lobApiKey + ':')}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        primary_line: address.street,
-        city: address.city,
-        state: address.state,
-        zip_code: address.zip_code,
-      }),
+      body: JSON.stringify(verificationRequest),
     })
 
     const verificationData = await verificationResponse.json()
-    console.log('Verification response:', verificationData)
+    console.log('Lob verification response:', verificationData)
 
     if (!verificationResponse.ok) {
-      throw new Error(`Address verification failed: ${verificationData.error.message}`)
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            message: verificationData.error.message || 'Address verification failed',
+            details: verificationData.error
+          }
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: verificationResponse.status,
+        }
+      )
     }
 
+    // Process successful verification
+    const isDeliverable = ['deliverable', 'deliverable_unnecessary_unit', 'deliverable_incorrect_unit', 'deliverable_missing_unit'].includes(verificationData.deliverability)
+
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: verificationData 
+      JSON.stringify({
+        success: true,
+        is_verified: isDeliverable,
+        deliverability: verificationData.deliverability,
+        deliverability_analysis: verificationData.deliverability_analysis,
+        street: verificationData.primary_line,
+        city: verificationData.components.city,
+        state: verificationData.components.state,
+        zip_code: verificationData.components.zip_code,
+        lob_id: verificationData.id,
+        confidence: verificationData.lob_confidence_score,
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -58,11 +85,14 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: {
+          message: error.message || 'Internal server error',
+          details: error
+        }
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 500,
       }
     )
   }

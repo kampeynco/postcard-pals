@@ -39,8 +39,20 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
-      if (data.error) {
-        toast.error(data.error.message || "Address verification failed");
+      if (!data.success) {
+        const errorMessage = data.error?.message || "Address verification failed";
+        const details = data.error?.details?.deliverability_analysis || {};
+        
+        let detailedError = errorMessage;
+        if (details.dpv_confirmation === 'N') {
+          detailedError += ": Address not found";
+        } else if (details.dpv_vacant === 'Y') {
+          detailedError += ": Address is vacant";
+        } else if (details.dpv_active === 'N') {
+          detailedError += ": Address is not active";
+        }
+        
+        toast.error(detailedError);
         return;
       }
 
@@ -56,7 +68,7 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         const { error: saveError } = await supabase
           .from('addresses')
           .insert({
-            actblue_account_id: data.actblue_account_id,
+            actblue_account_id: session.user.id,
             lob_id: data.lob_id,
             address_data: verifiedAddress,
             is_verified: true,
@@ -72,9 +84,10 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         onVerified(verifiedAddress);
         toast.success("Address verified successfully!");
       } else {
-        toast.error(data.deliverability 
+        const message = data.deliverability 
           ? `Address verification failed: ${data.deliverability}` 
-          : "Address verification failed");
+          : "Address verification failed";
+        toast.error(message);
       }
     } catch (error) {
       console.error('Error in address verification:', error);
