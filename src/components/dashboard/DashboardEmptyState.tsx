@@ -41,8 +41,7 @@ export const DashboardEmptyState = () => {
     navigate(ROUTES.ONBOARDING, { 
       state: { 
         initialStep: step.formStep 
-      },
-      replace: true // Use replace to prevent back navigation to empty state
+      }
     });
   };
 

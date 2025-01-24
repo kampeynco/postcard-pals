@@ -12,6 +12,7 @@ import PricingPage from "@/pages/PricingPage";
 import SignInPage from "@/components/auth/SignInPage";
 import SignUpPage from "@/components/auth/SignUpPage";
 import EmailConfirmationHandler from "@/components/auth/signin/EmailConfirmationHandler";
+import Onboarding from "@/pages/Onboarding";
 
 const AppRoutes = () => {
   return (
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         }
       >
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
         <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
         <Route path="/settings/actblue/new" element={<CreateActBlueAccount />} />
         <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />

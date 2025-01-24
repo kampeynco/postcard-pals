@@ -8,6 +8,7 @@ import { DonationActivity } from "@/types/donations";
 import { toast } from "sonner";
 import { useOnboardingStatus } from "@/hooks/dashboard/useOnboardingStatus";
 import { useDashboardStats } from "@/hooks/dashboard/useDashboardStats";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const Dashboard = () => {
   const { isOnboarded, loading: isLoadingOnboarding } = useOnboardingStatus();
@@ -34,7 +35,11 @@ const Dashboard = () => {
   });
 
   if (isLoadingOnboarding) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (!isOnboarded) {
@@ -49,9 +54,8 @@ const Dashboard = () => {
       <DashboardStats stats={stats} />
       <DashboardCharts />
       {isLoadingActivity ? (
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+        <div className="flex items-center justify-center py-8">
+          <LoadingSpinner />
         </div>
       ) : (
         <RecentActivity activities={recentActivity || []} />
