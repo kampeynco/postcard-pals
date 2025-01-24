@@ -3,30 +3,50 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import type { Provider } from "@supabase/supabase-js";
 import { useState } from 'react';
-import { validateAuthForm } from './validation'; // Importing the validation function
+import { toast } from "sonner";
 
 const AuthForm = () => {
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const email = (event.target as any).email.value;
-    const password = (event.target as any).password.value;
-    const isValid = validateAuthForm(email, password); // Pass email and password for validation
-    if (!isValid) {
-      setErrorMessage('Please fix the errors in the form.');
-      return;
-    }
+    setIsLoading(true);
+
     try {
-      // Submit logic here
+      const formData = new FormData(event.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      if (!email || !password) {
+        toast.error('Please enter both email and password');
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Sign in error:', error);
+        toast.error(error.message);
+        return;
+      }
+
+      if (data?.user) {
+        console.log('Successfully signed in:', data.user.email);
+        toast.success('Successfully signed in!');
+      }
     } catch (error) {
-      setErrorMessage('Submission failed. Please try again.');
+      console.error('Unexpected error during sign in:', error);
+      toast.error('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <Auth
         supabaseClient={supabase}
         appearance={{ 
@@ -47,7 +67,7 @@ const AuthForm = () => {
         localization={{
           variables: {
             sign_in: {
-              button_label: "Sign in",
+              button_label: isLoading ? "Signing in..." : "Sign in",
               loading_button_label: "Signing in...",
               email_label: "Email address",
               password_label: "Password",
