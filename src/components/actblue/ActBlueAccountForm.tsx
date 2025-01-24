@@ -18,7 +18,7 @@ export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProp
   });
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner size="lg" fullPage />;
   }
 
   return (
@@ -38,7 +38,7 @@ export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProp
         >
           {form.formState.isSubmitting ? (
             <>
-              <LoadingSpinner className="mr-2 h-4 w-4" />
+              <LoadingSpinner size="sm" className="mr-2" />
               Saving...
             </>
           ) : (
