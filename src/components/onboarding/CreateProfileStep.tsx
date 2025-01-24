@@ -1,6 +1,7 @@
 import { ProfileFormFields } from "./profile/ProfileFormFields";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { StepWrapper } from "./steps/StepWrapper";
+import { useState } from "react";
 
 interface CreateProfileStepProps {
   onNext: () => void;
@@ -9,10 +10,12 @@ interface CreateProfileStepProps {
 
 export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
   const { form } = useOnboarding();
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const handleSubmit = async () => {
     await form.trigger();
     if (form.formState.isValid) {
+      setIsCompleted(true);
       await onNext();
     }
   };
@@ -24,6 +27,8 @@ export function CreateProfileStep({ onNext, onBack }: CreateProfileStepProps) {
       onNext={handleSubmit}
       onBack={onBack}
       isSubmitting={form.formState.isSubmitting}
+      isValid={form.formState.isValid}
+      isCompleted={isCompleted}
     >
       <ProfileFormFields />
     </StepWrapper>

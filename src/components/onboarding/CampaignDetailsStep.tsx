@@ -2,6 +2,7 @@ import { CampaignForm } from "./campaign/CampaignForm";
 import { useOnboarding } from "./hooks/useOnboarding";
 import { FormValues } from "./campaign/types";
 import { StepWrapper } from "./steps/StepWrapper";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface CampaignDetailsStepProps {
@@ -11,6 +12,7 @@ interface CampaignDetailsStepProps {
 
 export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps) {
   const { form } = useOnboarding();
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const handleSubmit = async (values: FormValues) => {
     try {
@@ -19,6 +21,7 @@ export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps
         toast.error("Please fill in all required fields");
         return;
       }
+      setIsCompleted(true);
       await onNext(values);
     } catch (error) {
       console.error('Error submitting campaign details:', error);
@@ -33,6 +36,8 @@ export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps
       onNext={form.handleSubmit(handleSubmit)}
       onBack={onBack}
       isSubmitting={form.formState.isSubmitting}
+      isValid={form.formState.isValid}
+      isCompleted={isCompleted}
     >
       <CampaignForm onSubmit={handleSubmit} />
     </StepWrapper>
