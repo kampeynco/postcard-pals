@@ -39,7 +39,9 @@ export const DashboardEmptyState = () => {
 
   const handleStepClick = (step: OnboardingStepData) => {
     console.log(`Navigating to onboarding step: ${step.formStep}`);
+    // Use replace instead of push to prevent back button issues
     navigate(ROUTES.ONBOARDING, { 
+      replace: true,
       state: { 
         step: step.formStep 
       }

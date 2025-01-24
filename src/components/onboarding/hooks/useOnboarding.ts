@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,7 +16,7 @@ export type ProfileFormValues = z.infer<typeof formSchema>;
 
 export const useOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { session } = useAuth();
 
   const form = useForm<ProfileFormValues>({
@@ -30,6 +30,7 @@ export const useOnboarding = () => {
 
   const saveOnboardingState = async (data: Partial<ProfileFormValues>, step: number) => {
     try {
+      setLoading(true);
       if (!session) return;
       
       const { error } = await supabase
@@ -46,8 +47,15 @@ export const useOnboarding = () => {
     } catch (error) {
       console.error('Error saving onboarding state:', error);
       toast.error('Failed to save your progress');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Reset loading state when component mounts
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   return {
     form,

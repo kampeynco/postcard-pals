@@ -25,14 +25,6 @@ const Onboarding = () => {
     }
   }, [location.state, currentStep, saveOnboardingState]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
   const handleNext = async () => {
     const nextStep = currentStep + 1;
     await saveOnboardingState({}, nextStep);
@@ -48,6 +40,15 @@ const Onboarding = () => {
   };
 
   const renderStep = () => {
+    // Only show loading spinner when initially loading the page
+    if (loading && !currentStep) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingSpinner />
+        </div>
+      );
+    }
+
     switch (currentStep) {
       case 1:
         return (
