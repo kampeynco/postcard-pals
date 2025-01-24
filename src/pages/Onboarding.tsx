@@ -7,6 +7,7 @@ import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { FormProvider } from 'react-hook-form';
 import { ErrorBoundary } from "@/components/onboarding/ErrorBoundary";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useEffect } from "react"; // Added this import
 
 const Onboarding = () => {
   const navigate = useNavigate();
