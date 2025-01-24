@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
+import { VerifyAddressStep } from "@/components/onboarding/VerifyAddressStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
 import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { FormProvider } from 'react-hook-form';
@@ -28,7 +29,7 @@ const Onboarding = () => {
       const nextStep = currentStep + 1;
       await saveOnboardingState({}, nextStep);
 
-      if (nextStep > 3) {
+      if (nextStep > 4) {
         navigate(ROUTES.DASHBOARD);
       }
     } catch (error) {
@@ -65,6 +66,13 @@ const Onboarding = () => {
           />
         );
       case 3:
+        return (
+          <VerifyAddressStep
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        );
+      case 4:
         return (
           <IntegrateActBlueStep
             onNext={handleNext}

@@ -21,6 +21,11 @@ export const OnboardingProgress = ({ currentStep }: OnboardingProgressProps) => 
     },
     {
       number: 3,
+      title: "Verify Address",
+      description: "Verify your office address"
+    },
+    {
+      number: 4,
       title: "Integrate ActBlue",
       description: "Grant access to ActBlue"
     }

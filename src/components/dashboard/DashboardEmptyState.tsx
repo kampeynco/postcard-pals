@@ -30,16 +30,22 @@ export const DashboardEmptyState = () => {
     },
     {
       id: 3,
+      title: "Verify Account Address",
+      description: "Verify your campaign office address",
+      completed: false,
+      formStep: 3
+    },
+    {
+      id: 4,
       title: "Connect ActBlue",
       description: "Link your ActBlue account",
       completed: false,
-      formStep: 3
+      formStep: 4
     }
   ];
 
   const handleStepClick = (step: OnboardingStepData) => {
     console.log(`Navigating to onboarding step: ${step.formStep}`);
-    // Use replace instead of push to prevent back button issues
     navigate(ROUTES.ONBOARDING, { 
       replace: true,
       state: { 
