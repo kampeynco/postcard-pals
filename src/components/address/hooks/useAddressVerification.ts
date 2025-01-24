@@ -27,7 +27,7 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         .from('actblue_accounts')
         .select('id')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (accountError) {
         console.error('Error fetching ActBlue account:', accountError);
@@ -35,8 +35,9 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
-      if (!actBlueAccount?.id) {
-        toast.error("ActBlue account not found. Please complete your campaign setup first.");
+      if (!actBlueAccount) {
+        console.log('No ActBlue account found for user:', session.user.id);
+        toast.error("Please complete your campaign setup before verifying addresses.");
         return;
       }
 
