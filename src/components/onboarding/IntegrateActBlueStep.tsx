@@ -1,24 +1,18 @@
 import ActBlueAccountForm from "@/components/actblue/ActBlueAccountForm";
 import { StepWrapper } from "./steps/StepWrapper";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/constants/routes";
 
 interface IntegrateActBlueStepProps {
   onNext: () => void;
+  onBack: () => void;
 }
 
-export function IntegrateActBlueStep({ onNext }: IntegrateActBlueStepProps) {
+export function IntegrateActBlueStep({ onNext, onBack }: IntegrateActBlueStepProps) {
   const [isCompleted, setIsCompleted] = useState(false);
-  const navigate = useNavigate();
 
   const handleSuccess = async () => {
     setIsCompleted(true);
     await onNext();
-  };
-
-  const handleBack = () => {
-    navigate(ROUTES.DASHBOARD);
   };
 
   return (
@@ -26,7 +20,7 @@ export function IntegrateActBlueStep({ onNext }: IntegrateActBlueStepProps) {
       title="Connect Your ActBlue Account"
       description="Enter your ActBlue committee details to start processing donations"
       onNext={handleSuccess}
-      onBack={handleBack}
+      onBack={onBack}
       isValid={true}
       isCompleted={isCompleted}
     >

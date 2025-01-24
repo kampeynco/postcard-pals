@@ -4,17 +4,15 @@ import { FormValues } from "./campaign/types";
 import { StepWrapper } from "./steps/StepWrapper";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/constants/routes";
 
 interface CampaignDetailsStepProps {
   onNext: (values: FormValues) => void;
+  onBack: () => void;
 }
 
-export function CampaignDetailsStep({ onNext }: CampaignDetailsStepProps) {
+export function CampaignDetailsStep({ onNext, onBack }: CampaignDetailsStepProps) {
   const { form } = useOnboarding();
   const [isCompleted, setIsCompleted] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (values: FormValues) => {
     try {
@@ -34,16 +32,12 @@ export function CampaignDetailsStep({ onNext }: CampaignDetailsStepProps) {
     }
   };
 
-  const handleBack = () => {
-    navigate(ROUTES.DASHBOARD);
-  };
-
   return (
     <StepWrapper
       title="Campaign Details"
       description="Provide details about your campaign to get started"
       onNext={form.handleSubmit(handleSubmit)}
-      onBack={handleBack}
+      onBack={onBack}
       isSubmitting={form.formState.isSubmitting}
       isValid={form.formState.isValid}
       isCompleted={isCompleted}
