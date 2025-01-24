@@ -18,14 +18,16 @@ export function VerifyAddressStep({ onNext, onBack }: VerifyAddressStepProps) {
 
   return (
     <StepWrapper
-      title="Verify Account Address"
-      description="Please verify your campaign office address"
+      title="Campaign Office Address"
+      description="Enter and verify your campaign office address"
       onNext={onNext}
       onBack={onBack}
       isValid={isCompleted}
       isCompleted={isCompleted}
     >
-      <AddressVerification onVerified={handleVerified} />
+      <div className="space-y-6">
+        <AddressVerification onVerified={handleVerified} />
+      </div>
     </StepWrapper>
   );
 }

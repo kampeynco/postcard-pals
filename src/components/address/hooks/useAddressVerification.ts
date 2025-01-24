@@ -22,25 +22,6 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
         return;
       }
 
-      // First, get the user's ActBlue account ID
-      const { data: actBlueAccount, error: accountError } = await supabase
-        .from('actblue_accounts')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (accountError) {
-        console.error('Error fetching ActBlue account:', accountError);
-        toast.error("Unable to find your ActBlue account. Please complete your campaign setup first.");
-        return;
-      }
-
-      if (!actBlueAccount) {
-        console.log('No ActBlue account found for user:', session.user.id);
-        toast.error("Please complete your campaign setup before verifying addresses.");
-        return;
-      }
-
       const { data, error } = await supabase.functions.invoke('verify-address', {
         body: { address }
       });
@@ -83,28 +64,24 @@ export const useAddressVerification = (onVerified: (address: AddressInput) => vo
           zip_code: data.zip_code || address.zip_code
         };
 
-        // Save verified address to Supabase with the correct ActBlue account ID
+        // Save verified address to Supabase
         const { error: saveError } = await supabase
           .from('addresses')
           .upsert({
-            actblue_account_id: actBlueAccount.id,
-            lob_id: data.lob_id,
             address_data: verifiedAddress,
             is_verified: true,
-            last_verified_at: new Date().toISOString()
-          }, {
-            onConflict: 'actblue_account_id'
+            last_verified_at: new Date().toISOString(),
+            lob_id: data.lob_id
           });
 
         if (saveError) {
           console.error('Error saving verified address:', saveError);
-          const errorMessage = saveError.message || "Unable to save address";
-          toast.error(`Failed to save verified address: ${errorMessage}. Please try again later.`);
+          toast.error("Failed to save verified address. Please try again later.");
           return;
         }
 
         onVerified(verifiedAddress);
-        toast.success("Address verified and saved successfully!");
+        toast.success("Address verified successfully!");
       } else {
         const message = data.deliverability 
           ? `Address verification failed: ${data.deliverability}` 
