@@ -32,13 +32,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
 
       if (currentSession) {
-        checkOnboardingStatus(currentSession).then((onboardingStatus) => {
-          if (!onboardingStatus.completed) {
-            navigate(ROUTES.ONBOARDING, { 
-              state: { step: onboardingStatus.step }
-            });
-          }
-        });
+        // Always redirect to dashboard after authentication
+        navigate(ROUTES.DASHBOARD);
       }
     });
 
@@ -52,19 +47,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate(ROUTES.SIGNIN);
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session);
-        const onboardingStatus = await checkOnboardingStatus(session);
-        
-        if (!onboardingStatus.completed) {
-          toast.success("Welcome! Let's complete your account setup.");
-          navigate(ROUTES.ONBOARDING, { 
-            state: { step: onboardingStatus.step }
-          });
-        } else {
-          toast.success("Successfully signed in");
-          // Redirect to the originally requested page or dashboard
-          const from = location.state?.from?.pathname || ROUTES.DASHBOARD;
-          navigate(from, { replace: true });
-        }
+        toast.success("Successfully signed in");
+        navigate(ROUTES.DASHBOARD);
       } else if (event === 'USER_UPDATED' && session) {
         setSession(session);
       }
