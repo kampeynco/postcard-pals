@@ -8,7 +8,6 @@ import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { FormProvider } from 'react-hook-form';
 import { ErrorBoundary } from "@/components/onboarding/ErrorBoundary";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { useEffect } from "react";
 
 const Onboarding = () => {
@@ -87,8 +86,7 @@ const Onboarding = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <OnboardingProgress currentStep={currentStep} />
-      <div className="mt-8 bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-6">
         <ErrorBoundary>
           <FormProvider {...form}>
             {renderStep()}
