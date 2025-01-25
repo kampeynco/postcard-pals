@@ -20,7 +20,7 @@ export const useOnboardingStatus = () => {
           .from("profiles")
           .select("first_name, last_name")
           .eq("id", session.session.user.id)
-          .single();
+          .maybeSingle();
 
         if (profileError) {
           console.error("Error checking profile:", profileError);
@@ -33,9 +33,9 @@ export const useOnboardingStatus = () => {
           .from("actblue_accounts")
           .select("is_active")
           .eq("user_id", session.session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (actBlueError && actBlueError.code !== 'PGRST116') {
+        if (actBlueError) {
           console.error("Error checking ActBlue account:", actBlueError);
           setLoading(false);
           return;
@@ -43,6 +43,13 @@ export const useOnboardingStatus = () => {
 
         const hasProfile = !!(profile?.first_name || profile?.last_name);
         const isActBlueActive = !!actBlueAccount?.is_active;
+
+        console.log("Onboarding status:", {
+          hasProfile,
+          isActBlueActive,
+          profile,
+          actBlueAccount
+        });
 
         setIsOnboarded(hasProfile && isActBlueActive);
       } catch (error) {
