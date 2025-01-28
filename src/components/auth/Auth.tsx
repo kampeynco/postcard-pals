@@ -14,6 +14,7 @@ export { ProtectedRoute } from "./ProtectedRoute";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,13 +22,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Get initial session
     const initializeAuth = async () => {
       try {
-        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
         
         console.log("Initial session check:", currentSession?.user?.email || "No session");
         
-        if (error) {
-          console.error("Error checking session:", error);
-          toast.error("Authentication error: " + error.message);
+        if (sessionError) {
+          console.error("Error checking session:", sessionError);
+          setError(new Error(sessionError.message));
+          toast.error("Authentication error: " + sessionError.message);
           setLoading(false);
           return;
         }
@@ -47,11 +49,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           } catch (error) {
             console.error("Error checking onboarding status:", error);
+            setError(error instanceof Error ? error : new Error('Error checking profile status'));
             toast.error("Error checking profile status");
           }
         }
       } catch (error) {
         console.error("Unexpected error during auth initialization:", error);
+        setError(error instanceof Error ? error : new Error('An unexpected error occurred'));
         toast.error("An unexpected error occurred");
       } finally {
         setLoading(false);
@@ -66,10 +70,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (event === 'SIGNED_OUT') {
         setSession(null);
+        setError(null);
         toast.info("You have been signed out");
         navigate(ROUTES.SIGNIN);
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session);
+        setError(null);
         toast.success("Successfully signed in");
         
         try {
@@ -83,6 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } catch (error) {
           console.error("Error checking onboarding status:", error);
+          setError(error instanceof Error ? error : new Error('Error checking profile status'));
           toast.error("Error checking profile status");
         }
       } else if (event === 'TOKEN_REFRESHED' && session) {
@@ -97,7 +104,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [navigate, location]);
 
   return (
-    <AuthContext.Provider value={{ session, loading }}>
+    <AuthContext.Provider value={{ 
+      session, 
+      loading, 
+      error,
+      isAuthenticated: !!session 
+    }}>
       {loading ? <LoadingSpinner /> : children}
     </AuthContext.Provider>
   );
