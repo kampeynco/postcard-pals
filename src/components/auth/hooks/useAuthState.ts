@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ export const useAuthState = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const handleAuthChange = async (
+  const handleAuthChange = useCallback(async (
     event: string, 
     currentSession: Session | null,
     navigate: NavigateFunction
@@ -46,7 +46,7 @@ export const useAuthState = () => {
       console.log("Token refreshed successfully");
       setSession(currentSession);
     }
-  };
+  }, []);
 
   return {
     session,
