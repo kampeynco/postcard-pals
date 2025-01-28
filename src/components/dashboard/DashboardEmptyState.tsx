@@ -1,48 +1,69 @@
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { OnboardingStep } from "./empty-state/OnboardingStep";
-
-interface OnboardingStepData {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-  formStep: number;
-}
+import { ONBOARDING_STEPS } from "../onboarding/constants/steps";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const DashboardEmptyState = () => {
   const navigate = useNavigate();
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const steps: OnboardingStepData[] = [
-    {
-      id: 1,
-      title: "Campaign Details",
-      description: "Tell us about your campaign",
-      completed: false,
-      formStep: 1
-    },
-    {
-      id: 2,
-      title: "Verify Account Address",
-      description: "Verify your campaign office address",
-      completed: false,
-      formStep: 2
-    },
-    {
-      id: 3,
-      title: "Connect ActBlue",
-      description: "Link your ActBlue account",
-      completed: false,
-      formStep: 3
+  useEffect(() => {
+    const fetchOnboardingProgress = async () => {
+      try {
+        const { data: actBlueAccount } = await supabase
+          .from('actblue_accounts')
+          .select('is_onboarded, is_created')
+          .single();
+
+        if (actBlueAccount) {
+          const completed = [];
+          if (actBlueAccount.is_created) completed.push(1);
+          if (actBlueAccount.is_onboarded) {
+            completed.push(2);
+            completed.push(3);
+          }
+          setCompletedSteps(completed);
+        }
+      } catch (error) {
+        console.error('Error fetching onboarding progress:', error);
+        toast.error("Failed to load onboarding progress");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOnboardingProgress();
+  }, []);
+
+  const handleStepClick = async (formStep: number) => {
+    try {
+      // Validate step access
+      const previousStepCompleted = formStep === 1 || completedSteps.includes(formStep - 1);
+      if (!previousStepCompleted) {
+        toast.error("Please complete the previous step first");
+        return;
+      }
+
+      await navigate(ROUTES.ONBOARDING, { 
+        state: { step: formStep }
+      });
+    } catch (error) {
+      console.error('Navigation error:', error);
+      toast.error("Failed to navigate to step");
     }
-  ];
-
-  const handleStepClick = (step: OnboardingStepData) => {
-    console.log(`Navigating to onboarding step: ${step.formStep}`);
-    navigate(ROUTES.ONBOARDING, { 
-      state: { step: step.formStep }
-    });
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-brand-background" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center p-8 space-y-8">
@@ -53,15 +74,13 @@ export const DashboardEmptyState = () => {
 
       <div className="w-full max-w-3xl">
         <div className="grid gap-4">
-          {steps.map((step) => (
+          {ONBOARDING_STEPS.map((step) => (
             <OnboardingStep
               key={step.id}
-              id={step.id}
-              title={step.title}
-              description={step.description}
-              completed={step.completed}
-              formStep={step.formStep}
-              onClick={() => handleStepClick(step)}
+              {...step}
+              completed={completedSteps.includes(step.id)}
+              onClick={() => handleStepClick(step.formStep)}
+              disabled={!completedSteps.includes(step.id - 1) && step.id !== 1}
             />
           ))}
         </div>
