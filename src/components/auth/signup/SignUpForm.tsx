@@ -1,10 +1,11 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client";
 import { useState } from 'react';
 import { validateSignUpForm } from './validation';
 import { toast } from 'sonner';
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { supabase } from "@/integrations/supabase/client";
+import SignUpFormHeader from './components/SignUpFormHeader';
+import PersonalInfoFields from './components/PersonalInfoFields';
+import AuthFields from './components/AuthFields';
 
 const SignUpForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,13 +22,12 @@ const SignUpForm = () => {
     const { name, value } = e.target;
     let formattedValue = value;
     
-    // Format phone number as user types
     if (name === 'phoneNumber') {
       const numbers = value.replace(/\D/g, '');
       if (numbers.length <= 10) {
         formattedValue = numbers.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3').trim();
       } else {
-        return; // Don't update if more than 10 digits
+        return;
       }
     }
     
@@ -48,19 +48,16 @@ const SignUpForm = () => {
 
       if (!isValid) {
         setErrorMessage(errors.join(' '));
-        setIsSubmitting(false);
         return;
       }
 
       if (!firstName || !lastName) {
         setErrorMessage('First name and last name are required.');
-        setIsSubmitting(false);
         return;
       }
 
       if (!phoneNumber || !/^\(\d{3}\) \d{3}-\d{4}$/.test(phoneNumber)) {
         setErrorMessage('Please enter a valid phone number in the format (XXX) XXX-XXXX');
-        setIsSubmitting(false);
         return;
       }
 
@@ -92,10 +89,7 @@ const SignUpForm = () => {
 
   return (
     <>
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Create an account</h2>
-        <p className="mt-2 text-sm text-gray-600">Get started with Thanks From Us</p>
-      </div>
+      <SignUpFormHeader />
       <form onSubmit={handleSubmit} className="space-y-4">
         {errorMessage && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
@@ -103,84 +97,8 @@ const SignUpForm = () => {
           </div>
         )}
         
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                value={formData.firstName}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                value={formData.lastName}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-              Phone Number
-            </label>
-            <input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="tel"
-              required
-              placeholder="(XXX) XXX-XXXX"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
+        <PersonalInfoFields formData={formData} handleInputChange={handleInputChange} />
+        <AuthFields formData={formData} handleInputChange={handleInputChange} />
 
         {isSubmitting ? (
           <div className="flex justify-center py-4">

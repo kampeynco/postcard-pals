@@ -24,6 +24,7 @@ export type Database = {
           office_sought: string | null
           state: string
           street_address: string
+          updated_at: string | null
           user_id: string
           zip_code: string
         }
@@ -41,6 +42,7 @@ export type Database = {
           office_sought?: string | null
           state: string
           street_address: string
+          updated_at?: string | null
           user_id: string
           zip_code: string
         }
@@ -58,6 +60,7 @@ export type Database = {
           office_sought?: string | null
           state?: string
           street_address?: string
+          updated_at?: string | null
           user_id?: string
           zip_code?: string
         }
@@ -72,6 +75,7 @@ export type Database = {
           is_verified: boolean | null
           last_verified_at: string | null
           lob_id: string
+          updated_at: string | null
         }
         Insert: {
           actblue_account_id?: string | null
@@ -81,6 +85,7 @@ export type Database = {
           is_verified?: boolean | null
           last_verified_at?: string | null
           lob_id: string
+          updated_at?: string | null
         }
         Update: {
           actblue_account_id?: string | null
@@ -90,6 +95,7 @@ export type Database = {
           is_verified?: boolean | null
           last_verified_at?: string | null
           lob_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -108,6 +114,7 @@ export type Database = {
           front_image_url: string
           id: string
           is_active: boolean | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -116,6 +123,7 @@ export type Database = {
           front_image_url: string
           id?: string
           is_active?: boolean | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -124,6 +132,7 @@ export type Database = {
           front_image_url?: string
           id?: string
           is_active?: boolean | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -348,7 +357,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_rate_limit: {
+        Args: {
+          user_id: string
+          action_type: string
+          max_requests: number
+          window_minutes: number
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       committee_type: "candidate" | "political_action_committee" | "non_profit"
