@@ -24,7 +24,7 @@ export const OnboardingStep = ({
 }: OnboardingStepProps) => {
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const handleAction = async (e: React.MouseEvent) => {
+  const handleAction = async (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -54,8 +54,7 @@ export const OnboardingStep = ({
       tabIndex={disabled ? -1 : 0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleAction(e as unknown as React.MouseEvent);
+          handleAction(e);
         }
       }}
       aria-label={`Onboarding step ${id}: ${title}`}
