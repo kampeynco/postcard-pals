@@ -24,9 +24,11 @@ export const OnboardingStep = ({
 }: OnboardingStepProps) => {
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const handleAction = async (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleAction = async (e?: React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     
     if (disabled || isNavigating) return;
     
@@ -49,11 +51,11 @@ export const OnboardingStep = ({
           ? 'border-gray-100 opacity-60 cursor-not-allowed' 
           : 'border-gray-200 hover:border-brand-background cursor-pointer'
       }`}
-      onClick={handleAction}
+      onClick={(e) => handleAction(e)}
       role="button"
       tabIndex={disabled ? -1 : 0}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !isNavigating) {
           handleAction(e);
         }
       }}
@@ -76,7 +78,10 @@ export const OnboardingStep = ({
       <Button
         variant="ghost"
         className="flex items-center text-brand-background hover:text-brand-background/80"
-        onClick={handleAction}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAction();
+        }}
         disabled={disabled || isNavigating}
         aria-label={`Start ${title} step`}
       >

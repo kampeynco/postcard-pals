@@ -51,7 +51,8 @@ export const DashboardEmptyState = () => {
       
       // Navigate to onboarding with step information
       navigate(ROUTES.ONBOARDING, { 
-        state: { step: formStep }
+        state: { step: formStep },
+        replace: false // Ensure we don't replace the history entry
       });
     } catch (error) {
       console.error('Navigation error:', error);
