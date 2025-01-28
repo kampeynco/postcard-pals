@@ -42,21 +42,21 @@ export const initializeAuth = async ({
           .eq("user_id", currentSession.user.id)
           .maybeSingle();
 
-        if (actBlueError) {
+        if (actBlueError && actBlueError.code !== 'PGRST116') {
           console.error("Error checking ActBlue account:", actBlueError);
           setError(new Error(actBlueError.message));
           toast.error("Error checking ActBlue account status");
           return;
         }
 
-        // If no ActBlue account exists, route to onboarding
+        // If no ActBlue account exists, route to dashboard empty state
         if (!actBlueAccount) {
-          console.log("No ActBlue account found, routing to onboarding");
+          console.log("No ActBlue account found, routing to dashboard empty state");
           navigate(ROUTES.DASHBOARD);
           return;
         }
 
-        // Otherwise check onboarding status
+        // Check onboarding status for users with ActBlue accounts
         const onboardingStatus = await checkOnboardingStatus(currentSession);
         if (!onboardingStatus.completed) {
           navigate(ROUTES.ONBOARDING, { 
