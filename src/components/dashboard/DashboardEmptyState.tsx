@@ -42,7 +42,7 @@ export const DashboardEmptyState = () => {
     };
 
     fetchOnboardingProgress();
-  }, []); // Only fetch once when component mounts
+  }, []);
 
   const handleStepClick = async (formStep: number) => {
     try {
@@ -53,10 +53,12 @@ export const DashboardEmptyState = () => {
         return;
       }
 
+      console.log(`Navigating to onboarding step ${formStep}`);
+      
       // Navigate to onboarding with step information
       navigate(ROUTES.ONBOARDING, { 
         state: { step: formStep },
-        replace: true
+        replace: false // Changed to false to maintain history
       });
     } catch (error) {
       console.error('Navigation error:', error);

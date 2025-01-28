@@ -32,6 +32,7 @@ export const OnboardingStep = ({
     
     try {
       setIsNavigating(true);
+      console.log(`Initiating navigation for step ${id}`);
       await onClick();
     } catch (error) {
       console.error('Navigation error:', error);
