@@ -3,16 +3,19 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { checkOnboardingStatus } from "@/utils/profile";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 
 export const useAuthState = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const navigate = useNavigate();
 
-  const handleAuthChange = async (event: string, currentSession: Session | null) => {
+  const handleAuthChange = async (
+    event: string, 
+    currentSession: Session | null,
+    navigate: NavigateFunction
+  ) => {
     console.log("Auth state changed:", event, currentSession?.user?.email);
     
     if (event === 'SIGNED_OUT') {

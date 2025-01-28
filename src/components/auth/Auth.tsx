@@ -23,9 +23,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    initializeAuth(setSession, setError, setLoading, navigate);
+    initializeAuth({ setSession, setError, setLoading, navigate });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => handleAuthChange(event, currentSession, navigate)
+    );
 
     return () => {
       subscription.unsubscribe();

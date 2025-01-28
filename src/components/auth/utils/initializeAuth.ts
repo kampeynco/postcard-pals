@@ -5,12 +5,19 @@ import { checkOnboardingStatus } from "@/utils/profile";
 import { NavigateFunction } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 
-export const initializeAuth = async (
-  setSession: (session: Session | null) => void,
-  setError: (error: Error | null) => void,
-  setLoading: (loading: boolean) => void,
-  navigate: NavigateFunction
-) => {
+interface InitializeAuthParams {
+  setSession: (session: Session | null) => void;
+  setError: (error: Error | null) => void;
+  setLoading: (loading: boolean) => void;
+  navigate: NavigateFunction;
+}
+
+export const initializeAuth = async ({
+  setSession,
+  setError,
+  setLoading,
+  navigate
+}: InitializeAuthParams) => {
   try {
     const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
     
