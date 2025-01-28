@@ -23,20 +23,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const init = async () => {
-      await initializeAuth({ setSession, setError, setLoading, navigate });
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    const setupAuth = async () => {
+      try {
+        await initializeAuth({ setSession, setError, setLoading, navigate });
+        
+        const { data: authData } = supabase.auth.onAuthStateChange(
+          (event, currentSession) => handleAuthChange(event, currentSession, navigate)
+        );
+        
+        subscription = authData.subscription;
+      } catch (err) {
+        console.error('Error setting up auth:', err);
+        setError(err instanceof Error ? err : new Error('Failed to initialize auth'));
+      }
     };
 
-    init();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => handleAuthChange(event, currentSession, navigate)
-    );
+    setupAuth();
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
-  }, [location, navigate, handleAuthChange, setSession, setError, setLoading]);
+  }, [navigate, handleAuthChange, setSession, setError, setLoading]);
 
   return (
     <AuthContext.Provider value={{ 
