@@ -16,31 +16,24 @@ export const DashboardEmptyState = () => {
   const steps: OnboardingStepData[] = [
     {
       id: 1,
-      title: "Create Profile",
-      description: "Set up your account details",
+      title: "Campaign Details",
+      description: "Tell us about your campaign",
       completed: false,
       formStep: 1
     },
     {
       id: 2,
-      title: "Campaign Details",
-      description: "Tell us about your campaign",
+      title: "Verify Account Address",
+      description: "Verify your campaign office address",
       completed: false,
       formStep: 2
     },
     {
       id: 3,
-      title: "Verify Account Address",
-      description: "Verify your campaign office address",
-      completed: false,
-      formStep: 3
-    },
-    {
-      id: 4,
       title: "Connect ActBlue",
       description: "Link your ActBlue account",
       completed: false,
-      formStep: 4
+      formStep: 3
     }
   ];
 
