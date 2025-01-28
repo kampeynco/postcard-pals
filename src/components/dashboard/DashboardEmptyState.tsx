@@ -49,8 +49,10 @@ export const DashboardEmptyState = () => {
         return;
       }
 
-      await navigate(ROUTES.ONBOARDING, { 
-        state: { step: formStep }
+      // Navigate to onboarding with step information
+      navigate(ROUTES.ONBOARDING, { 
+        state: { step: formStep },
+        replace: true // Use replace to prevent back navigation issues
       });
     } catch (error) {
       console.error('Navigation error:', error);

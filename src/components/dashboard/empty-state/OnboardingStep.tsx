@@ -1,7 +1,8 @@
-import { Check, ChevronRight, Loader2 } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 interface OnboardingStepProps {
   id: number;
@@ -18,13 +19,15 @@ export const OnboardingStep = ({
   title, 
   description, 
   completed,
-  formStep,
   onClick,
   disabled = false
 }: OnboardingStepProps) => {
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const handleAction = async () => {
+  const handleAction = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (disabled || isNavigating) return;
     
     try {
@@ -51,7 +54,7 @@ export const OnboardingStep = ({
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          handleAction();
+          handleAction(e as unknown as React.MouseEvent);
         }
       }}
       aria-label={`Onboarding step ${id}: ${title}`}
@@ -73,18 +76,15 @@ export const OnboardingStep = ({
       <Button
         variant="ghost"
         className="flex items-center text-brand-background hover:text-brand-background/80"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleAction();
-        }}
+        onClick={handleAction}
         disabled={disabled || isNavigating}
         aria-label={`Start ${title} step`}
       >
         {isNavigating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <div className="flex items-center">
+            <LoadingSpinner size="sm" className="mr-2" />
             Loading...
-          </>
+          </div>
         ) : (
           <>
             Get Started
