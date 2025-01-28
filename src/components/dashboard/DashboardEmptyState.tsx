@@ -47,10 +47,7 @@ export const DashboardEmptyState = () => {
   const handleStepClick = (step: OnboardingStepData) => {
     console.log(`Navigating to onboarding step: ${step.formStep}`);
     navigate(ROUTES.ONBOARDING, { 
-      replace: true,
-      state: { 
-        step: step.formStep 
-      }
+      state: { step: step.formStep }
     });
   };
 
