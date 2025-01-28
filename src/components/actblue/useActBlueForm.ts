@@ -46,7 +46,6 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
           .from("actblue_accounts")
           .select("*")
           .eq("user_id", session.session.user.id)
-          .order("created_at", { ascending: false })
           .maybeSingle();
 
         if (error) {
@@ -104,7 +103,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
         .from("actblue_accounts")
         .upsert(insertData)
         .select()
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
 
