@@ -46,6 +46,7 @@ const Onboarding = () => {
           return;
         }
 
+        // Set the current step in the onboarding state
         await saveOnboardingState({}, requestedStep);
       } catch (error) {
         console.error('Error checking step access:', error);
