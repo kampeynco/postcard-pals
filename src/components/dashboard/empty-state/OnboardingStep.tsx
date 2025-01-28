@@ -8,6 +8,7 @@ interface OnboardingStepProps {
   title: string;
   description: string;
   completed: boolean;
+  formStep: number;
   onClick: () => void;
 }
 
@@ -15,15 +16,16 @@ export const OnboardingStep = ({
   id, 
   title, 
   description, 
-  completed, 
+  completed,
+  formStep,
   onClick 
 }: OnboardingStepProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Navigate to onboarding with the specific step
+    console.log(`Navigating to onboarding step: ${formStep}`);
     navigate(ROUTES.ONBOARDING, { 
-      state: { step: id } 
+      state: { step: formStep }
     });
     onClick();
   };
