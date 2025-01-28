@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { CreateProfileStep } from "@/components/onboarding/CreateProfileStep";
 import { CampaignDetailsStep } from "@/components/onboarding/CampaignDetailsStep";
 import { VerifyAddressStep } from "@/components/onboarding/VerifyAddressStep";
 import { IntegrateActBlueStep } from "@/components/onboarding/IntegrateActBlueStep";
@@ -28,7 +27,7 @@ const Onboarding = () => {
       const nextStep = currentStep + 1;
       await saveOnboardingState({}, nextStep);
 
-      if (nextStep > 4) {
+      if (nextStep > 3) {
         navigate(ROUTES.DASHBOARD);
       }
     } catch (error) {
@@ -52,26 +51,19 @@ const Onboarding = () => {
     switch (currentStep) {
       case 1:
         return (
-          <CreateProfileStep
+          <CampaignDetailsStep
             onNext={handleNext}
             onBack={handleBack}
           />
         );
       case 2:
         return (
-          <CampaignDetailsStep
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        );
-      case 3:
-        return (
           <VerifyAddressStep
             onNext={handleNext}
             onBack={handleBack}
           />
         );
-      case 4:
+      case 3:
         return (
           <IntegrateActBlueStep
             onNext={handleNext}
