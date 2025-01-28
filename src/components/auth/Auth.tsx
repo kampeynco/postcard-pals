@@ -19,23 +19,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session: currentSession }, error }) => {
-      console.log("Initial session check:", currentSession?.user?.email || "No session");
-      if (error) {
-        console.error("Error checking session:", error);
-        toast.error("Authentication error: " + error.message);
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        
+        console.log("Initial session check:", currentSession?.user?.email || "No session");
+        
+        if (error) {
+          console.error("Error checking session:", error);
+          toast.error("Authentication error: " + error.message);
+          setLoading(false);
+          return;
+        }
+
+        setSession(currentSession);
+
+        if (currentSession) {
+          // Check onboarding status and redirect accordingly
+          try {
+            const onboardingStatus = await checkOnboardingStatus(currentSession);
+            if (!onboardingStatus.completed) {
+              navigate(ROUTES.ONBOARDING, { 
+                state: { step: onboardingStatus.step }
+              });
+            } else {
+              navigate(ROUTES.DASHBOARD);
+            }
+          } catch (error) {
+            console.error("Error checking onboarding status:", error);
+            toast.error("Error checking profile status");
+          }
+        }
+      } catch (error) {
+        console.error("Unexpected error during auth initialization:", error);
+        toast.error("An unexpected error occurred");
+      } finally {
         setLoading(false);
-        return;
       }
+    };
 
-      setSession(currentSession);
-      setLoading(false);
-
-      if (currentSession) {
-        // Always redirect to dashboard after authentication
-        navigate(ROUTES.DASHBOARD);
-      }
-    });
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -48,8 +71,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session);
         toast.success("Successfully signed in");
-        navigate(ROUTES.DASHBOARD);
-      } else if (event === 'USER_UPDATED' && session) {
+        
+        try {
+          const onboardingStatus = await checkOnboardingStatus(session);
+          if (!onboardingStatus.completed) {
+            navigate(ROUTES.ONBOARDING, { 
+              state: { step: onboardingStatus.step }
+            });
+          } else {
+            navigate(ROUTES.DASHBOARD);
+          }
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+          toast.error("Error checking profile status");
+        }
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        console.log("Token refreshed successfully");
         setSession(session);
       }
     });
