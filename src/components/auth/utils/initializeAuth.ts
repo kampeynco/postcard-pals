@@ -35,6 +35,28 @@ export const initializeAuth = async ({
 
     if (currentSession) {
       try {
+        // Check if user has an ActBlue account
+        const { data: actBlueAccount, error: actBlueError } = await supabase
+          .from("actblue_accounts")
+          .select("is_active")
+          .eq("user_id", currentSession.user.id)
+          .maybeSingle();
+
+        if (actBlueError) {
+          console.error("Error checking ActBlue account:", actBlueError);
+          setError(new Error(actBlueError.message));
+          toast.error("Error checking ActBlue account status");
+          return;
+        }
+
+        // If no ActBlue account exists, route to onboarding
+        if (!actBlueAccount) {
+          console.log("No ActBlue account found, routing to onboarding");
+          navigate(ROUTES.DASHBOARD);
+          return;
+        }
+
+        // Otherwise check onboarding status
         const onboardingStatus = await checkOnboardingStatus(currentSession);
         if (!onboardingStatus.completed) {
           navigate(ROUTES.ONBOARDING, { 
@@ -44,7 +66,7 @@ export const initializeAuth = async ({
           navigate(ROUTES.DASHBOARD);
         }
       } catch (error) {
-        console.error("Error checking onboarding status:", error);
+        console.error("Error checking profile status:", error);
         setError(error instanceof Error ? error : new Error('Error checking profile status'));
         toast.error("Error checking profile status");
       }

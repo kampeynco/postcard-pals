@@ -29,6 +29,28 @@ export const useAuthState = () => {
       toast.success("Successfully signed in");
       
       try {
+        // Check if user has an ActBlue account
+        const { data: actBlueAccount, error: actBlueError } = await supabase
+          .from("actblue_accounts")
+          .select("is_active")
+          .eq("user_id", currentSession.user.id)
+          .maybeSingle();
+
+        if (actBlueError) {
+          console.error("Error checking ActBlue account:", actBlueError);
+          setError(new Error(actBlueError.message));
+          toast.error("Error checking ActBlue account status");
+          return;
+        }
+
+        // If no ActBlue account exists, route to dashboard empty state
+        if (!actBlueAccount) {
+          console.log("No ActBlue account found, routing to dashboard");
+          navigate(ROUTES.DASHBOARD);
+          return;
+        }
+
+        // Otherwise check onboarding status
         const onboardingStatus = await checkOnboardingStatus(currentSession);
         if (!onboardingStatus.completed) {
           navigate(ROUTES.ONBOARDING, { 
