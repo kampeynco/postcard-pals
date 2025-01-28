@@ -1,5 +1,7 @@
 import { Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 interface OnboardingStepProps {
   id: number;
@@ -16,15 +18,25 @@ export const OnboardingStep = ({
   completed, 
   onClick 
 }: OnboardingStepProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    // Navigate to onboarding with the specific step
+    navigate(ROUTES.ONBOARDING, { 
+      state: { step: id } 
+    });
+    onClick();
+  };
+
   return (
     <div
       className="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-brand-background transition-colors cursor-pointer"
-      onClick={onClick}
+      onClick={handleClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onClick();
+          handleClick();
         }
       }}
     >
@@ -46,7 +58,7 @@ export const OnboardingStep = ({
         className="flex items-center text-brand-background hover:text-brand-background/80"
         onClick={(e) => {
           e.stopPropagation();
-          onClick();
+          handleClick();
         }}
         aria-label={`Get started with ${title}`}
       >
