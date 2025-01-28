@@ -60,6 +60,7 @@ export const DashboardEmptyState = () => {
               title={step.title}
               description={step.description}
               completed={step.completed}
+              formStep={step.formStep}
               onClick={() => handleStepClick(step)}
             />
           ))}
