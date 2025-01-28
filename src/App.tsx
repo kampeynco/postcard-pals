@@ -7,7 +7,15 @@ import { AuthProvider } from "@/components/auth/Auth";
 import AppRoutes from "./routes";
 import usePageTitle from "./hooks/usePageTitle";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AppContent = () => {
   usePageTitle();

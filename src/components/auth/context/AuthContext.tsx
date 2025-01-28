@@ -4,11 +4,15 @@ import { Session } from "@supabase/supabase-js";
 interface AuthContextType {
   session: Session | null;
   loading: boolean;
+  error: Error | null;
+  isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({ 
   session: null, 
-  loading: true 
+  loading: true,
+  error: null,
+  isAuthenticated: false
 });
 
 export const useAuth = () => {
