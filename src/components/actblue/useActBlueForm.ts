@@ -99,7 +99,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
         user_id: session.user.id,
       };
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("actblue_accounts")
         .upsert(insertData)
         .select()
