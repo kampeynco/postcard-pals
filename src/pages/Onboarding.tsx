@@ -7,20 +7,65 @@ import { useOnboarding } from "@/components/onboarding/hooks/useOnboarding";
 import { FormProvider } from 'react-hook-form';
 import { ErrorBoundary } from "@/components/onboarding/ErrorBoundary";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentStep, loading, saveOnboardingState, form, resetForm } = useOnboarding();
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
   useEffect(() => {
-    const state = location.state as { step?: number };
-    if (state?.step && state.step !== currentStep) {
-      console.log(`Setting onboarding step to: ${state.step}`);
-      saveOnboardingState({}, state.step);
-    }
-  }, [location.state, currentStep, saveOnboardingState]);
+    const checkStepAccess = async () => {
+      try {
+        const { data: actBlueAccount } = await supabase
+          .from('actblue_accounts')
+          .select('is_created, is_onboarded')
+          .maybeSingle();
+
+        const state = location.state as { step?: number };
+        const requestedStep = state?.step || 1;
+
+        // Determine which steps are accessible
+        const completedSteps = [];
+        if (actBlueAccount?.is_created) completedSteps.push(1);
+        if (actBlueAccount?.is_onboarded) {
+          completedSteps.push(2);
+          completedSteps.push(3);
+        }
+
+        // Check if the requested step is accessible
+        const previousStepCompleted = requestedStep === 1 || completedSteps.includes(requestedStep - 1);
+        
+        if (!previousStepCompleted) {
+          console.log('Redirecting to dashboard: previous step not completed');
+          toast.error("Please complete the previous steps first");
+          navigate(ROUTES.DASHBOARD);
+          return;
+        }
+
+        await saveOnboardingState({}, requestedStep);
+      } catch (error) {
+        console.error('Error checking step access:', error);
+        toast.error("Failed to verify step access");
+        navigate(ROUTES.DASHBOARD);
+      } finally {
+        setIsCheckingAccess(false);
+      }
+    };
+
+    checkStepAccess();
+  }, [location.state, navigate, saveOnboardingState]);
+
+  if (loading || isCheckingAccess) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   const handleNext = async () => {
     try {
@@ -32,20 +77,13 @@ const Onboarding = () => {
       }
     } catch (error) {
       console.error('Error proceeding to next step:', error);
+      toast.error("Failed to proceed to next step");
     }
   };
 
   const handleBack = () => {
     navigate(ROUTES.DASHBOARD);
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   const renderStep = () => {
     switch (currentStep) {

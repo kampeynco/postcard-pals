@@ -15,16 +15,10 @@ export const DashboardEmptyState = () => {
   useEffect(() => {
     const fetchOnboardingProgress = async () => {
       try {
-        const { data: actBlueAccount, error } = await supabase
+        const { data: actBlueAccount } = await supabase
           .from('actblue_accounts')
           .select('is_onboarded, is_created')
           .maybeSingle();
-
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching onboarding progress:', error);
-          toast.error("Failed to load onboarding progress");
-          return;
-        }
 
         const completed = [];
         if (actBlueAccount?.is_created) completed.push(1);
@@ -57,8 +51,7 @@ export const DashboardEmptyState = () => {
       
       // Navigate to onboarding with step information
       navigate(ROUTES.ONBOARDING, { 
-        state: { step: formStep },
-        replace: false // Changed to false to maintain history
+        state: { step: formStep }
       });
     } catch (error) {
       console.error('Navigation error:', error);
