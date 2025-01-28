@@ -20,15 +20,13 @@ export const DashboardEmptyState = () => {
           .select('is_onboarded, is_created')
           .single();
 
-        if (actBlueAccount) {
-          const completed = [];
-          if (actBlueAccount.is_created) completed.push(1);
-          if (actBlueAccount.is_onboarded) {
-            completed.push(2);
-            completed.push(3);
-          }
-          setCompletedSteps(completed);
+        const completed = [];
+        if (actBlueAccount?.is_created) completed.push(1);
+        if (actBlueAccount?.is_onboarded) {
+          completed.push(2);
+          completed.push(3);
         }
+        setCompletedSteps(completed);
       } catch (error) {
         console.error('Error fetching onboarding progress:', error);
         toast.error("Failed to load onboarding progress");
@@ -38,7 +36,7 @@ export const DashboardEmptyState = () => {
     };
 
     fetchOnboardingProgress();
-  }, []);
+  }, []); // Only fetch once when component mounts
 
   const handleStepClick = async (formStep: number) => {
     try {
@@ -52,7 +50,7 @@ export const DashboardEmptyState = () => {
       // Navigate to onboarding with step information
       navigate(ROUTES.ONBOARDING, { 
         state: { step: formStep },
-        replace: true // Use replace to prevent back navigation issues
+        replace: true
       });
     } catch (error) {
       console.error('Navigation error:', error);
