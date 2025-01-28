@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { AuthContext } from "./context/AuthContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthState } from "./hooks/useAuthState";
 import { initializeAuth } from "./utils/initializeAuth";
 
@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     handleAuthChange
   } = useAuthState();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     initializeAuth(setSession, setError, setLoading, navigate);
