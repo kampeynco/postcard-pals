@@ -5,6 +5,7 @@ import { ONBOARDING_STEPS } from "../onboarding/constants/steps";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 export const DashboardEmptyState = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export const DashboardEmptyState = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-background" />
+        <LoadingSpinner size="lg" color="primary" />
       </div>
     );
   }
