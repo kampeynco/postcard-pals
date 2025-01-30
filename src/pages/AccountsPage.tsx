@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ActBlueAccountCard } from "@/components/accounts/ActBlueAccountCard";
 import { EmptyState } from "@/components/accounts/EmptyState";
 import { ROUTES } from "@/constants/routes";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountsPage() {
   const navigate = useNavigate();
@@ -39,10 +37,6 @@ export default function AccountsPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">ActBlue Accounts</h1>
-        <Button onClick={handleCreateAccount}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create ActBlue Account
-        </Button>
       </div>
 
       {!accounts?.length ? (
