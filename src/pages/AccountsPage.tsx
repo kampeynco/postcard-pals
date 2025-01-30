@@ -36,7 +36,7 @@ export default function AccountsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">ActBlue Accounts</h1>
+        <h1 className="text-2xl font-bold">Your Accounts</h1>
       </div>
 
       {!accounts?.length ? (
