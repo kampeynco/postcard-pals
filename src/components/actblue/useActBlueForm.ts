@@ -48,7 +48,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
           .eq("user_id", session.session.user.id)
           .maybeSingle();
 
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
           console.error("Error fetching ActBlue account:", error);
           toast.error("Failed to load ActBlue account data");
           return;
