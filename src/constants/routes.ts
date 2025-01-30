@@ -6,6 +6,7 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   PRICING: '/pricing',
   SETTINGS: {
+    BASE: '/settings',
     ACTBLUE: '/settings/actblue',
   },
   POSTCARDS: '/postcards',

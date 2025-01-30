@@ -1,5 +1,6 @@
 import { UserProfileMenu } from "./UserProfileMenu";
 import { Link } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 export const TopNav = () => {
   return (
@@ -9,9 +10,9 @@ export const TopNav = () => {
           <span className="text-white font-semibold text-lg">Thanks From Us</span>
           <div className="flex items-center space-x-4">
             <nav className="hidden md:flex items-center space-x-8">
-              <Link to="/dashboard" className="text-white hover:text-gray-200">Dashboard</Link>
-              <Link to="/postcards" className="text-white hover:text-gray-200">Postcards</Link>
-              <Link to="/settings" className="text-white hover:text-gray-200">Settings</Link>
+              <Link to={ROUTES.DASHBOARD} className="text-white hover:text-gray-200">Dashboard</Link>
+              <Link to={ROUTES.POSTCARDS} className="text-white hover:text-gray-200">Postcards</Link>
+              <Link to={ROUTES.SETTINGS.BASE} className="text-white hover:text-gray-200">Settings</Link>
             </nav>
             <UserProfileMenu />
           </div>

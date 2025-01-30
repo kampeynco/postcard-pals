@@ -13,6 +13,7 @@ import SignInPage from "@/components/auth/SignInPage";
 import SignUpPage from "@/components/auth/SignUpPage";
 import EmailConfirmationHandler from "@/components/auth/signin/EmailConfirmationHandler";
 import Onboarding from "@/pages/Onboarding";
+import Settings from "@/pages/Settings";
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/settings/actblue/new" element={<CreateActBlueAccount />} />
         <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />
         <Route path={ROUTES.MONITORING} element={<MonitoringPage />} />
+        <Route path={ROUTES.SETTINGS.BASE} element={<Settings />} />
       </Route>
 
       {/* Catch-all redirect */}
