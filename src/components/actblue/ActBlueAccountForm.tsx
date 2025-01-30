@@ -14,9 +14,7 @@ interface ActBlueAccountFormProps {
 }
 
 export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccountFormProps) {
-  const { form, committeeType, onSubmit, isLoading } = useActBlueForm({
-    onSuccess,
-  });
+  const { form, committeeType, onSubmit, isLoading } = useActBlueForm({ onSuccess });
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = committeeType === "candidate" ? 3 : 2;
 
@@ -49,7 +47,7 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
     
     if (isValid) {
       if (currentStep === totalSteps) {
-        await form.handleSubmit(onSubmit)();
+        await onSubmit(form.getValues());
       } else {
         setCurrentStep(prev => prev + 1);
       }

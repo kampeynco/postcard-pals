@@ -1,8 +1,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "./types";
+import { useFormSubmission } from "./hooks/useFormSubmission";
+import { useState } from "react";
 
-export const useActBlueForm = () => {
+interface UseActBlueFormProps {
+  onSuccess?: () => void;
+}
+
+export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -18,5 +26,27 @@ export const useActBlueForm = () => {
     },
   });
 
-  return { form };
+  const committeeType = form.watch("committee_type");
+  const { submitForm } = useFormSubmission();
+
+  const onSubmit = async (values: FormValues) => {
+    setIsLoading(true);
+    try {
+      const success = await submitForm(values);
+      if (success) {
+        onSuccess?.();
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    form,
+    committeeType,
+    onSubmit,
+    isLoading,
+  };
 };
