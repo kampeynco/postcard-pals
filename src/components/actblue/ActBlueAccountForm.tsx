@@ -48,13 +48,23 @@ export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProp
     }
   };
 
-  const handleNext = async () => {
-    const fields: (keyof FormValues)[] = currentStep === 1
-      ? ['committee_type', 'committee_name', ...(committeeType === 'candidate' ? ['candidate_name', 'office_sought'] : [])]
-      : currentStep === 2
-      ? ['street_address', 'city', 'state', 'zip_code']
-      : ['disclaimer_text'];
+  const getFieldsForStep = (step: number): Array<keyof FormValues> => {
+    switch (step) {
+      case 1:
+        return committeeType === 'candidate' 
+          ? ['committee_type', 'committee_name', 'candidate_name', 'office_sought']
+          : ['committee_type', 'committee_name'];
+      case 2:
+        return ['street_address', 'city', 'state', 'zip_code'];
+      case 3:
+        return ['disclaimer_text'];
+      default:
+        return [];
+    }
+  };
 
+  const handleNext = async () => {
+    const fields = getFieldsForStep(currentStep);
     const isValid = await form.trigger(fields);
     
     if (isValid) {
