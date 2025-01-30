@@ -99,7 +99,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
         user_id: session.user.id,
       };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("actblue_accounts")
         .upsert(insertData)
         .select()
@@ -115,6 +115,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
     } catch (error) {
       console.error("Error saving ActBlue account:", error);
       toast.error("Failed to save ActBlue account settings. Please try again.");
+      throw error;
     }
   };
 
