@@ -7,7 +7,6 @@ export const ROUTES = {
   PRICING: '/pricing',
   SETTINGS: {
     BASE: '/settings',
-    ACTBLUE: '/settings/actblue',
   },
   ACCOUNTS: {
     BASE: '/accounts',

@@ -6,7 +6,10 @@ export const useFormSubmission = () => {
   const submitForm = async (values: FormValues) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No authenticated user found");
+      if (!user) {
+        toast.error("No authenticated user found");
+        return false;
+      }
 
       const { error } = await supabase
         .from("actblue_accounts")
@@ -23,12 +26,16 @@ export const useFormSubmission = () => {
           user_id: user.id,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        toast.error("Failed to create ActBlue account");
+        return false;
+      }
 
       toast.success("ActBlue account created successfully!");
       return true;
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Form submission error:", error);
       toast.error("Failed to create ActBlue account");
       return false;
     }
