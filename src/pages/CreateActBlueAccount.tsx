@@ -4,6 +4,8 @@ import ActBlueAccountForm from "@/components/actblue/ActBlueAccountForm";
 import { EmptyState } from "@/components/accounts/EmptyState";
 import { toast } from "sonner";
 import { ROUTES } from "@/constants/routes";
+import { StepIndicator } from "@/components/actblue/steps/StepIndicator";
+import { FORM_STEPS } from "@/components/actblue/types/steps";
 
 export default function CreateActBlueAccount() {
   const navigate = useNavigate();
@@ -11,7 +13,7 @@ export default function CreateActBlueAccount() {
 
   const handleSuccess = () => {
     toast.success("ActBlue account created successfully");
-    navigate(ROUTES.ACCOUNTS);
+    navigate(ROUTES.ACCOUNTS.BASE);
   };
 
   const handleCreateAccount = () => {
@@ -22,7 +24,7 @@ export default function CreateActBlueAccount() {
     if (showForm) {
       setShowForm(false);
     } else {
-      navigate(ROUTES.ACCOUNTS);
+      navigate(ROUTES.ACCOUNTS.BASE);
     }
   };
 
@@ -34,10 +36,13 @@ export default function CreateActBlueAccount() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
           {showForm ? (
-            <ActBlueAccountForm 
-              onSuccess={handleSuccess} 
-              onBack={handleBack}
-            />
+            <>
+              <StepIndicator currentStep={1} steps={FORM_STEPS} />
+              <ActBlueAccountForm 
+                onSuccess={handleSuccess} 
+                onBack={handleBack}
+              />
+            </>
           ) : (
             <EmptyState onCreateAccount={handleCreateAccount} />
           )}

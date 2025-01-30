@@ -8,9 +8,11 @@ export const ROUTES = {
   SETTINGS: {
     BASE: '/settings',
     ACTBLUE: '/settings/actblue',
-    ACTBLUE_NEW: '/settings/actblue/new',
   },
-  ACCOUNTS: '/accounts',
+  ACCOUNTS: {
+    BASE: '/accounts',
+    NEW: '/accounts/new',
+  },
   POSTCARDS: '/postcards',
   MONITORING: '/monitoring',
 } as const;

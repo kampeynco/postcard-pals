@@ -4,7 +4,6 @@ import { ProtectedRoute } from "@/components/auth/Auth";
 import MainLayout from "@/components/layout/MainLayout";
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
-import ActBlueSettings from "@/pages/ActBlueSettings";
 import CreateActBlueAccount from "@/pages/CreateActBlueAccount";
 import PostcardsPage from "@/pages/PostcardsPage";
 import MonitoringPage from "@/pages/MonitoringPage";
@@ -38,12 +37,11 @@ const AppRoutes = () => {
       >
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
         <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
-        <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
-        <Route path={ROUTES.SETTINGS.ACTBLUE_NEW} element={<CreateActBlueAccount />} />
-        <Route path={ROUTES.ACCOUNTS} element={<AccountsPage />} />
+        <Route path={ROUTES.SETTINGS.BASE} element={<Settings />} />
+        <Route path={ROUTES.ACCOUNTS.BASE} element={<AccountsPage />} />
+        <Route path={ROUTES.ACCOUNTS.NEW} element={<CreateActBlueAccount />} />
         <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />
         <Route path={ROUTES.MONITORING} element={<MonitoringPage />} />
-        <Route path={ROUTES.SETTINGS.BASE} element={<Settings />} />
       </Route>
 
       {/* Catch-all redirect */}

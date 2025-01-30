@@ -14,7 +14,7 @@ export function EmptyState({ onCreateAccount }: EmptyStateProps) {
     if (onCreateAccount) {
       onCreateAccount();
     } else {
-      navigate(ROUTES.SETTINGS.ACTBLUE_NEW);
+      navigate(ROUTES.ACCOUNTS.NEW);
     }
   };
 
