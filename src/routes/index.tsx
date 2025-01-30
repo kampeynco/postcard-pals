@@ -14,6 +14,7 @@ import SignUpPage from "@/components/auth/SignUpPage";
 import EmailConfirmationHandler from "@/components/auth/signin/EmailConfirmationHandler";
 import Onboarding from "@/pages/Onboarding";
 import Settings from "@/pages/Settings";
+import AccountsPage from "@/pages/AccountsPage";
 
 const AppRoutes = () => {
   return (
@@ -38,7 +39,8 @@ const AppRoutes = () => {
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
         <Route path={ROUTES.ONBOARDING} element={<Onboarding />} />
         <Route path={ROUTES.SETTINGS.ACTBLUE} element={<ActBlueSettings />} />
-        <Route path="/settings/actblue/new" element={<CreateActBlueAccount />} />
+        <Route path={ROUTES.SETTINGS.ACTBLUE_NEW} element={<CreateActBlueAccount />} />
+        <Route path={ROUTES.ACCOUNTS} element={<AccountsPage />} />
         <Route path={ROUTES.POSTCARDS} element={<PostcardsPage />} />
         <Route path={ROUTES.MONITORING} element={<MonitoringPage />} />
         <Route path={ROUTES.SETTINGS.BASE} element={<Settings />} />

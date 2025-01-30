@@ -1,23 +1,51 @@
-import { UserProfileMenu } from "./UserProfileMenu";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { UserProfileMenu } from "./UserProfileMenu";
+import { LayoutDashboard, CreditCard, Settings, Mail, Activity } from "lucide-react";
 
-export const TopNav = () => {
+export function TopNav() {
   return (
-    <div className="bg-[#4B5EE4] border-b border-gray-200">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center h-16">
-          <span className="text-white font-semibold text-lg">Thanks From Us</span>
-          <div className="flex items-center space-x-4">
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link to={ROUTES.DASHBOARD} className="text-white hover:text-gray-200">Dashboard</Link>
-              <Link to={ROUTES.POSTCARDS} className="text-white hover:text-gray-200">Postcards</Link>
-              <Link to={ROUTES.SETTINGS.BASE} className="text-white hover:text-gray-200">Settings</Link>
-            </nav>
-            <UserProfileMenu />
-          </div>
+    <nav className="border-b">
+      <div className="flex h-16 items-center px-4">
+        <div className="ml-auto flex items-center space-x-4">
+          <Link
+            to={ROUTES.DASHBOARD}
+            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+          >
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            Dashboard
+          </Link>
+          <Link
+            to={ROUTES.ACCOUNTS}
+            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+          >
+            <CreditCard className="h-4 w-4 mr-2" />
+            Accounts
+          </Link>
+          <Link
+            to={ROUTES.POSTCARDS}
+            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Postcards
+          </Link>
+          <Link
+            to={ROUTES.MONITORING}
+            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+          >
+            <Activity className="h-4 w-4 mr-2" />
+            Monitoring
+          </Link>
+          <Link
+            to={ROUTES.SETTINGS.BASE}
+            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Link>
+          <UserProfileMenu />
         </div>
       </div>
-    </div>
+    </nav>
   );
-};
+}
