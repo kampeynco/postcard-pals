@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { UserProfileMenu } from "./UserProfileMenu";
-import { Database, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 
 export function TopNav() {
   return (
@@ -10,9 +10,8 @@ export function TopNav() {
         <div className="ml-auto flex items-center space-x-4">
           <Link
             to={ROUTES.DASHBOARD}
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+            className="text-sm font-medium text-white transition-colors hover:text-primary"
           >
-            <Database className="h-4 w-4 mr-2" />
             Donations
           </Link>
           <Link

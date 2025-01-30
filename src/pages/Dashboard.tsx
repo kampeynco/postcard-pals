@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { DonationActivity } from "@/types/donations";
 import { toast } from "sonner";
-import { useDashboardStats } from "@/hooks/dashboard/useDashboardStats";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAuth } from "@/components/auth/Auth";
 import { Card } from "@/components/ui/card";
@@ -12,7 +10,6 @@ import { Database } from "lucide-react";
 
 const Dashboard = () => {
   const { session } = useAuth();
-  const { stats } = useDashboardStats();
 
   const { data: recentActivity, isLoading: isLoadingActivity } = useQuery({
     queryKey: ["recent-activity"],
@@ -48,7 +45,6 @@ const Dashboard = () => {
         <div className="mb-8">
           <h1 className="text-2xl font-semibold">Dashboard</h1>
         </div>
-        <DashboardStats stats={stats} />
         <Card className="mt-8 p-12 flex flex-col items-center justify-center text-center">
           <Database className="h-12 w-12 text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold mb-2">No donations yet</h3>
@@ -65,7 +61,6 @@ const Dashboard = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
       </div>
-      <DashboardStats stats={stats} />
       <RecentActivity activities={recentActivity} />
     </div>
   );

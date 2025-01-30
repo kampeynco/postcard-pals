@@ -36,7 +36,6 @@ export const UserProfileMenu = () => {
     try {
       const { error } = await supabase.auth.signOut();
       
-      // Even if we get a session_not_found error, we still want to clear local state
       if (error && error.message !== "session_not_found") {
         console.error("Error logging out:", error);
         toast.error("Failed to log out");
@@ -59,26 +58,9 @@ export const UserProfileMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="flex justify-between items-center">
-            <span>Accounts</span>
-            <ChevronRight className="h-4 w-4" />
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            {actblueAccounts?.map((account) => (
-              <DropdownMenuItem
-                key={account.id}
-                onClick={() => navigate(`/settings/actblue/${account.id}`)}
-              >
-                {account.committee_name}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/settings/actblue/new")}>
-              Create New Account
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+        <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS)}>
+          Switch Accounts
+        </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => navigate("/settings/profile")}>
           Profile
