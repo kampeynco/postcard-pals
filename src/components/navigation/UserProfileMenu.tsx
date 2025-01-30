@@ -51,9 +51,6 @@ export const UserProfileMenu = () => {
         <DropdownMenuItem onClick={() => navigate("/settings/profile")}>
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate("/settings/account")}>
-          Settings
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-red-600">
           Logout
