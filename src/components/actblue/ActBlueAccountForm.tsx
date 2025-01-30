@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { CommitteeTypeField } from "./CommitteeTypeField";
-import { CommitteeNameField } from "./CommitteeNameField";
-import { CandidateFields } from "./CandidateFields";
-import { AddressFields } from "./AddressFields";
-import { DisclaimerField } from "./DisclaimerField";
 import { useActBlueForm } from "./useActBlueForm";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useState } from "react";
 import { FormValues } from "./types";
+import { CommitteeStep } from "./steps/CommitteeStep";
+import { AddressStep } from "./steps/AddressStep";
+import { DisclaimerStep } from "./steps/DisclaimerStep";
 
 interface ActBlueAccountFormProps {
   onSuccess?: () => void;
@@ -29,25 +27,6 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
       </div>
     );
   }
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <CommitteeTypeField form={form} />
-            <CommitteeNameField form={form} />
-            {committeeType === "candidate" && <CandidateFields />}
-          </div>
-        );
-      case 2:
-        return <AddressFields form={form} />;
-      case 3:
-        return <DisclaimerField form={form} />;
-      default:
-        return null;
-    }
-  };
 
   const getFieldsForStep = (step: number): Array<keyof FormValues> => {
     switch (step) {
@@ -82,6 +61,19 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
       onBack?.();
     } else {
       setCurrentStep(prev => Math.max(1, prev - 1));
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <CommitteeStep form={form} committeeType={committeeType} />;
+      case 2:
+        return <AddressStep form={form} />;
+      case 3:
+        return <DisclaimerStep form={form} />;
+      default:
+        return null;
     }
   };
 
