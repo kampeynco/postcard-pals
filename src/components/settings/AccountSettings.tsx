@@ -9,7 +9,7 @@ import { CandidateFields } from "@/components/actblue/CandidateFields";
 import { AddressFields } from "@/components/actblue/AddressFields";
 import { DisclaimerField } from "@/components/actblue/DisclaimerField";
 import { Button } from "@/components/ui/button";
-import { FormValues, formSchema } from "@/components/actblue/types";
+import { FormValues, formSchema, OfficeType } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/Auth";
 import { toast } from "sonner";
@@ -50,7 +50,7 @@ export const AccountSettings = () => {
             committee_name: data.committee_name,
             committee_type: data.committee_type,
             candidate_name: data.candidate_name || "",
-            office_sought: data.office_sought || undefined,
+            office_sought: data.office_sought as OfficeType || undefined,
             disclaimer_text: data.disclaimer_text,
             street_address: data.street_address,
             city: data.city,
