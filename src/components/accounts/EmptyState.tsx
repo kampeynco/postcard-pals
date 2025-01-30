@@ -13,9 +13,9 @@ export function EmptyState({ onCreateAccount }: EmptyStateProps) {
           <Plus className="h-6 w-6 text-primary" />
         </div>
       </div>
-      <h3 className="text-lg font-semibold mb-2">No ActBlue Accounts</h3>
+      <h3 className="text-lg font-semibold mb-2">No ActBlue Account</h3>
       <p className="text-muted-foreground mb-4 max-w-sm">
-        Get started by creating your first ActBlue account to begin managing your campaign donations.
+        Get started by creating your ActBlue account to begin managing your campaign donations.
       </p>
       <Button onClick={onCreateAccount}>
         <Plus className="h-4 w-4 mr-2" />
