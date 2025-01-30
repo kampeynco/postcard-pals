@@ -12,9 +12,10 @@ import { FormValues } from "./types";
 
 interface ActBlueAccountFormProps {
   onSuccess?: () => void;
+  onBack?: () => void;
 }
 
-export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProps) {
+export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccountFormProps) {
   const { form, committeeType, onSubmit, isLoading } = useActBlueForm({
     onSuccess,
   });
@@ -77,7 +78,11 @@ export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProp
   };
 
   const handleBack = () => {
-    setCurrentStep(prev => Math.max(1, prev - 1));
+    if (currentStep === 1) {
+      onBack?.();
+    } else {
+      setCurrentStep(prev => Math.max(1, prev - 1));
+    }
   };
 
   return (
@@ -92,7 +97,7 @@ export default function ActBlueAccountForm({ onSuccess }: ActBlueAccountFormProp
             type="button"
             variant="outline"
             onClick={handleBack}
-            disabled={currentStep === 1 || form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting}
           >
             Back
           </Button>
