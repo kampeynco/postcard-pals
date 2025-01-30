@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { UserProfileMenu } from "./UserProfileMenu";
-import { Settings } from "lucide-react";
 
 export function TopNav() {
   const location = useLocation();
@@ -21,9 +20,8 @@ export function TopNav() {
               </Link>
               <Link
                 to={ROUTES.SETTINGS.BASE}
-                className="text-sm font-medium transition-colors hover:text-primary flex items-center"
+                className="text-sm font-medium text-white transition-colors hover:text-primary"
               >
-                <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Link>
             </>
