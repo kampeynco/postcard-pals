@@ -18,7 +18,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
       committee_type: "candidate",
       committee_name: "",
       candidate_name: "",
-      office_sought: "",
+      office_sought: undefined,
       street_address: "",
       city: "",
       state: "",
