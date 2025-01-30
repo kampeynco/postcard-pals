@@ -34,11 +34,19 @@ export const UserProfileMenu = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate("/login");
+      const { error } = await supabase.auth.signOut();
+      
+      // Even if we get a session_not_found error, we still want to clear local state
+      if (error && error.message !== "session_not_found") {
+        console.error("Error logging out:", error);
+        toast.error("Failed to log out");
+        return;
+      }
+
+      navigate(ROUTES.SIGNIN);
       toast.success("Logged out successfully");
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Error in logout:", error);
       toast.error("Failed to log out");
     }
   };
