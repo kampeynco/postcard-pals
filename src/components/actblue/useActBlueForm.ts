@@ -42,19 +42,22 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
           return;
         }
 
+        console.log('Fetching ActBlue account for user:', session.session.user.id);
+
         const { data, error } = await supabase
           .from("actblue_accounts")
           .select("*")
           .eq("user_id", session.session.user.id)
           .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error("Error fetching ActBlue account:", error);
           toast.error("Failed to load ActBlue account data");
           return;
         }
 
         if (data) {
+          console.log('Found existing ActBlue account:', data);
           form.reset({
             committee_type: data.committee_type,
             committee_name: data.committee_name,
@@ -66,6 +69,8 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
             zip_code: data.zip_code,
             disclaimer_text: data.disclaimer_text,
           });
+        } else {
+          console.log('No existing ActBlue account found, using default values');
         }
       } catch (error) {
         console.error("Error in loadExistingData:", error);
@@ -98,6 +103,8 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps = {}) => {
         disclaimer_text: values.disclaimer_text,
         user_id: session.user.id,
       };
+
+      console.log('Saving ActBlue account:', insertData);
 
       const { error } = await supabase
         .from("actblue_accounts")
