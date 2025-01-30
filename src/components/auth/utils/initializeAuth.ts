@@ -35,28 +35,7 @@ export const initializeAuth = async ({
 
     if (currentSession) {
       try {
-        // Check if user has an ActBlue account
-        const { data: actBlueAccount, error: actBlueError } = await supabase
-          .from("actblue_accounts")
-          .select("is_active")
-          .eq("user_id", currentSession.user.id)
-          .maybeSingle();
-
-        if (actBlueError && actBlueError.code !== 'PGRST116') {
-          console.error("Error checking ActBlue account:", actBlueError);
-          setError(new Error(actBlueError.message));
-          toast.error("Error checking ActBlue account status");
-          return;
-        }
-
-        // If no ActBlue account exists, route to dashboard empty state
-        if (!actBlueAccount) {
-          console.log("No ActBlue account found, routing to dashboard empty state");
-          navigate(ROUTES.DASHBOARD);
-          return;
-        }
-
-        // Check onboarding status for users with ActBlue accounts
+        // Check onboarding status for users
         const onboardingStatus = await checkOnboardingStatus(currentSession);
         if (!onboardingStatus.completed) {
           navigate(ROUTES.ONBOARDING, { 
