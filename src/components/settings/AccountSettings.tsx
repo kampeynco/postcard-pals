@@ -7,11 +7,13 @@ import { CommitteeTypeField } from "@/components/actblue/CommitteeTypeField";
 import { CommitteeNameField } from "@/components/actblue/CommitteeNameField";
 import { CandidateFields } from "@/components/actblue/CandidateFields";
 import { AddressFields } from "@/components/actblue/AddressFields";
+import { DisclaimerField } from "@/components/actblue/DisclaimerField";
 import { Button } from "@/components/ui/button";
 import { FormValues, formSchema } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/Auth";
 import { toast } from "sonner";
+import { FormProvider } from "react-hook-form";
 
 export const AccountSettings = () => {
   const { session } = useAuth();
@@ -23,6 +25,10 @@ export const AccountSettings = () => {
       candidate_name: "",
       office_sought: undefined,
       disclaimer_text: "",
+      street_address: "",
+      city: "",
+      state: "",
+      zip_code: "",
     },
   });
 
@@ -46,6 +52,10 @@ export const AccountSettings = () => {
             candidate_name: data.candidate_name || "",
             office_sought: data.office_sought || undefined,
             disclaimer_text: data.disclaimer_text,
+            street_address: data.street_address,
+            city: data.city,
+            state: data.state,
+            zip_code: data.zip_code,
           });
         }
       } catch (error) {
@@ -64,12 +74,18 @@ export const AccountSettings = () => {
       const { error } = await supabase
         .from("actblue_accounts")
         .upsert({
-          user_id: session.user.id,
           committee_name: data.committee_name,
           committee_type: data.committee_type,
           candidate_name: data.candidate_name,
           office_sought: data.office_sought,
           disclaimer_text: data.disclaimer_text,
+          street_address: data.street_address,
+          city: data.city,
+          state: data.state,
+          zip_code: data.zip_code,
+          user_id: session.user.id,
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
@@ -81,7 +97,7 @@ export const AccountSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <FormProvider {...form}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitCommittee)}>
           <Card>
@@ -92,26 +108,27 @@ export const AccountSettings = () => {
               <CommitteeNameField form={form} />
               <CommitteeTypeField form={form} />
               <CandidateFields />
+              <DisclaimerField form={form} />
               <Button type="submit">Save Committee Details</Button>
             </CardContent>
           </Card>
-        </form>
 
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Address Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <AddressFields form={form} />
-            <Button 
-              onClick={form.handleSubmit(onSubmitCommittee)} 
-              className="mt-4"
-            >
-              Save Address
-            </Button>
-          </CardContent>
-        </Card>
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Address Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AddressFields form={form} />
+              <Button 
+                onClick={form.handleSubmit(onSubmitCommittee)} 
+                className="mt-4"
+              >
+                Save Address
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
       </Form>
-    </div>
+    </FormProvider>
   );
 };
