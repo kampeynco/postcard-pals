@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { DonationActivity } from "@/types/donations";
 import { toast } from "sonner";
 import { useDashboardStats } from "@/hooks/dashboard/useDashboardStats";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAuth } from "@/components/auth/Auth";
+import { Card } from "@/components/ui/card";
+import { Database } from "lucide-react";
 
 const Dashboard = () => {
   const { session } = useAuth();
@@ -21,7 +22,7 @@ const Dashboard = () => {
           .from("donations")
           .select("*")
           .order("created_at", { ascending: false })
-          .limit(5);
+          .limit(10);
 
         if (error) throw error;
         return (data as DonationActivity[]) || [];
@@ -41,14 +42,31 @@ const Dashboard = () => {
     );
   }
 
+  if (!recentActivity || recentActivity.length === 0) {
+    return (
+      <div className="p-8 max-w-[1400px] mx-auto">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
+        </div>
+        <DashboardStats stats={stats} />
+        <Card className="mt-8 p-12 flex flex-col items-center justify-center text-center">
+          <Database className="h-12 w-12 text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No donations yet</h3>
+          <p className="text-gray-600 mb-4">
+            When you receive donations, they will appear here.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 max-w-[1400px] mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
       </div>
       <DashboardStats stats={stats} />
-      <DashboardCharts />
-      <RecentActivity activities={recentActivity || []} />
+      <RecentActivity activities={recentActivity} />
     </div>
   );
 };

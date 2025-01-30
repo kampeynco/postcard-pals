@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import { UserProfileMenu } from "./UserProfileMenu";
-import { LayoutDashboard, CreditCard, Settings, Mail, Activity } from "lucide-react";
+import { Database, Settings } from "lucide-react";
 
 export function TopNav() {
   return (
@@ -12,29 +12,8 @@ export function TopNav() {
             to={ROUTES.DASHBOARD}
             className="text-sm font-medium transition-colors hover:text-primary flex items-center"
           >
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            Dashboard
-          </Link>
-          <Link
-            to={ROUTES.ACCOUNTS}
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
-          >
-            <CreditCard className="h-4 w-4 mr-2" />
-            Accounts
-          </Link>
-          <Link
-            to={ROUTES.POSTCARDS}
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
-          >
-            <Mail className="h-4 w-4 mr-2" />
-            Postcards
-          </Link>
-          <Link
-            to={ROUTES.MONITORING}
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center"
-          >
-            <Activity className="h-4 w-4 mr-2" />
-            Monitoring
+            <Database className="h-4 w-4 mr-2" />
+            Donations
           </Link>
           <Link
             to={ROUTES.SETTINGS.BASE}
