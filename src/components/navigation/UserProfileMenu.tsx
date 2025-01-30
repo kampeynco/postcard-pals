@@ -1,36 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 import { ROUTES } from "@/constants/routes";
 
 export const UserProfileMenu = () => {
   const navigate = useNavigate();
-
-  const { data: actblueAccounts } = useQuery({
-    queryKey: ["actblue-accounts"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("actblue_accounts")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
+  const location = useLocation();
+  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS;
 
   const handleLogout = async () => {
     try {
@@ -58,9 +42,11 @@ export const UserProfileMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS)}>
-          Switch Accounts
-        </DropdownMenuItem>
+        {!isAccountsPage && (
+          <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS)}>
+            Switch Accounts
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuItem onClick={() => navigate("/settings/profile")}>
           Profile
