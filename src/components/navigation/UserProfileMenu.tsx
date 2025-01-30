@@ -14,7 +14,7 @@ import { ROUTES } from "@/constants/routes";
 export const UserProfileMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS;
+  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS.BASE;
 
   const handleLogout = async () => {
     try {
@@ -43,7 +43,7 @@ export const UserProfileMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         {!isAccountsPage && (
-          <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS)}>
+          <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS.BASE)}>
             Switch Accounts
           </DropdownMenuItem>
         )}

@@ -30,7 +30,7 @@ export default function AccountsPage() {
   }
 
   const handleCreateAccount = () => {
-    navigate(ROUTES.SETTINGS.ACTBLUE_NEW);
+    navigate(ROUTES.ACCOUNTS.NEW);
   };
 
   return (

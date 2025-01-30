@@ -4,7 +4,7 @@ import { UserProfileMenu } from "./UserProfileMenu";
 
 export function TopNav() {
   const location = useLocation();
-  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS;
+  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS.BASE;
 
   return (
     <nav className="border-b">
