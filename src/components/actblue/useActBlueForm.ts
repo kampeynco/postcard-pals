@@ -1,22 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "./types";
-import { useFormValidation } from "./hooks/useFormValidation";
-import { useFormSubmission } from "./hooks/useFormSubmission";
-import { useState } from "react";
 
-interface UseActBlueFormProps {
-  onSuccess?: () => void;
-}
-
-export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  
+export const useActBlueForm = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      committee_type: "candidate",
       committee_name: "",
+      committee_type: "candidate",
       candidate_name: "",
       office_sought: undefined,
       street_address: "",
@@ -27,22 +18,5 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
     },
   });
 
-  const committeeType = form.watch("committee_type");
-  const { validateStep } = useFormValidation(form);
-  const { submitForm, isSubmitting } = useFormSubmission(onSuccess);
-
-  const onSubmit = async (values: FormValues) => {
-    try {
-      await submitForm(values);
-    } catch (error) {
-      console.error("Form submission error:", error);
-    }
-  };
-
-  return {
-    form,
-    committeeType,
-    onSubmit,
-    isLoading: isLoading || isSubmitting,
-  };
+  return { form };
 };

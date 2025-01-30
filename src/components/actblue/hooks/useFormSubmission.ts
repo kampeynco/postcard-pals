@@ -1,13 +1,9 @@
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FormValues } from "../types";
 import { toast } from "sonner";
 
-export const useFormSubmission = (onSuccess?: () => void) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+export const useFormSubmission = () => {
   const submitForm = async (values: FormValues) => {
-    setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user found");
@@ -17,8 +13,8 @@ export const useFormSubmission = (onSuccess?: () => void) => {
         .insert({
           committee_name: values.committee_name,
           committee_type: values.committee_type,
-          candidate_name: values.candidate_name,
-          office_sought: values.office_sought,
+          candidate_name: values.candidate_name || null,
+          office_sought: values.office_sought || null,
           street_address: values.street_address,
           city: values.city,
           state: values.state,
@@ -29,16 +25,14 @@ export const useFormSubmission = (onSuccess?: () => void) => {
 
       if (error) throw error;
 
-      toast.success("ActBlue account created successfully");
-      onSuccess?.();
+      toast.success("ActBlue account created successfully!");
+      return true;
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to create ActBlue account");
-      throw error;
-    } finally {
-      setIsSubmitting(false);
+      return false;
     }
   };
 
-  return { submitForm, isSubmitting };
+  return { submitForm };
 };
