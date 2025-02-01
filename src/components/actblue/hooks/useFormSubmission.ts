@@ -14,10 +14,14 @@ export const useFormSubmission = () => {
       const { error } = await supabase
         .from("actblue_accounts")
         .insert({
-          committee_name: values.committee_name,
+          legal_committee_name: values.legal_committee_name,
+          organization_name: values.organization_name,
           committee_type: values.committee_type,
-          candidate_name: values.candidate_name || null,
-          office_sought: values.office_sought || null,
+          candidate_first_name: values.candidate_first_name,
+          candidate_middle_name: values.candidate_middle_name,
+          candidate_last_name: values.candidate_last_name,
+          candidate_suffix: values.candidate_suffix,
+          office_sought: values.office_sought,
           street_address: values.street_address,
           city: values.city,
           state: values.state,

@@ -18,12 +18,21 @@ export const FORM_STEPS: FormStep[] = [
     id: 1,
     title: "Committee Details",
     description: "Enter your committee information",
-    fields: ["committee_type", "committee_name", "candidate_name", "office_sought"],
+    fields: [
+      "committee_type",
+      "legal_committee_name",
+      "organization_name",
+      "candidate_first_name",
+      "candidate_middle_name",
+      "candidate_last_name",
+      "candidate_suffix",
+      "office_sought"
+    ],
   },
   {
     id: 2,
     title: "Address Information",
-    description: "Enter your committee's address",
+    description: "This will be the return address on postcards.",
     fields: ["street_address", "city", "state", "zip_code"],
   },
   {
@@ -40,7 +49,7 @@ export const getStepFields = (step: number, committeeType: string): Array<keyof 
 
   if (step === 1 && committeeType !== "candidate") {
     return stepConfig.fields.filter(field => 
-      !["candidate_name", "office_sought"].includes(field as string)
+      !["candidate_first_name", "candidate_middle_name", "candidate_last_name", "candidate_suffix", "office_sought"].includes(field as string)
     );
   }
 
