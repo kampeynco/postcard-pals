@@ -1,39 +1,40 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { CommitteeTypeField } from "@/components/actblue/CommitteeTypeField";
-import { CommitteeNameField } from "@/components/actblue/CommitteeNameField";
-import { CandidateFields } from "@/components/actblue/CandidateFields";
-import { AddressFields } from "@/components/actblue/AddressFields";
-import { DisclaimerField } from "@/components/actblue/DisclaimerField";
-import { FormValues, formSchema } from "@/components/actblue/types";
+import { FormValues, formSchema } from "../actblue/types";
 import { supabase } from "@/integrations/supabase/client";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { toast } from "sonner";
+import { FormField } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export function ActBlueSettingsForm() {
-  const [isLoading, setIsLoading] = useState(false);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      legal_committee_name: "",
+      organization_name: "",
       committee_type: "candidate",
-      committee_name: "",
-      candidate_name: "",
+      candidate_first_name: "",
+      candidate_middle_name: "",
+      candidate_last_name: "",
+      candidate_suffix: null,
       office_sought: undefined,
-      disclaimer_text: "",
       street_address: "",
       city: "",
       state: "",
       zip_code: "",
+      disclaimer_text: "",
     },
   });
 
-  const loadActBlueData = async () => {
-    try {
-      setIsLoading(true);
+  useEffect(() => {
+    const loadSettings = async () => {
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user?.id) return;
 
@@ -43,31 +44,35 @@ export function ActBlueSettingsForm() {
         .eq("user_id", session.session.user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error loading settings:", error);
+        return;
+      }
+
       if (data) {
         form.reset({
-          committee_name: data.committee_name,
+          legal_committee_name: data.legal_committee_name,
+          organization_name: data.organization_name,
           committee_type: data.committee_type,
-          candidate_name: data.candidate_name || "",
-          office_sought: data.office_sought as FormValues["office_sought"] || undefined,
-          disclaimer_text: data.disclaimer_text,
+          candidate_first_name: data.candidate_first_name || "",
+          candidate_middle_name: data.candidate_middle_name || "",
+          candidate_last_name: data.candidate_last_name || "",
+          candidate_suffix: data.candidate_suffix || null,
+          office_sought: data.office_sought || undefined,
           street_address: data.street_address,
           city: data.city,
           state: data.state,
           zip_code: data.zip_code,
+          disclaimer_text: data.disclaimer_text,
         });
       }
-    } catch (error) {
-      console.error("Error loading ActBlue data:", error);
-      toast.error("Failed to load ActBlue settings");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    loadSettings();
+  }, [form]);
 
   const onSubmit = async (values: FormValues) => {
     try {
-      setIsLoading(true);
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user?.id) {
         toast.error("Please sign in to save settings");
@@ -77,15 +82,7 @@ export function ActBlueSettingsForm() {
       const { error } = await supabase
         .from("actblue_accounts")
         .upsert({
-          committee_name: values.committee_name,
-          committee_type: values.committee_type,
-          candidate_name: values.candidate_name,
-          office_sought: values.office_sought,
-          disclaimer_text: values.disclaimer_text,
-          street_address: values.street_address,
-          city: values.city,
-          state: values.state,
-          zip_code: values.zip_code,
+          ...values,
           user_id: session.session.user.id,
         });
 
@@ -94,44 +91,152 @@ export function ActBlueSettingsForm() {
     } catch (error) {
       console.error("Error saving settings:", error);
       toast.error("Failed to save settings");
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  // Load data on mount
-  useState(() => {
-    loadActBlueData();
-  });
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-4">
-          <CommitteeTypeField form={form} />
-          <CommitteeNameField form={form} />
-          <CandidateFields />
-          <AddressFields form={form} />
-          <DisclaimerField form={form} />
-        </div>
+        <Card className="p-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="legal_committee_name"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label>Legal Committee Name</Label>
+                  <Input {...field} placeholder="Enter legal committee name" />
+                </div>
+              )}
+            />
 
-        <Button 
-          type="submit" 
-          disabled={form.formState.isSubmitting || isLoading}
-          className="w-full"
-        >
-          {form.formState.isSubmitting ? (
-            <>
-              <LoadingSpinner size="sm" className="mr-2" />
-              Saving...
-            </>
-          ) : (
-            'Save Settings'
-          )}
+            <FormField
+              control={form.control}
+              name="committee_type"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label>Committee Type</Label>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <option value="candidate">Candidate Committee</option>
+                    <option value="political_action_committee">Political Action Committee</option>
+                    <option value="non_profit">Non-Profit</option>
+                  </Select>
+                </div>
+              )}
+            />
+
+            {form.watch("committee_type") === "candidate" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="candidate_first_name"
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <Label>Candidate First Name</Label>
+                      <Input {...field} placeholder="Enter first name" />
+                    </div>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="candidate_last_name"
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <Label>Candidate Last Name</Label>
+                      <Input {...field} placeholder="Enter last name" />
+                    </div>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="office_sought"
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <Label>Office Sought</Label>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <option value="">Select office</option>
+                        <option value="U.S. President">U.S. President</option>
+                        <option value="U.S. Senator">U.S. Senator</option>
+                        <option value="U.S. Representative">U.S. Representative</option>
+                        <option value="Governor">Governor</option>
+                        <option value="State Senator">State Senator</option>
+                        <option value="State Representative">State Representative</option>
+                      </Select>
+                    </div>
+                  )}
+                />
+              </>
+            )}
+
+            <FormField
+              control={form.control}
+              name="street_address"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label>Street Address</Label>
+                  <Input {...field} placeholder="Enter street address" />
+                </div>
+              )}
+            />
+
+            <div className="grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>City</Label>
+                    <Input {...field} placeholder="City" />
+                  </div>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>State</Label>
+                    <Input {...field} placeholder="State" maxLength={2} />
+                  </div>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="zip_code"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>ZIP Code</Label>
+                    <Input {...field} placeholder="ZIP code" />
+                  </div>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="disclaimer_text"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label>Disclaimer Text</Label>
+                  <Textarea {...field} placeholder="Enter disclaimer text" />
+                </div>
+              )}
+            />
+          </div>
+        </Card>
+
+        <Button type="submit" className="w-full">
+          Save Settings
         </Button>
       </form>
     </Form>

@@ -23,7 +23,7 @@ export function OnboardingForm() {
       candidate_first_name: "",
       candidate_middle_name: "",
       candidate_last_name: "",
-      candidate_suffix: undefined,
+      candidate_suffix: null,
       office_sought: undefined,
       disclaimer_text: "",
       street_address: "",
@@ -46,8 +46,8 @@ export function OnboardingForm() {
       const { error } = await supabase
         .from("actblue_accounts")
         .upsert({
-          user_id: session.session.user.id,
           ...values,
+          user_id: session.session.user.id,
         });
 
       if (error) throw error;
