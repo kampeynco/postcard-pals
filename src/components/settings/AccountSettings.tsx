@@ -10,6 +10,7 @@ import { CommitteeSection } from "../onboarding/form/CommitteeSection";
 import { CampaignSection } from "../onboarding/form/CampaignSection";
 import { AddressSection } from "../onboarding/form/AddressSection";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { validateOfficeSought } from "../actblue/types/form";
 
 export function AccountSettings() {
   const form = useForm<FormValues>({
@@ -54,6 +55,10 @@ export function AccountSettings() {
         }
 
         if (data) {
+          const officeSought = data.office_sought && validateOfficeSought(data.office_sought) 
+            ? data.office_sought 
+            : undefined;
+
           form.reset({
             legal_committee_name: data.legal_committee_name,
             organization_name: data.organization_name || "",
@@ -62,7 +67,7 @@ export function AccountSettings() {
             candidate_middle_name: data.candidate_middle_name || "",
             candidate_last_name: data.candidate_last_name || "",
             candidate_suffix: data.candidate_suffix,
-            office_sought: data.office_sought || undefined,
+            office_sought: officeSought,
             street_address: data.street_address,
             city: data.city,
             state: data.state,
@@ -97,7 +102,7 @@ export function AccountSettings() {
           candidate_middle_name: values.candidate_middle_name,
           candidate_last_name: values.candidate_last_name,
           candidate_suffix: values.candidate_suffix,
-          office_sought: values.office_sought,
+          office_sought: validateOfficeSought(values.office_sought || "") ? values.office_sought : null,
           street_address: values.street_address,
           city: values.city,
           state: values.state,
