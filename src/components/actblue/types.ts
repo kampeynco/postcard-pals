@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CandidateSuffix, CommitteeType, OfficeSought } from "@/types/actblue";
 
 export const suffixOptions = [
   "Jr.",
@@ -19,28 +20,26 @@ export const officeOptions = [
   "State Representative",
   "Attorney General",
   "Secretary of State",
-  "State Treasurer",
-  "Mayor",
-  "City Council Member",
-  "County Commissioner",
-  "District Attorney",
-  "Sheriff",
   "School Board Member"
 ] as const;
+
+const addressSchema = z.object({
+  street: z.string().min(1, "Street address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().length(2, "Please use 2-letter state code"),
+  zip_code: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
+});
 
 export const formSchema = z.object({
   legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
   organization_name: z.string().optional(),
-  committee_type: z.enum(["candidate", "political_action_committee", "non_profit"]),
+  committee_type: z.enum(["candidate", "political_action_committee", "non_profit"] as const),
   candidate_first_name: z.string().min(1, "First name is required").optional(),
   candidate_middle_name: z.string().optional(),
   candidate_last_name: z.string().min(1, "Last name is required").optional(),
   candidate_suffix: z.enum(suffixOptions).nullable(),
   office_sought: z.enum(officeOptions).optional(),
-  street_address: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().length(2, "Please use 2-letter state code"),
-  zip_code: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
+  address: addressSchema,
   disclaimer_text: z.string().min(1, "Disclaimer text is required"),
 }).refine(
   (data) => {
@@ -55,7 +54,4 @@ export const formSchema = z.object({
   }
 );
 
-export type FormValues = z.infer<typeof formSchema>;
-export type OfficeType = typeof officeOptions[number];
-export type SuffixType = typeof suffixOptions[number];
-export type CommitteeType = "candidate" | "political_action_committee" | "non_profit";
+export type { CandidateSuffix, CommitteeType, OfficeSought };
