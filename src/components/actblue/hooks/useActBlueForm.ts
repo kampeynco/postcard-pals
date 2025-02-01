@@ -20,7 +20,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
       candidate_first_name: "",
       candidate_middle_name: "",
       candidate_last_name: "",
-      candidate_suffix: undefined,
+      candidate_suffix: null,
       office_sought: undefined,
       street_address: "",
       city: "",

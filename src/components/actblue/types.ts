@@ -38,7 +38,7 @@ export const formSchema = z.object({
   candidate_first_name: z.string().min(1, "First name is required").optional(),
   candidate_middle_name: z.string().optional(),
   candidate_last_name: z.string().min(1, "Last name is required").optional(),
-  candidate_suffix: z.enum(suffixOptions).optional(),
+  candidate_suffix: z.enum(suffixOptions).optional().nullable(),
   office_sought: z.enum(officeOptions).optional(),
   street_address: z.string().min(1, "Street address is required"),
   city: z.string().min(1, "City is required"),
