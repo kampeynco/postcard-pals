@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button";
 import { FormValues, formSchema } from "../actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { CommitteeSection } from "../onboarding/form/CommitteeSection";
+import { CampaignSection } from "../onboarding/form/CampaignSection";
+import { AddressSection } from "../onboarding/form/AddressSection";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 export function AccountSettings() {
   const form = useForm<FormValues>({
@@ -25,40 +29,50 @@ export function AccountSettings() {
       zip_code: "",
       disclaimer_text: "",
     },
+    mode: "onChange",
   });
 
   useEffect(() => {
     const loadSettings = async () => {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session?.user?.id) return;
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (!session?.session?.user?.id) {
+          toast.error("Please sign in to view settings");
+          return;
+        }
 
-      const { data, error } = await supabase
-        .from("actblue_accounts")
-        .select("*")
-        .eq("user_id", session.session.user.id)
-        .single();
+        const { data, error } = await supabase
+          .from("actblue_accounts")
+          .select("*")
+          .eq("user_id", session.session.user.id)
+          .single();
 
-      if (error) {
+        if (error) {
+          console.error("Error loading settings:", error);
+          toast.error("Failed to load settings");
+          return;
+        }
+
+        if (data) {
+          form.reset({
+            legal_committee_name: data.legal_committee_name,
+            organization_name: data.organization_name || "",
+            committee_type: data.committee_type,
+            candidate_first_name: data.candidate_first_name || "",
+            candidate_middle_name: data.candidate_middle_name || "",
+            candidate_last_name: data.candidate_last_name || "",
+            candidate_suffix: data.candidate_suffix,
+            office_sought: data.office_sought || undefined,
+            street_address: data.street_address,
+            city: data.city,
+            state: data.state,
+            zip_code: data.zip_code,
+            disclaimer_text: data.disclaimer_text,
+          });
+        }
+      } catch (error) {
         console.error("Error loading settings:", error);
-        return;
-      }
-
-      if (data) {
-        form.reset({
-          legal_committee_name: data.legal_committee_name,
-          organization_name: data.organization_name,
-          committee_type: data.committee_type,
-          candidate_first_name: data.candidate_first_name || "",
-          candidate_middle_name: data.candidate_middle_name || "",
-          candidate_last_name: data.candidate_last_name || "",
-          candidate_suffix: data.candidate_suffix || null,
-          office_sought: data.office_sought || undefined,
-          street_address: data.street_address,
-          city: data.city,
-          state: data.state,
-          zip_code: data.zip_code,
-          disclaimer_text: data.disclaimer_text,
-        });
+        toast.error("Failed to load settings");
       }
     };
 
@@ -75,12 +89,29 @@ export function AccountSettings() {
 
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert({
-          ...values,
-          user_id: session.session.user.id,
-        });
+        .update({
+          legal_committee_name: values.legal_committee_name,
+          organization_name: values.organization_name,
+          committee_type: values.committee_type,
+          candidate_first_name: values.candidate_first_name,
+          candidate_middle_name: values.candidate_middle_name,
+          candidate_last_name: values.candidate_last_name,
+          candidate_suffix: values.candidate_suffix,
+          office_sought: values.office_sought,
+          street_address: values.street_address,
+          city: values.city,
+          state: values.state,
+          zip_code: values.zip_code,
+          disclaimer_text: values.disclaimer_text,
+        })
+        .eq("user_id", session.session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error saving settings:", error);
+        toast.error("Failed to save settings");
+        return;
+      }
+
       toast.success("Settings saved successfully");
     } catch (error) {
       console.error("Error saving settings:", error);
@@ -91,64 +122,22 @@ export function AccountSettings() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <label htmlFor="legal_committee_name">Legal Committee Name</label>
-          <input {...form.register("legal_committee_name")} />
-        </div>
-        <div>
-          <label htmlFor="organization_name">Organization Name</label>
-          <input {...form.register("organization_name")} />
-        </div>
-        <div>
-          <label htmlFor="committee_type">Committee Type</label>
-          <select {...form.register("committee_type")}>
-            <option value="candidate">Candidate</option>
-            <option value="political_action_committee">Political Action Committee</option>
-            <option value="non_profit">Non-Profit</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="candidate_first_name">Candidate First Name</label>
-          <input {...form.register("candidate_first_name")} />
-        </div>
-        <div>
-          <label htmlFor="candidate_middle_name">Candidate Middle Name</label>
-          <input {...form.register("candidate_middle_name")} />
-        </div>
-        <div>
-          <label htmlFor="candidate_last_name">Candidate Last Name</label>
-          <input {...form.register("candidate_last_name")} />
-        </div>
-        <div>
-          <label htmlFor="candidate_suffix">Candidate Suffix</label>
-          <input {...form.register("candidate_suffix")} />
-        </div>
-        <div>
-          <label htmlFor="office_sought">Office Sought</label>
-          <input {...form.register("office_sought")} />
-        </div>
-        <div>
-          <label htmlFor="street_address">Street Address</label>
-          <input {...form.register("street_address")} />
-        </div>
-        <div>
-          <label htmlFor="city">City</label>
-          <input {...form.register("city")} />
-        </div>
-        <div>
-          <label htmlFor="state">State</label>
-          <input {...form.register("state")} />
-        </div>
-        <div>
-          <label htmlFor="zip_code">ZIP Code</label>
-          <input {...form.register("zip_code")} />
-        </div>
-        <div>
-          <label htmlFor="disclaimer_text">Disclaimer Text</label>
-          <textarea {...form.register("disclaimer_text")} />
-        </div>
-        <Button type="submit" className="w-full">
-          Save Settings
+        <CommitteeSection form={form} />
+        <CampaignSection />
+        <AddressSection form={form} />
+
+        <Button 
+          type="submit" 
+          className="w-full"
+        >
+          {form.formState.isSubmitting ? (
+            <div className="flex items-center justify-center">
+              <LoadingSpinner size="sm" className="mr-2" />
+              Saving...
+            </div>
+          ) : (
+            'Save Changes'
+          )}
         </Button>
       </form>
     </Form>
