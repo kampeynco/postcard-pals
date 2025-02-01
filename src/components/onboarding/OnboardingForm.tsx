@@ -92,7 +92,10 @@ export function OnboardingForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <GroupCard title="Committee Details">
+        <GroupCard 
+          title="Committee Details"
+          description="Enter your committee's basic information, including the type of committee and official name."
+        >
           <div className="space-y-4">
             <CommitteeTypeField form={form} />
             <CommitteeNameField form={form} />
@@ -100,12 +103,18 @@ export function OnboardingForm() {
         </GroupCard>
 
         {committeeType === "candidate" && (
-          <GroupCard title="Campaign Details">
+          <GroupCard 
+            title="Campaign Details"
+            description="Provide specific information about your campaign, including candidate name and the office being sought."
+          >
             <CandidateFields />
           </GroupCard>
         )}
 
-        <GroupCard title="Verify Committee Address">
+        <GroupCard 
+          title="Verify Committee Address"
+          description="Enter your committee's official address. This will be used for compliance and communication purposes."
+        >
           <AddressFields form={form} />
         </GroupCard>
 
