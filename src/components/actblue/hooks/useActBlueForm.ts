@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormValues, formSchema } from "../types";
+import { FormValues, formSchema } from "@/types/actblue";
 import { useFormSubmission } from "./useFormSubmission";
 import { useState } from "react";
 
@@ -36,16 +36,7 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const formattedValues = {
-        ...values,
-        address: {
-          street: values.street_address,
-          city: values.city,
-          state: values.state,
-          zip_code: values.zip_code,
-        },
-      };
-      const success = await submitForm(formattedValues);
+      const success = await submitForm(values);
       if (success) {
         onSuccess?.();
       }
