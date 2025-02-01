@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,8 +13,6 @@ import { ROUTES } from "@/constants/routes";
 
 export const UserProfileMenu = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS.BASE;
 
   const handleLogout = async () => {
     try {
@@ -42,13 +40,7 @@ export const UserProfileMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        {!isAccountsPage && (
-          <DropdownMenuItem onClick={() => navigate(ROUTES.ACCOUNTS.BASE)}>
-            Switch Accounts
-          </DropdownMenuItem>
-        )}
-        
-        <DropdownMenuItem onClick={() => navigate("/settings/profile")}>
+        <DropdownMenuItem onClick={() => navigate(ROUTES.SETTINGS.BASE)}>
           Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />

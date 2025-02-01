@@ -4,13 +4,13 @@ import { UserProfileMenu } from "./UserProfileMenu";
 
 export function TopNav() {
   const location = useLocation();
-  const isAccountsPage = location.pathname === ROUTES.ACCOUNTS.BASE;
+  const isSettingsPage = location.pathname.startsWith(ROUTES.SETTINGS.BASE);
 
   return (
     <nav className="border-b">
       <div className="flex h-16 items-center px-4">
         <div className="ml-auto flex items-center space-x-4">
-          {!isAccountsPage && (
+          {!isSettingsPage && (
             <>
               <Link
                 to={ROUTES.DASHBOARD}
