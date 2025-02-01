@@ -7,7 +7,7 @@ const Onboarding = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">Campaign Setup</h1>
         <p className="mt-2 text-muted-foreground">
-          Complete your campaign information to start receiving donations and sending thank you postcards.
+          Complete your committee setup to start sending thank you postcards.
         </p>
       </div>
       <div className="bg-white rounded-lg shadow p-6">

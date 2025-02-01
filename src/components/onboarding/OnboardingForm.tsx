@@ -112,7 +112,7 @@ export function OnboardingForm() {
         )}
 
         <GroupCard 
-          title="Verify Committee Address"
+          title="Committee Address"
           description="Enter your committee's official address. This will be used for compliance and communication purposes."
         >
           <AddressFields form={form} />
