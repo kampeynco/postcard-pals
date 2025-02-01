@@ -1,11 +1,18 @@
 import { z } from "zod";
 
-const officeOptions = [
-  // Federal Offices
+export const suffixOptions = [
+  "Jr.",
+  "Sr.",
+  "II",
+  "III",
+  "IV",
+  "V"
+] as const;
+
+export const officeOptions = [
   "U.S. President",
   "U.S. Senator",
   "U.S. Representative",
-  // State Offices
   "Governor",
   "Lieutenant Governor",
   "State Senator",
@@ -13,22 +20,12 @@ const officeOptions = [
   "Attorney General",
   "Secretary of State",
   "State Treasurer",
-  // Local Offices
   "Mayor",
   "City Council Member",
   "County Commissioner",
   "District Attorney",
   "Sheriff",
   "School Board Member"
-] as const;
-
-const suffixOptions = [
-  "Jr.",
-  "Sr.",
-  "II",
-  "III",
-  "IV",
-  "V"
 ] as const;
 
 export const formSchema = z.object({
