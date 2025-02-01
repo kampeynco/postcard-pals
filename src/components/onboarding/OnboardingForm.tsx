@@ -3,15 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { GroupCard } from "./GroupCard";
-import { CommitteeTypeField } from "../actblue/CommitteeTypeField";
-import { CommitteeNameField } from "../actblue/CommitteeNameField";
-import { CandidateFields } from "../actblue/CandidateFields";
-import { AddressFields } from "../actblue/AddressFields";
 import { FormValues, formSchema } from "../actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { CommitteeSection } from "./form/CommitteeSection";
+import { CampaignSection } from "./form/CampaignSection";
+import { AddressSection } from "./form/AddressSection";
 
 export function OnboardingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,8 +18,12 @@ export function OnboardingForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       committee_type: "candidate",
-      committee_name: "",
-      candidate_name: "",
+      legal_committee_name: "",
+      organization_name: "",
+      candidate_first_name: "",
+      candidate_middle_name: "",
+      candidate_last_name: "",
+      candidate_suffix: undefined,
       office_sought: undefined,
       disclaimer_text: "",
       street_address: "",
@@ -31,21 +33,9 @@ export function OnboardingForm() {
     },
   });
 
-  const committeeType = form.watch("committee_type");
-
   const handleSubmit = async (values: FormValues) => {
     try {
       setIsSubmitting(true);
-
-      // Validate all fields
-      const isValid = await form.trigger();
-      if (!isValid) {
-        const errors = Object.keys(form.formState.errors);
-        if (errors.length > 0) {
-          toast.error(`Please fill in all required fields: ${errors.join(", ")}`);
-        }
-        return;
-      }
 
       const { data: session } = await supabase.auth.getSession();
       if (!session?.session?.user?.id) {
@@ -53,31 +43,12 @@ export function OnboardingForm() {
         return;
       }
 
-      // Get existing record first
-      const { data: existingData } = await supabase
-        .from("actblue_accounts")
-        .select("*")
-        .eq("user_id", session.session.user.id)
-        .single();
-
-      // Prepare data for upsert
-      const updateData = {
-        ...(existingData || {}),
-        user_id: session.session.user.id,
-        committee_type: values.committee_type,
-        committee_name: values.committee_name,
-        candidate_name: values.committee_type === "candidate" ? values.candidate_name : null,
-        office_sought: values.committee_type === "candidate" ? values.office_sought : null,
-        street_address: values.street_address,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        disclaimer_text: values.disclaimer_text,
-      };
-
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert(updateData);
+        .upsert({
+          user_id: session.session.user.id,
+          ...values,
+        });
 
       if (error) throw error;
       toast.success("Settings saved successfully");
@@ -92,31 +63,9 @@ export function OnboardingForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <GroupCard 
-          title="Committee Details"
-          description="Enter your committee's basic information, including the type of committee and official name."
-        >
-          <div className="space-y-4">
-            <CommitteeTypeField form={form} />
-            <CommitteeNameField form={form} />
-          </div>
-        </GroupCard>
-
-        {committeeType === "candidate" && (
-          <GroupCard 
-            title="Campaign Details"
-            description="Provide specific information about your campaign, including candidate name and the office being sought."
-          >
-            <CandidateFields />
-          </GroupCard>
-        )}
-
-        <GroupCard 
-          title="Committee Address"
-          description="Enter your committee's official address. This will be used for compliance and communication purposes."
-        >
-          <AddressFields form={form} />
-        </GroupCard>
+        <CommitteeSection form={form} />
+        <CampaignSection />
+        <AddressSection form={form} />
 
         <Button 
           type="submit" 
