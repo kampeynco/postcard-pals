@@ -380,7 +380,7 @@ export type Database = {
       }
     }
     Enums: {
-      committee_type: "candidate" | "political_action_committee" | "non_profit"
+      committee_type: "candidate" | "organization"
       postcard_status:
         | "pending"
         | "in_transit"
