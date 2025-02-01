@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
@@ -10,12 +10,12 @@ import { AddressFields } from "@/components/actblue/AddressFields";
 import { DisclaimerField } from "@/components/actblue/DisclaimerField";
 import { FormValues, formSchema } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/auth/Auth";
-import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { toast } from "sonner";
 
 export function ActBlueSettingsForm() {
-  const { session } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,51 +31,49 @@ export function ActBlueSettingsForm() {
     },
   });
 
-  const committeeType = form.watch("committee_type");
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const loadActBlueData = async () => {
-      if (!session?.user?.id) return;
-
-      try {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from("actblue_accounts")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          form.reset({
-            committee_name: data.committee_name,
-            committee_type: data.committee_type,
-            candidate_name: data.candidate_name || "",
-            office_sought: data.office_sought || undefined,
-            disclaimer_text: data.disclaimer_text,
-            street_address: data.street_address,
-            city: data.city,
-            state: data.state,
-            zip_code: data.zip_code,
-          });
-        }
-      } catch (error) {
-        console.error("Error loading ActBlue data:", error);
-        toast.error("Failed to load ActBlue settings");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadActBlueData();
-  }, [session?.user?.id, form]);
-
-  const onSubmit = async (values: FormValues) => {
-    if (!session?.user?.id) return;
-
+  const loadActBlueData = async () => {
     try {
       setIsLoading(true);
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user?.id) return;
+
+      const { data, error } = await supabase
+        .from("actblue_accounts")
+        .select("*")
+        .eq("user_id", session.session.user.id)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        form.reset({
+          committee_name: data.committee_name,
+          committee_type: data.committee_type,
+          candidate_name: data.candidate_name || "",
+          office_sought: data.office_sought as FormValues["office_sought"] || undefined,
+          disclaimer_text: data.disclaimer_text,
+          street_address: data.street_address,
+          city: data.city,
+          state: data.state,
+          zip_code: data.zip_code,
+        });
+      }
+    } catch (error) {
+      console.error("Error loading ActBlue data:", error);
+      toast.error("Failed to load ActBlue settings");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      setIsLoading(true);
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.user?.id) {
+        toast.error("Please sign in to save settings");
+        return;
+      }
+
       const { error } = await supabase
         .from("actblue_accounts")
         .upsert({
@@ -88,7 +86,7 @@ export function ActBlueSettingsForm() {
           city: values.city,
           state: values.state,
           zip_code: values.zip_code,
-          user_id: session.user.id,
+          user_id: session.session.user.id,
         });
 
       if (error) throw error;
@@ -101,6 +99,11 @@ export function ActBlueSettingsForm() {
     }
   };
 
+  // Load data on mount
+  useState(() => {
+    loadActBlueData();
+  });
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -111,14 +114,14 @@ export function ActBlueSettingsForm() {
         <div className="space-y-4">
           <CommitteeTypeField form={form} />
           <CommitteeNameField form={form} />
-          {committeeType === "candidate" && <CandidateFields />}
-          <DisclaimerField form={form} />
+          <CandidateFields />
           <AddressFields form={form} />
+          <DisclaimerField form={form} />
         </div>
 
         <Button 
           type="submit" 
-          disabled={form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting || isLoading}
           className="w-full"
         >
           {form.formState.isSubmitting ? (
