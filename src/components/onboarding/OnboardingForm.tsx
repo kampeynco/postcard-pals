@@ -40,7 +40,10 @@ export function OnboardingForm() {
       // Validate all fields
       const isValid = await form.trigger();
       if (!isValid) {
-        toast.error("Please fill in all required fields");
+        const errors = Object.keys(form.formState.errors);
+        if (errors.length > 0) {
+          toast.error(`Please fill in all required fields: ${errors.join(", ")}`);
+        }
         return;
       }
 
@@ -106,22 +109,20 @@ export function OnboardingForm() {
           <AddressFields form={form} />
         </GroupCard>
 
-        <div className="flex justify-end pt-6">
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full sm:w-auto"
-          >
-            {isSubmitting ? (
-              <>
-                <LoadingSpinner size="sm" className="mr-2" />
-                Saving...
-              </>
-            ) : (
-              'Save All Settings'
-            )}
-          </Button>
-        </div>
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="w-full"
+        >
+          {isSubmitting ? (
+            <div className="flex items-center justify-center">
+              <LoadingSpinner size="sm" className="mr-2" />
+              Saving...
+            </div>
+          ) : (
+            'Save All Settings'
+          )}
+        </Button>
       </form>
     </Form>
   );
