@@ -22,7 +22,7 @@ export type OfficeSought =
   | "Sheriff"
   | "School Board Member";
 
-export type CommitteeType = "candidate" | "political_action_committee" | "non_profit";
+export type CommitteeType = "candidate" | "organization";
 
 // Form interfaces
 export interface AddressFormValues {
@@ -53,7 +53,7 @@ export interface CandidateFormValues extends BaseFormValues {
 }
 
 export interface NonCandidateFormValues extends BaseFormValues {
-  committee_type: "political_action_committee" | "non_profit";
+  committee_type: "organization";
 }
 
 export type FormValues = CandidateFormValues | NonCandidateFormValues;
@@ -99,7 +99,7 @@ export const formSchema = z.discriminatedUnion("committee_type", [
   z.object({
     legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
     organization_name: z.string().optional(),
-    committee_type: z.enum(["political_action_committee", "non_profit"]),
+    committee_type: z.literal("organization"),
     ...addressSchema.shape,
     disclaimer_text: z.string().min(1, "Disclaimer text is required"),
   })
