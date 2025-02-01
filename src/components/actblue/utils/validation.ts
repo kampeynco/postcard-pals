@@ -8,7 +8,7 @@ export const validateStep = async (
   committeeType: string
 ): Promise<boolean> => {
   const fields = getStepFields(step, committeeType);
-  return await form.trigger(fields);
+  return await form.trigger(fields as Array<keyof FormValues>);
 };
 
 export const getStepErrors = (
@@ -20,7 +20,7 @@ export const getStepErrors = (
   const errors: Record<string, string> = {};
 
   fields.forEach((field) => {
-    const fieldError = form.formState.errors[field];
+    const fieldError = form.formState.errors[field as keyof FormValues];
     if (fieldError?.message) {
       errors[field] = fieldError.message as string;
     }
