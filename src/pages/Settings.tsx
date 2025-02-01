@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CommitteeForm } from "@/components/forms/CommitteeForm";
-import { FormValues } from "@/components/forms/types";
+import { FormValues } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
@@ -36,12 +36,14 @@ export default function Settings() {
         setFormData({
           legal_committee_name: data.legal_committee_name,
           organization_name: data.organization_name || "",
-          committee_type: data.committee_type,
-          candidate_first_name: data.candidate_first_name || "",
-          candidate_middle_name: data.candidate_middle_name || "",
-          candidate_last_name: data.candidate_last_name || "",
-          candidate_suffix: data.candidate_suffix,
-          office_sought: data.office_sought,
+          committee_type: data.committee_type as "candidate" | "organization",
+          ...(data.committee_type === "candidate" ? {
+            candidate_first_name: data.candidate_first_name || "",
+            candidate_middle_name: data.candidate_middle_name || "",
+            candidate_last_name: data.candidate_last_name || "",
+            candidate_suffix: data.candidate_suffix,
+            office_sought: data.office_sought as FormValues["office_sought"],
+          } : {}),
           street_address: data.street_address,
           city: data.city,
           state: data.state,
@@ -62,23 +64,33 @@ export default function Settings() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No authenticated user");
 
+    const updateData = {
+      legal_committee_name: values.legal_committee_name,
+      organization_name: values.organization_name,
+      committee_type: values.committee_type,
+      ...(values.committee_type === "candidate" ? {
+        candidate_first_name: values.candidate_first_name,
+        candidate_middle_name: values.candidate_middle_name,
+        candidate_last_name: values.candidate_last_name,
+        candidate_suffix: values.candidate_suffix,
+        office_sought: values.office_sought,
+      } : {
+        candidate_first_name: null,
+        candidate_middle_name: null,
+        candidate_last_name: null,
+        candidate_suffix: null,
+        office_sought: null,
+      }),
+      street_address: values.street_address,
+      city: values.city,
+      state: values.state,
+      zip_code: values.zip_code,
+      disclaimer_text: values.disclaimer_text,
+    };
+
     const { error } = await supabase
       .from("actblue_accounts")
-      .update({
-        legal_committee_name: values.legal_committee_name,
-        organization_name: values.organization_name,
-        committee_type: values.committee_type,
-        candidate_first_name: values.committee_type === "candidate" ? values.candidate_first_name : null,
-        candidate_middle_name: values.committee_type === "candidate" ? values.candidate_middle_name : null,
-        candidate_last_name: values.committee_type === "candidate" ? values.candidate_last_name : null,
-        candidate_suffix: values.committee_type === "candidate" ? values.candidate_suffix : null,
-        office_sought: values.committee_type === "candidate" ? values.office_sought : null,
-        street_address: values.street_address,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        disclaimer_text: values.disclaimer_text,
-      })
+      .update(updateData)
       .eq("user_id", user.id);
 
     if (error) throw error;

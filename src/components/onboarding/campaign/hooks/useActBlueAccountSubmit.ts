@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { ActBlueFormData, validateOfficeSought } from "@/components/actblue/types/form";
+import { ActBlueFormData } from "@/components/actblue/types/form";
 import { toast } from "sonner";
 
 export const useActBlueAccountSubmit = () => {
@@ -15,11 +15,19 @@ export const useActBlueAccountSubmit = () => {
         legal_committee_name: values.legal_committee_name || "",
         organization_name: values.organization_name || "",
         committee_type: values.committee_type || "candidate",
-        candidate_first_name: values.candidate_first_name || "",
-        candidate_middle_name: values.candidate_middle_name || "",
-        candidate_last_name: values.candidate_last_name || "",
-        candidate_suffix: values.candidate_suffix || null,
-        office_sought: validateOfficeSought(values.office_sought || "") ? values.office_sought : null,
+        ...(values.committee_type === "candidate" ? {
+          candidate_first_name: values.candidate_first_name || "",
+          candidate_middle_name: values.candidate_middle_name || "",
+          candidate_last_name: values.candidate_last_name || "",
+          candidate_suffix: values.candidate_suffix || null,
+          office_sought: values.office_sought || null,
+        } : {
+          candidate_first_name: null,
+          candidate_middle_name: null,
+          candidate_last_name: null,
+          candidate_suffix: null,
+          office_sought: null,
+        }),
         street_address: address.street,
         city: address.city,
         state: address.state,

@@ -1,4 +1,3 @@
-// Base types for committee and candidate information
 export type CandidateSuffix = "Jr." | "Sr." | "II" | "III" | "IV" | "V";
 export type CommitteeType = "candidate" | "organization";
 
