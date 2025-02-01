@@ -22,6 +22,15 @@ const officeOptions = [
   "School Board Member"
 ] as const;
 
+const suffixOptions = [
+  "Jr.",
+  "Sr.",
+  "II",
+  "III",
+  "IV",
+  "V"
+] as const;
+
 export const formSchema = z.object({
   legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
   organization_name: z.string().optional(),
@@ -29,7 +38,7 @@ export const formSchema = z.object({
   candidate_first_name: z.string().min(1, "First name is required").optional(),
   candidate_middle_name: z.string().optional(),
   candidate_last_name: z.string().min(1, "Last name is required").optional(),
-  candidate_suffix: z.string().optional(),
+  candidate_suffix: z.enum(suffixOptions).optional(),
   office_sought: z.enum(officeOptions).optional(),
   street_address: z.string().min(1, "Street address is required"),
   city: z.string().min(1, "City is required"),
@@ -51,4 +60,5 @@ export const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 export type OfficeType = typeof officeOptions[number];
+export type SuffixType = typeof suffixOptions[number];
 export type CommitteeType = "candidate" | "political_action_committee" | "non_profit";

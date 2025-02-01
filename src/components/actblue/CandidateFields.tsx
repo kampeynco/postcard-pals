@@ -2,7 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFormContext } from "react-hook-form";
-import { FormValues, OfficeType } from "./types";
+import { FormValues, OfficeType, SuffixType } from "./types";
 import { memo } from "react";
 
 const officeOptions: OfficeType[] = [
@@ -25,6 +25,15 @@ const officeOptions: OfficeType[] = [
   "District Attorney",
   "Sheriff",
   "School Board Member"
+];
+
+const suffixOptions: SuffixType[] = [
+  "Jr.",
+  "Sr.",
+  "II",
+  "III",
+  "IV",
+  "V"
 ];
 
 export const CandidateFields = memo(() => {
@@ -98,12 +107,20 @@ export const CandidateFields = memo(() => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Suffix</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Optional (e.g., Jr., Sr., III)" 
-                  {...field} 
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a suffix" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {suffixOptions.map((suffix) => (
+                    <SelectItem key={suffix} value={suffix}>
+                      {suffix}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -116,7 +133,7 @@ export const CandidateFields = memo(() => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Office Sought</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select an office" />
