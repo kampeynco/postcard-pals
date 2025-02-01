@@ -8,10 +8,6 @@ export const ROUTES = {
   SETTINGS: {
     BASE: '/settings',
   },
-  ACCOUNTS: {
-    BASE: '/accounts',
-    NEW: '/accounts/new',
-  },
   POSTCARDS: '/postcards',
   MONITORING: '/monitoring',
 } as const;

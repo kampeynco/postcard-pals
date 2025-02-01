@@ -1,34 +1,89 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AccountSettings } from "@/components/settings/AccountSettings";
-import { TemplateSettings } from "@/components/settings/TemplateSettings";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActBlueSettingsForm } from "@/components/settings/ActBlueSettingsForm";
 import { BillingSettings } from "@/components/settings/BillingSettings";
+import { TemplateSettings } from "@/components/settings/TemplateSettings";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
-const Settings = () => {
+export default function Settings() {
+  const [loading, setLoading] = useState(true);
+  const [hasActBlueAccount, setHasActBlueAccount] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkActBlueAccount = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          navigate(ROUTES.SIGNIN);
+          return;
+        }
+
+        const { data: account } = await supabase
+          .from('actblue_accounts')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (!account) {
+          navigate(ROUTES.ONBOARDING);
+          return;
+        }
+
+        setHasActBlueAccount(true);
+      } catch (error) {
+        console.error('Error checking ActBlue account:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkActBlueAccount();
+  }, [navigate]);
+
+  if (loading) {
+    return <LoadingSpinner size="lg" />;
+  }
+
+  if (!hasActBlueAccount) {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
+    <div className="container mx-auto py-8 space-y-8">
+      <h1 className="text-2xl font-bold">Settings</h1>
       
-      <Tabs defaultValue="account" className="space-y-6">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="template">Template</TabsTrigger>
-          <TabsTrigger value="billing">Billing</TabsTrigger>
-        </TabsList>
+      <div className="grid gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>ActBlue Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ActBlueSettingsForm />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="account">
-          <AccountSettings />
-        </TabsContent>
+        <Card>
+          <CardHeader>
+            <CardTitle>Template Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TemplateSettings />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="template">
-          <TemplateSettings />
-        </TabsContent>
-
-        <TabsContent value="billing">
-          <BillingSettings />
-        </TabsContent>
-      </Tabs>
+        <Card>
+          <CardHeader>
+            <CardTitle>Billing Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BillingSettings />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
-};
-
-export default Settings;
+}
