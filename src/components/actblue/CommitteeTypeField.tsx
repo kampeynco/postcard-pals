@@ -23,8 +23,7 @@ export const CommitteeTypeField = ({ form }: CommitteeTypeFieldProps) => {
             </FormControl>
             <SelectContent>
               <SelectItem value="candidate">Candidate Committee</SelectItem>
-              <SelectItem value="political_action_committee">Political Action Committee</SelectItem>
-              <SelectItem value="non_profit">Non-Profit</SelectItem>
+              <SelectItem value="organization">Organization</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage />

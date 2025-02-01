@@ -2,6 +2,7 @@ import { z } from "zod";
 
 // Base types
 export type CandidateSuffix = "Jr." | "Sr." | "II" | "III" | "IV" | "V";
+export type CommitteeType = "candidate" | "organization";
 
 export type OfficeSought = 
   | "U.S. President"
@@ -20,8 +21,6 @@ export type OfficeSought =
   | "District Attorney"
   | "Sheriff"
   | "School Board Member";
-
-export type CommitteeType = "candidate" | "political_action_committee" | "non_profit";
 
 // Form interfaces
 export interface AddressFormValues {
@@ -51,26 +50,11 @@ export interface CandidateFormValues extends BaseFormValues {
   office_sought: OfficeSought;
 }
 
-export interface NonCandidateFormValues extends BaseFormValues {
-  committee_type: "political_action_committee" | "non_profit";
+export interface OrganizationFormValues extends BaseFormValues {
+  committee_type: "organization";
 }
 
-export type FormValues = CandidateFormValues | NonCandidateFormValues;
-
-// Helper function to convert address format
-export interface SubmissionAddress {
-  street1: string;
-  city: string;
-  state: string;
-  zip_code: string;
-}
-
-export const convertToSubmissionAddress = (address: AddressFormValues): SubmissionAddress => ({
-  street1: address.street_address,
-  city: address.city,
-  state: address.state,
-  zip_code: address.zip_code,
-});
+export type FormValues = CandidateFormValues | OrganizationFormValues;
 
 // Form validation schema
 const addressSchema = z.object({
@@ -113,16 +97,16 @@ export const formSchema = z.discriminatedUnion("committee_type", [
   z.object({
     legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
     organization_name: z.string().optional(),
-    committee_type: z.enum(["political_action_committee", "non_profit"]),
+    committee_type: z.literal("organization"),
     ...addressSchema.shape,
     disclaimer_text: z.string().min(1, "Disclaimer text is required"),
   })
 ]);
 
 // Type guard
-export const isCandidateForm = (form: FormValues): form is CandidateFormValues => {
+export function isCandidateForm(form: FormValues): form is CandidateFormValues {
   return form.committee_type === "candidate";
-};
+}
 
 export const officeOptions: OfficeSought[] = [
   "U.S. President",
