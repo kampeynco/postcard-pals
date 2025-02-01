@@ -10,9 +10,12 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { CommitteeSection } from "./form/CommitteeSection";
 import { CampaignSection } from "./form/CampaignSection";
 import { AddressSection } from "./form/AddressSection";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
 
 export function OnboardingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -31,6 +34,7 @@ export function OnboardingForm() {
       state: "",
       zip_code: "",
     },
+    mode: "onChange", // Enable real-time validation
   });
 
   const handleSubmit = async (values: FormValues) => {
@@ -45,13 +49,31 @@ export function OnboardingForm() {
 
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert({
-          ...values,
+        .insert({
+          legal_committee_name: values.legal_committee_name,
+          organization_name: values.organization_name,
+          committee_type: values.committee_type,
+          candidate_first_name: values.candidate_first_name,
+          candidate_middle_name: values.candidate_middle_name,
+          candidate_last_name: values.candidate_last_name,
+          candidate_suffix: values.candidate_suffix,
+          office_sought: values.office_sought,
+          street_address: values.street_address,
+          city: values.city,
+          state: values.state,
+          zip_code: values.zip_code,
+          disclaimer_text: values.disclaimer_text,
           user_id: session.session.user.id,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error saving settings:", error);
+        toast.error("Failed to save settings");
+        return;
+      }
+
       toast.success("Settings saved successfully");
+      navigate(ROUTES.DASHBOARD);
     } catch (error) {
       console.error("Error saving settings:", error);
       toast.error("Failed to save settings");
@@ -78,7 +100,7 @@ export function OnboardingForm() {
               Saving...
             </div>
           ) : (
-            'Save All Settings'
+            'Save'
           )}
         </Button>
       </form>
