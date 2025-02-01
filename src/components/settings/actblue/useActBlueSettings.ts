@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormValues, formSchema } from "@/components/actblue/types";
+import { FormValues, formSchema, isCandidateForm } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -43,23 +43,25 @@ export const useActBlueSettings = () => {
         if (error) throw error;
 
         if (data) {
-          form.reset({
+          const formData = {
             legal_committee_name: data.legal_committee_name,
             organization_name: data.organization_name || "",
             committee_type: data.committee_type as "candidate" | "organization",
-            ...(data.committee_type === "candidate" ? {
-              candidate_first_name: data.candidate_first_name || "",
-              candidate_middle_name: data.candidate_middle_name || "",
-              candidate_last_name: data.candidate_last_name || "",
-              candidate_suffix: data.candidate_suffix,
-              office_sought: data.office_sought as FormValues["office_sought"],
-            } : {}),
             street_address: data.street_address,
             city: data.city,
             state: data.state,
             zip_code: data.zip_code,
             disclaimer_text: data.disclaimer_text,
-          });
+            ...(data.committee_type === "candidate" ? {
+              candidate_first_name: data.candidate_first_name || "",
+              candidate_middle_name: data.candidate_middle_name || "",
+              candidate_last_name: data.candidate_last_name || "",
+              candidate_suffix: data.candidate_suffix,
+              office_sought: data.office_sought,
+            } : {})
+          } as FormValues;
+
+          form.reset(formData);
         }
       } catch (error) {
         console.error("Error loading settings:", error);
@@ -82,7 +84,12 @@ export const useActBlueSettings = () => {
         legal_committee_name: values.legal_committee_name,
         organization_name: values.organization_name,
         committee_type: values.committee_type,
-        ...(values.committee_type === "candidate" ? {
+        street_address: values.street_address,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
+        disclaimer_text: values.disclaimer_text,
+        ...(isCandidateForm(values) ? {
           candidate_first_name: values.candidate_first_name,
           candidate_middle_name: values.candidate_middle_name,
           candidate_last_name: values.candidate_last_name,
@@ -94,12 +101,7 @@ export const useActBlueSettings = () => {
           candidate_last_name: null,
           candidate_suffix: null,
           office_sought: null,
-        }),
-        street_address: values.street_address,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        disclaimer_text: values.disclaimer_text,
+        })
       };
 
       const { error } = await supabase

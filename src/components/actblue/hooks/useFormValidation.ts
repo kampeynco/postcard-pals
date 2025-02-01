@@ -1,4 +1,4 @@
-import { FormValues } from "@/types/actblue";
+import { FormValues } from "../types";
 import { UseFormReturn } from "react-hook-form";
 import { getStepFields } from "../types/form-steps";
 
