@@ -1,4 +1,4 @@
-import { FormValues } from "../types";
+import { FormValues } from "@/types/actblue";
 
 export interface FormStep {
   id: number;
@@ -17,11 +17,6 @@ export const FORM_STEPS: FormStep[] = [
       "committee_type",
       "legal_committee_name",
       "organization_name",
-      "candidate_first_name",
-      "candidate_middle_name",
-      "candidate_last_name",
-      "candidate_suffix",
-      "office_sought"
     ],
   },
   {
@@ -38,14 +33,20 @@ export const FORM_STEPS: FormStep[] = [
   },
 ];
 
+export const getCandidateFields = (): Array<keyof CandidateFormValues> => [
+  "candidate_first_name",
+  "candidate_middle_name",
+  "candidate_last_name",
+  "candidate_suffix",
+  "office_sought"
+];
+
 export const getStepFields = (step: number, committeeType: string): Array<keyof FormValues> => {
   const stepConfig = FORM_STEPS.find(s => s.id === step);
   if (!stepConfig) return [];
 
-  if (step === 1 && committeeType !== "candidate") {
-    return stepConfig.fields.filter(field => 
-      !["candidate_first_name", "candidate_middle_name", "candidate_last_name", "candidate_suffix", "office_sought"].includes(field)
-    );
+  if (step === 1 && committeeType === "candidate") {
+    return [...stepConfig.fields, ...getCandidateFields()];
   }
 
   return stepConfig.fields;
