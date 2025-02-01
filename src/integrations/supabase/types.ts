@@ -11,9 +11,11 @@ export type Database = {
     Tables: {
       actblue_accounts: {
         Row: {
-          candidate_name: string | null
+          candidate_first_name: string | null
+          candidate_last_name: string | null
+          candidate_middle_name: string | null
+          candidate_suffix: string | null
           city: string
-          committee_name: string
           committee_type: Database["public"]["Enums"]["committee_type"]
           created_at: string | null
           disclaimer_text: string
@@ -21,7 +23,9 @@ export type Database = {
           is_active: boolean | null
           is_created: boolean | null
           is_onboarded: boolean | null
+          legal_committee_name: string
           office_sought: string | null
+          organization_name: string | null
           state: string
           street_address: string
           updated_at: string | null
@@ -29,9 +33,11 @@ export type Database = {
           zip_code: string
         }
         Insert: {
-          candidate_name?: string | null
+          candidate_first_name?: string | null
+          candidate_last_name?: string | null
+          candidate_middle_name?: string | null
+          candidate_suffix?: string | null
           city: string
-          committee_name: string
           committee_type: Database["public"]["Enums"]["committee_type"]
           created_at?: string | null
           disclaimer_text: string
@@ -39,7 +45,9 @@ export type Database = {
           is_active?: boolean | null
           is_created?: boolean | null
           is_onboarded?: boolean | null
+          legal_committee_name: string
           office_sought?: string | null
+          organization_name?: string | null
           state: string
           street_address: string
           updated_at?: string | null
@@ -47,9 +55,11 @@ export type Database = {
           zip_code: string
         }
         Update: {
-          candidate_name?: string | null
+          candidate_first_name?: string | null
+          candidate_last_name?: string | null
+          candidate_middle_name?: string | null
+          candidate_suffix?: string | null
           city?: string
-          committee_name?: string
           committee_type?: Database["public"]["Enums"]["committee_type"]
           created_at?: string | null
           disclaimer_text?: string
@@ -57,7 +67,9 @@ export type Database = {
           is_active?: boolean | null
           is_created?: boolean | null
           is_onboarded?: boolean | null
+          legal_committee_name?: string
           office_sought?: string | null
+          organization_name?: string | null
           state?: string
           street_address?: string
           updated_at?: string | null

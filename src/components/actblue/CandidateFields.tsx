@@ -35,23 +35,80 @@ export const CandidateFields = memo(() => {
 
   return (
     <div className="space-y-4">
-      <FormField
-        control={form.control}
-        name="candidate_name"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Candidate Name</FormLabel>
-            <FormControl>
-              <Input 
-                placeholder="Enter candidate name" 
-                {...field} 
-                autoComplete="name"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="candidate_first_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Enter first name" 
+                  {...field} 
+                  autoComplete="given-name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="candidate_middle_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Middle Name or Initial</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Optional" 
+                  {...field} 
+                  autoComplete="additional-name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="candidate_last_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Enter last name" 
+                  {...field} 
+                  autoComplete="family-name"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="candidate_suffix"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Suffix</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Optional (e.g., Jr., Sr., III)" 
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
 
       <FormField
         control={form.control}

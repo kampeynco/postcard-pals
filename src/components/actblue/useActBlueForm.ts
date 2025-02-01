@@ -14,9 +14,13 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      committee_name: "",
+      legal_committee_name: "",
+      organization_name: "",
       committee_type: "candidate",
-      candidate_name: "",
+      candidate_first_name: "",
+      candidate_middle_name: "",
+      candidate_last_name: "",
+      candidate_suffix: "",
       office_sought: undefined,
       street_address: "",
       city: "",

@@ -23,9 +23,13 @@ const officeOptions = [
 ] as const;
 
 export const formSchema = z.object({
-  committee_name: z.string().min(2, "Committee name must be at least 2 characters"),
+  legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
+  organization_name: z.string().optional(),
   committee_type: z.enum(["candidate", "political_action_committee", "non_profit"]),
-  candidate_name: z.string().optional(),
+  candidate_first_name: z.string().optional(),
+  candidate_middle_name: z.string().optional(),
+  candidate_last_name: z.string().optional(),
+  candidate_suffix: z.string().optional(),
   office_sought: z.enum(officeOptions).optional(),
   street_address: z.string().min(1, "Street address is required"),
   city: z.string().min(1, "City is required"),
@@ -35,13 +39,13 @@ export const formSchema = z.object({
 }).refine(
   (data) => {
     if (data.committee_type === "candidate") {
-      return !!data.candidate_name && !!data.office_sought;
+      return !!data.candidate_first_name && !!data.candidate_last_name && !!data.office_sought;
     }
     return true;
   },
   {
-    message: "Candidate name and office sought are required for candidate committees",
-    path: ["candidate_name"],
+    message: "Candidate first name, last name, and office sought are required for candidate committees",
+    path: ["candidate_first_name"],
   }
 );
 
