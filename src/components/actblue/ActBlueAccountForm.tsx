@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useActBlueForm } from "./useActBlueForm";
+import { useActBlueForm } from "./hooks/useActBlueForm";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useState } from "react";
 import { FormValues } from "./types";
@@ -30,8 +30,8 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
     switch (step) {
       case 1:
         return committeeType === 'candidate' 
-          ? ['committee_type', 'committee_name', 'candidate_name', 'office_sought']
-          : ['committee_type', 'committee_name'];
+          ? ['committee_type', 'legal_committee_name', 'organization_name', 'candidate_first_name', 'candidate_middle_name', 'candidate_last_name', 'candidate_suffix', 'office_sought']
+          : ['committee_type', 'legal_committee_name', 'organization_name'];
       case 2:
         return ['street_address', 'city', 'state', 'zip_code'];
       case 3:
@@ -62,24 +62,13 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
     }
   };
 
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return <CommitteeStep form={form} committeeType={committeeType} />;
-      case 2:
-        return <AddressStep form={form} />;
-      case 3:
-        return <DisclaimerStep form={form} />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
         <div className="space-y-6">
-          {renderStepContent()}
+          {currentStep === 1 && <CommitteeStep form={form} committeeType={committeeType} />}
+          {currentStep === 2 && <AddressStep form={form} />}
+          {currentStep === 3 && <DisclaimerStep form={form} />}
         </div>
         
         <div className="flex justify-between pt-6">
