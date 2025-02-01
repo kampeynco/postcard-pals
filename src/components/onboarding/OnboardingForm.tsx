@@ -32,6 +32,7 @@ export function OnboardingForm() {
   });
 
   const committeeType = form.watch("committee_type");
+  const formValues = form.getValues();
 
   const saveCommitteeDetails = async () => {
     try {
@@ -49,14 +50,24 @@ export function OnboardingForm() {
         return;
       }
 
-      const values = form.getValues();
+      // Get existing record first
+      const { data: existingData } = await supabase
+        .from("actblue_accounts")
+        .select("*")
+        .eq("user_id", session.session.user.id)
+        .single();
+
+      // Merge existing data with new committee details
+      const updateData = {
+        ...(existingData || {}),
+        committee_type: formValues.committee_type,
+        committee_name: formValues.committee_name,
+        user_id: session.session.user.id,
+      };
+
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert({
-          committee_type: values.committee_type,
-          committee_name: values.committee_name,
-          user_id: session.session.user.id,
-        });
+        .upsert(updateData);
 
       if (error) throw error;
       toast.success("Committee details saved successfully");
@@ -84,14 +95,28 @@ export function OnboardingForm() {
         return;
       }
 
-      const values = form.getValues();
+      // Get existing record first
+      const { data: existingData } = await supabase
+        .from("actblue_accounts")
+        .select("*")
+        .eq("user_id", session.session.user.id)
+        .single();
+
+      if (!existingData) {
+        toast.error("Please save committee details first");
+        return;
+      }
+
+      // Merge existing data with new campaign details
+      const updateData = {
+        ...existingData,
+        candidate_name: formValues.candidate_name,
+        office_sought: formValues.office_sought,
+      };
+
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert({
-          candidate_name: values.candidate_name,
-          office_sought: values.office_sought,
-          user_id: session.session.user.id,
-        });
+        .upsert(updateData);
 
       if (error) throw error;
       toast.success("Campaign details saved successfully");
@@ -119,16 +144,30 @@ export function OnboardingForm() {
         return;
       }
 
-      const values = form.getValues();
+      // Get existing record first
+      const { data: existingData } = await supabase
+        .from("actblue_accounts")
+        .select("*")
+        .eq("user_id", session.session.user.id)
+        .single();
+
+      if (!existingData) {
+        toast.error("Please save committee details first");
+        return;
+      }
+
+      // Merge existing data with new address details
+      const updateData = {
+        ...existingData,
+        street_address: formValues.street_address,
+        city: formValues.city,
+        state: formValues.state,
+        zip_code: formValues.zip_code,
+      };
+
       const { error } = await supabase
         .from("actblue_accounts")
-        .upsert({
-          street_address: values.street_address,
-          city: values.city,
-          state: values.state,
-          zip_code: values.zip_code,
-          user_id: session.session.user.id,
-        });
+        .upsert(updateData);
 
       if (error) throw error;
       toast.success("Address details saved successfully");
