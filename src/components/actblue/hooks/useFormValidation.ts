@@ -11,8 +11,8 @@ export const useFormValidation = (form: UseFormReturn<FormValues>) => {
     switch (step) {
       case 1:
         return committeeType === 'candidate' 
-          ? ['committee_type', 'committee_name', 'candidate_name', 'office_sought']
-          : ['committee_type', 'committee_name'];
+          ? ['committee_type', 'legal_committee_name', 'organization_name', 'candidate_first_name', 'candidate_last_name', 'candidate_middle_name', 'candidate_suffix', 'office_sought']
+          : ['committee_type', 'legal_committee_name', 'organization_name'];
       case 2:
         return ['street_address', 'city', 'state', 'zip_code'];
       case 3:

@@ -52,13 +52,3 @@ export const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 export type OfficeType = typeof officeOptions[number];
 export type CommitteeType = "candidate" | "political_action_committee" | "non_profit";
-
-export interface ValidationErrors {
-  [key: string]: string;
-}
-
-export interface FormState {
-  isSubmitting: boolean;
-  isValid: boolean;
-  errors: ValidationErrors;
-}

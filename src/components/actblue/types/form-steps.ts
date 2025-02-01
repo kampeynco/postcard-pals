@@ -8,11 +8,6 @@ export interface FormStep {
   isOptional?: boolean;
 }
 
-export interface StepValidationResult {
-  isValid: boolean;
-  errors?: Record<string, string>;
-}
-
 export const FORM_STEPS: FormStep[] = [
   {
     id: 1,
@@ -49,7 +44,7 @@ export const getStepFields = (step: number, committeeType: string): Array<keyof 
 
   if (step === 1 && committeeType !== "candidate") {
     return stepConfig.fields.filter(field => 
-      !["candidate_first_name", "candidate_middle_name", "candidate_last_name", "candidate_suffix", "office_sought"].includes(field as string)
+      !["candidate_first_name", "candidate_middle_name", "candidate_last_name", "candidate_suffix", "office_sought"].includes(field)
     );
   }
 
