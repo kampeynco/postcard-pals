@@ -1,6 +1,25 @@
 import { supabase } from "@/integrations/supabase/client";
-import { FormValues, isCandidateForm, convertToSubmissionAddress } from "@/types/actblue";
+import { FormValues, isCandidateForm } from "../types";
 import { toast } from "sonner";
+
+interface SubmissionAddress {
+  street1: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}
+
+const convertToSubmissionAddress = (address: {
+  street_address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+}): SubmissionAddress => ({
+  street1: address.street_address,
+  city: address.city,
+  state: address.state,
+  zip_code: address.zip_code,
+});
 
 export const useFormSubmission = () => {
   const submitForm = async (values: FormValues) => {
