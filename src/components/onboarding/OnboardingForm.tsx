@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { FormValues, formSchema } from "../actblue/types";
+import { FormValues, formSchema, isCandidateForm } from "../actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -34,7 +34,7 @@ export function OnboardingForm() {
       state: "",
       zip_code: "",
     },
-    mode: "onChange", // Enable real-time validation
+    mode: "onChange",
   });
 
   const handleSubmit = async (values: FormValues) => {
@@ -47,24 +47,31 @@ export function OnboardingForm() {
         return;
       }
 
+      const baseData = {
+        legal_committee_name: values.legal_committee_name,
+        organization_name: values.organization_name,
+        committee_type: values.committee_type,
+        street_address: values.street_address,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
+        disclaimer_text: values.disclaimer_text,
+        user_id: session.session.user.id,
+      };
+
       const { error } = await supabase
         .from("actblue_accounts")
-        .insert({
-          legal_committee_name: values.legal_committee_name,
-          organization_name: values.organization_name,
-          committee_type: values.committee_type,
-          candidate_first_name: values.candidate_first_name,
-          candidate_middle_name: values.candidate_middle_name,
-          candidate_last_name: values.candidate_last_name,
-          candidate_suffix: values.candidate_suffix,
-          office_sought: values.office_sought,
-          street_address: values.street_address,
-          city: values.city,
-          state: values.state,
-          zip_code: values.zip_code,
-          disclaimer_text: values.disclaimer_text,
-          user_id: session.session.user.id,
-        });
+        .insert(isCandidateForm(values) 
+          ? {
+              ...baseData,
+              candidate_first_name: values.candidate_first_name,
+              candidate_middle_name: values.candidate_middle_name,
+              candidate_last_name: values.candidate_last_name,
+              candidate_suffix: values.candidate_suffix,
+              office_sought: values.office_sought,
+            }
+          : baseData
+        );
 
       if (error) {
         console.error("Error saving settings:", error);

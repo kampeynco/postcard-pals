@@ -58,7 +58,7 @@ export interface NonCandidateFormValues extends BaseFormValues {
 
 export type FormValues = CandidateFormValues | NonCandidateFormValues;
 
-// Zod schema for form validation
+// Form validation schema
 const addressSchema = z.object({
   street_address: z.string().min(1, "Street address is required"),
   city: z.string().min(1, "City is required"),
@@ -105,6 +105,11 @@ export const formSchema = z.discriminatedUnion("committee_type", [
   })
 ]);
 
+// Type guard
+export function isCandidateForm(form: FormValues): form is CandidateFormValues {
+  return form.committee_type === "candidate";
+}
+
 export const officeOptions: OfficeSought[] = [
   "U.S. President",
   "U.S. Senator",
@@ -123,8 +128,3 @@ export const officeOptions: OfficeSought[] = [
   "Sheriff",
   "School Board Member"
 ];
-
-// Type guard
-export function isCandidateForm(form: FormValues): form is CandidateFormValues {
-  return form.committee_type === "candidate";
-}

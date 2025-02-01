@@ -1,4 +1,4 @@
-import { FormValues } from "@/types/actblue";
+import { FormValues, CandidateFormValues } from "../types";
 
 export interface FormStep {
   id: number;
@@ -46,10 +46,10 @@ export const getStepFields = (step: number, committeeType: string): Array<keyof 
   if (!stepConfig) return [];
 
   if (step === 1 && committeeType === "candidate") {
-    return [...stepConfig.fields, ...getCandidateFields()];
+    return [...stepConfig.fields, ...getCandidateFields()] as Array<keyof FormValues>;
   }
 
-  return stepConfig.fields;
+  return stepConfig.fields as Array<keyof FormValues>;
 };
 
 export const getTotalSteps = (committeeType: string): number => {
