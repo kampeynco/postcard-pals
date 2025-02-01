@@ -26,16 +26,27 @@ export default function ActBlueAccountForm({ onSuccess, onBack }: ActBlueAccount
     );
   }
 
-  const getFieldsForStep = (step: number): Array<keyof FormValues> => {
+  const getFieldsForStep = (step: number) => {
+    const baseFields = ["committee_type", "legal_committee_name", "organization_name"] as const;
+    const candidateFields = [
+      "candidate_first_name",
+      "candidate_middle_name",
+      "candidate_last_name",
+      "candidate_suffix",
+      "office_sought"
+    ] as const;
+    const addressFields = ["street_address", "city", "state", "zip_code"] as const;
+    const disclaimerFields = ["disclaimer_text"] as const;
+
     switch (step) {
       case 1:
         return committeeType === 'candidate' 
-          ? ['committee_type', 'legal_committee_name', 'organization_name', 'candidate_first_name', 'candidate_middle_name', 'candidate_last_name', 'candidate_suffix', 'office_sought']
-          : ['committee_type', 'legal_committee_name', 'organization_name'];
+          ? [...baseFields, ...candidateFields]
+          : baseFields;
       case 2:
-        return ['street_address', 'city', 'state', 'zip_code'];
+        return addressFields;
       case 3:
-        return ['disclaimer_text'];
+        return disclaimerFields;
       default:
         return [];
     }

@@ -36,7 +36,16 @@ export const useActBlueForm = ({ onSuccess }: UseActBlueFormProps) => {
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const success = await submitForm(values);
+      const formattedValues = {
+        ...values,
+        address: {
+          street: values.street_address,
+          city: values.city,
+          state: values.state,
+          zip_code: values.zip_code,
+        },
+      };
+      const success = await submitForm(formattedValues);
       if (success) {
         onSuccess?.();
       }
