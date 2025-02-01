@@ -1,7 +1,5 @@
-import { z } from "zod";
 import { CandidateSuffix, CommitteeType, OfficeSought } from "./base";
 
-// Form interfaces
 export interface AddressFormValues {
   street_address: string;
   city: string;
@@ -35,7 +33,6 @@ export interface OrganizationFormValues extends BaseFormValues {
 
 export type FormValues = CandidateFormValues | OrganizationFormValues;
 
-// Type guard
 export function isCandidateForm(form: FormValues): form is CandidateFormValues {
   return form.committee_type === "candidate";
 }

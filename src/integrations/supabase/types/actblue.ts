@@ -1,12 +1,16 @@
-import { CommitteeType } from './enums';
+import { CommitteeType } from '../types/enums';
 
 export interface ActBlueAccount {
   id: string;
   user_id: string;
-  committee_name: string;
+  legal_committee_name: string;
+  organization_name?: string;
   committee_type: CommitteeType;
-  candidate_name: string | null;
-  office_sought: string | null;
+  candidate_first_name?: string;
+  candidate_middle_name?: string;
+  candidate_last_name?: string;
+  candidate_suffix?: string | null;
+  office_sought?: string | null;
   street_address: string;
   city: string;
   state: string;
