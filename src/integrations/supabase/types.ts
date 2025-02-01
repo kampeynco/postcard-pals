@@ -14,7 +14,7 @@ export type Database = {
           candidate_first_name: string | null
           candidate_last_name: string | null
           candidate_middle_name: string | null
-          candidate_suffix: Database["public"]["Enums"]["suffix_type"] | null
+          candidate_suffix: string | null
           city: string
           committee_type: Database["public"]["Enums"]["committee_type"]
           created_at: string | null
@@ -36,7 +36,7 @@ export type Database = {
           candidate_first_name?: string | null
           candidate_last_name?: string | null
           candidate_middle_name?: string | null
-          candidate_suffix?: Database["public"]["Enums"]["suffix_type"] | null
+          candidate_suffix?: string | null
           city: string
           committee_type: Database["public"]["Enums"]["committee_type"]
           created_at?: string | null
@@ -58,7 +58,7 @@ export type Database = {
           candidate_first_name?: string | null
           candidate_last_name?: string | null
           candidate_middle_name?: string | null
-          candidate_suffix?: Database["public"]["Enums"]["suffix_type"] | null
+          candidate_suffix?: string | null
           city?: string
           committee_type?: Database["public"]["Enums"]["committee_type"]
           created_at?: string | null
@@ -395,7 +395,6 @@ export type Database = {
         | "postcard_queued"
         | "processing_complete"
         | "failed"
-      suffix_type: "Jr." | "Sr." | "II" | "III" | "IV" | "V"
     }
     CompositeTypes: {
       [_ in never]: never
