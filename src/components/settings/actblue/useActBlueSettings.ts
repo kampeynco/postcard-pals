@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormValues, formSchema } from "@/components/actblue/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { validateOfficeSought } from "@/components/actblue/types/form";
 
 export const useActBlueSettings = () => {
   const form = useForm<FormValues>({
@@ -47,6 +48,10 @@ export const useActBlueSettings = () => {
         }
 
         if (data) {
+          const officeSought = data.office_sought && validateOfficeSought(data.office_sought) 
+            ? data.office_sought 
+            : undefined;
+
           form.reset({
             legal_committee_name: data.legal_committee_name,
             organization_name: data.organization_name || "",
@@ -55,7 +60,7 @@ export const useActBlueSettings = () => {
             candidate_middle_name: data.candidate_middle_name || "",
             candidate_last_name: data.candidate_last_name || "",
             candidate_suffix: data.candidate_suffix,
-            office_sought: data.office_sought || undefined,
+            office_sought: officeSought,
             street_address: data.street_address,
             city: data.city,
             state: data.state,
@@ -90,7 +95,7 @@ export const useActBlueSettings = () => {
           candidate_middle_name: values.candidate_middle_name,
           candidate_last_name: values.candidate_last_name,
           candidate_suffix: values.candidate_suffix,
-          office_sought: values.office_sought,
+          office_sought: validateOfficeSought(values.office_sought || "") ? values.office_sought : null,
           street_address: values.street_address,
           city: values.city,
           state: values.state,
