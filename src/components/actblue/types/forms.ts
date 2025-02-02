@@ -3,6 +3,7 @@ import { CandidateSuffix, CommitteeType, OfficeSought } from "./base";
 export interface BaseFormValues {
   legal_committee_name: string;
   organization_name?: string;
+  committee_type: CommitteeType;
   street_address: string;
   city: string;
   state: string;

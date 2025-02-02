@@ -1,14 +1,18 @@
 import { z } from "zod";
 import { CandidateSuffix, OfficeSought, officeOptions } from "./base";
 
-const baseSchema = z.object({
-  legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
-  organization_name: z.string().optional(),
+const addressSchema = z.object({
   street_address: z.string().min(1, "Street address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().length(2, "Please use 2-letter state code"),
   zip_code: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code format"),
+});
+
+const baseSchema = z.object({
+  legal_committee_name: z.string().min(2, "Legal committee name must be at least 2 characters"),
+  organization_name: z.string().optional(),
   disclaimer_text: z.string().min(1, "Disclaimer text is required"),
+  ...addressSchema.shape,
 });
 
 export const formSchema = z.discriminatedUnion("committee_type", [

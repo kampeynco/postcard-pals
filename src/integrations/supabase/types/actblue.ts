@@ -6,7 +6,7 @@ export interface ActBlueAccount {
   user_id: string;
   legal_committee_name: string;
   organization_name?: string;
-  committee_type: CommitteeType;
+  committee_type: "candidate" | "organization";
   candidate_first_name?: string;
   candidate_middle_name?: string;
   candidate_last_name?: string;
