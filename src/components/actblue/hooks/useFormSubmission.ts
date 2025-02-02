@@ -2,25 +2,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { FormValues, isCandidateForm } from "../types";
 import { toast } from "sonner";
 
-interface SubmissionAddress {
-  street1: string;
-  city: string;
-  state: string;
-  zip_code: string;
-}
-
-const convertToSubmissionAddress = (address: {
-  street_address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-}): SubmissionAddress => ({
-  street1: address.street_address,
-  city: address.city,
-  state: address.state,
-  zip_code: address.zip_code,
-});
-
 export const useFormSubmission = () => {
   const submitForm = async (values: FormValues) => {
     try {
@@ -30,21 +11,14 @@ export const useFormSubmission = () => {
         return false;
       }
 
-      const submissionAddress = convertToSubmissionAddress({
-        street_address: values.street_address,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code
-      });
-
       const baseData = {
         legal_committee_name: values.legal_committee_name,
         organization_name: values.organization_name,
         committee_type: values.committee_type,
-        street_address: submissionAddress.street1,
-        city: submissionAddress.city,
-        state: submissionAddress.state,
-        zip_code: submissionAddress.zip_code,
+        street_address: values.street_address,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
         disclaimer_text: values.disclaimer_text,
         user_id: user.id,
       };

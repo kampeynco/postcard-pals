@@ -1,5 +1,5 @@
 import { CommitteeType } from "./enums";
-import { CandidateSuffix, OfficeSought } from "@/components/actblue/types";
+import { CandidateSuffix, OfficeSought } from "@/components/actblue/types/base";
 
 export interface ActBlueAccount {
   id: string;
@@ -23,3 +23,9 @@ export interface ActBlueAccount {
   created_at?: string;
   updated_at?: string;
 }
+
+export type ActBlueAccountsTable = {
+  Row: ActBlueAccount;
+  Insert: Omit<ActBlueAccount, "id" | "created_at" | "updated_at">;
+  Update: Partial<Omit<ActBlueAccount, "id" | "created_at" | "updated_at">>;
+};

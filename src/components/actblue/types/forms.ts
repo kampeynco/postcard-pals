@@ -1,21 +1,13 @@
 import { CandidateSuffix, CommitteeType, OfficeSought } from "./base";
 
-export interface AddressFormValues {
-  street_address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-}
-
 export interface BaseFormValues {
   legal_committee_name: string;
   organization_name?: string;
-  committee_type: CommitteeType;
-  disclaimer_text: string;
   street_address: string;
   city: string;
   state: string;
   zip_code: string;
+  disclaimer_text: string;
 }
 
 export interface CandidateFormValues extends BaseFormValues {
